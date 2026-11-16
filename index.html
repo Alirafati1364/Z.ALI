@@ -144,17 +144,17 @@ body::before {
   background: radial-gradient(circle, rgba(244, 194, 94, .38), transparent 70%);
 }
 .hero h1 {
-  margin: 10px 0 0; line-height: 1.62;
-  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px;
+  margin: 0 0 8px; line-height: 1.7;
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 2px 7px;
 }
-/* ردیف گوشه‌های بالا: شیفت راست، آب‌وهوا چپ */
+/* ردیف وضعیت: شیفت راست، آب‌وهوا چپ — در یک خط روبروی هم */
 .hero-top {
-  display: flex; justify-content: space-between; align-items: flex-start;
+  display: flex; justify-content: space-between; align-items: center;
   gap: 8px; row-gap: 6px; flex-wrap: wrap;
 }
-/* سلام و خوش‌آمد: یک اندازه و طلایی */
+/* سلام و خوش‌آمد: یک خط، یک اندازه و طلایی — بالاترین قسمت */
 .g1, .g2 {
-  display: inline; font-size: clamp(15px, 4.2vw, 18.5px); font-weight: 800; letter-spacing: 0; white-space: nowrap;
+  display: inline; font-size: clamp(16px, 4.7vw, 20px); font-weight: 800; letter-spacing: 0; white-space: nowrap;
   background: linear-gradient(185deg, #FFF8D9 8%, #FFD97A 48%, #F2B94B 95%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, .35));
@@ -181,11 +181,12 @@ body::before {
   color: #FFF6DC;
 }
 .install-btn {
-  position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: 2;
+  display: block; width: fit-content; margin: 0 auto 8px;
   padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255, 226, 150, .55);
   background: rgba(255, 226, 150, .16); color: #FFE9A8; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
+.install-btn[hidden] { display: none; }
 .occ {
   display: inline-flex; align-items: center; margin-top: 10px; padding: 3px 14px; border-radius: 999px;
   border: 1px solid rgba(255, 226, 150, .38); background: rgba(255, 226, 150, .13);
@@ -298,23 +299,25 @@ body.voice-active .status { display: block; }
 body.searching .status { display: block; }
 /* حین جستجو هم تب‌های دسته‌ها پیدای می‌مانند؛ شمارندهٔ نتایج هر دسته را نشان می‌دهند */
 
-/* ───────── نوار دسته‌ها: همهٔ دسته‌ها همیشه جلوی چشم؛ بدون نوار کشویی ───────── */
+/* ───────── نوار دسته‌ها: جدول مرتب و درشت؛ همهٔ دسته‌ها همیشه مرئی ───────── */
 .chips {
   position: sticky; top: var(--bar-h, 120px); z-index: 25;
-  display: flex; flex-wrap: wrap; gap: 5px;
-  margin: 0 -16px 8px; padding: 9px 16px 11px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 7px;
+  margin: 0 -16px 8px; padding: 10px 16px 12px;
   background: var(--bar);
   -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
   border-bottom: 1px solid var(--line);
 }
+/* روی موبایل جدول چندردیفی اگر چسبان باشد ارتفاع زیادی می‌گیرد؛ مرتب بالای صفحه می‌ماند و با اسکرول می‌رود */
+@media (max-width: 699px) { .chips { position: static; } .chip .n { display: none; } }
 .chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 4px 10px;
-  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 4px;
+  border-radius: 12px;
   border: 1px solid hsl(var(--h) 45% 86%);
   background: hsl(var(--h) 75% 94%);
   color: var(--ink);
-  font: inherit; font-size: 11px; font-weight: 700; white-space: nowrap;
+  font: inherit; font-size: 12px; font-weight: 700; white-space: nowrap;
   cursor: pointer;
   transition: transform .15s, border-color .15s, box-shadow .15s, background .15s;
 }
@@ -327,10 +330,10 @@ body.searching .status { display: block; }
   box-shadow: inset 0 0 0 1px hsl(var(--h) 60% 44% / .30), 0 4px 12px -6px hsl(var(--h) 70% 50% / .45);
 }
 .chip .n {
-  min-width: 18px; padding: 0 6px; border-radius: 999px; text-align: center;
+  min-width: 14px; padding: 1px 3px; border-radius: 999px; text-align: center;
   background: hsl(var(--h) 80% 89%);
   color: hsl(var(--h) 55% 30%);
-  font-size: 9.5px; font-weight: 800; font-variant-numeric: tabular-nums;
+  font-size: 9px; font-weight: 800; font-variant-numeric: tabular-nums;
 }
 [data-theme="dark"] .chip { border-color: hsl(var(--h) 28% 22%); background: hsl(var(--h) 30% 14%); }
 [data-theme="dark"] .chip .n { background: hsl(var(--h) 34% 20%); color: hsl(var(--h) 60% 82%); }
@@ -414,7 +417,7 @@ a.tk {
 [data-theme="dark"] .badge { background: linear-gradient(140deg, hsl(var(--h) 45% 28%), hsl(var(--h) 50% 16%)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
 /* اوقات شرعی: نشان خیلی کوچک — بخش کم‌اهمیت‌تر */
 #owq .badge { width: 20px; height: 20px; border-radius: 7px; font-size: 10px; }
-#owq .cat-head { gap: 8px; }
+#owq .cat-head { gap: 8px; padding: 8px 4px 4px; }
 .cat-name { flex: 1; font-size: 15.5px; font-weight: 800; }
 .count {
   flex: none; padding: 3px 11px;
@@ -891,14 +894,16 @@ dialog.sheet::before {
 
 /* ───────── پنل اوقات شرعی مشهد ───────── */
 .owq { --h: 150; }
-.owq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(97px, 1fr)); gap: 7px; }
+/* کادر اوقات شرعی: جمع‌وجور */
+#owq { padding: 2px 10px 10px; margin: 10px 0; }
+.owq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 5px; }
 .owq-i {
-  padding: 9px 4px 8px; border-radius: 14px; text-align: center;
+  padding: 5px 2px 4px; border-radius: 10px; text-align: center;
   border: 1px solid var(--line); background: var(--field);
 }
-.owq-i .k { display: block; font-size: 10.5px; font-weight: 700; color: var(--muted); line-height: 1.8; }
-.owq-i .v { display: block; font-size: 15px; font-weight: 800; line-height: 1.6; font-variant-numeric: tabular-nums; }
-.owq-i .rel { font-size: 10.5px; opacity: .8; }
+.owq-i .k { display: block; font-size: 9px; font-weight: 700; color: var(--muted); line-height: 1.7; }
+.owq-i .v { display: block; font-size: 12.5px; font-weight: 800; line-height: 1.55; font-variant-numeric: tabular-nums; }
+.owq-i .rel { font-size: 9px; opacity: .8; }
 .owq-i.next {
   border-color: hsl(150 50% 42%);
   background: hsl(150 62% 90% / .75);
@@ -907,46 +912,46 @@ dialog.sheet::before {
 [data-theme="dark"] .owq-i.next { background: hsl(150 42% 15% / .85); border-color: hsl(150 50% 38%); }
 .owq-i.next .k { color: hsl(150 55% 30%); }
 [data-theme="dark"] .owq-i.next .k { color: hsl(150 55% 72%); }
-.owq-note { margin: 12px 2px 0; font-size: 11px; line-height: 1.9; color: var(--muted); }
+.owq-note { margin: 8px 2px 0; font-size: 10px; line-height: 1.8; color: var(--muted); }
 
 /* ── موقعیت جغرافیایی + قبله‌یاب ── */
-.geo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 2px 0; }
+.geo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 2px 0; }
 .geo-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 14px; border-radius: 999px;
+  padding: 5px 11px; border-radius: 999px;
   border: 1px solid hsl(150 45% 70%); background: hsl(150 55% 92%);
-  color: hsl(150 45% 25%); font: inherit; font-size: 12.5px; font-weight: 700;
+  color: hsl(150 45% 25%); font: inherit; font-size: 11px; font-weight: 700;
   cursor: pointer; transition: transform .15s, border-color .15s;
 }
 .geo-btn:hover { border-color: hsl(150 50% 45%); transform: translateY(-1px); }
 .geo-btn:active { transform: scale(.96); }
 [data-theme="dark"] .geo-btn { background: hsl(150 40% 14%); border-color: hsl(150 40% 30%); color: hsl(150 55% 72%); }
 .geo-chip {
-  padding: 7px 12px; border-radius: 999px;
+  padding: 4px 10px; border-radius: 999px;
   border: 1px dashed var(--line); background: transparent;
-  color: var(--muted); font: inherit; font-size: 11.5px; font-weight: 600;
+  color: var(--muted); font: inherit; font-size: 10px; font-weight: 600;
   cursor: pointer; transition: color .15s, border-color .15s;
 }
 .geo-chip:hover { color: var(--ink); border-color: var(--focus); }
 .qibla {
-  display: flex; align-items: center; gap: 12px;
-  margin: 12px 2px 0; padding: 10px 14px;
-  border-radius: 16px;
+  display: flex; align-items: center; gap: 9px;
+  margin: 8px 2px 0; padding: 7px 11px;
+  border-radius: 12px;
   background: hsl(215 60% 95%); border: 1px solid var(--line);
 }
 [data-theme="dark"] .qibla { background: hsl(220 35% 13%); }
 .qb-dial {
   position: relative; flex: none;
-  width: 46px; height: 46px; border-radius: 50%;
+  width: 34px; height: 34px; border-radius: 50%;
   border: 1.5px solid hsl(215 30% 78%); background: var(--surface-solid);
   display: grid; place-items: center;
 }
 [data-theme="dark"] .qb-dial { border-color: hsl(215 30% 34%); background: hsl(220 35% 18%); }
 .qb-dial .n-mark { position: absolute; top: 1px; left: 50%; transform: translateX(-50%); font-size: 8.5px; font-weight: 800; color: var(--muted); line-height: 1.2; }
-.qb-dial svg { width: 24px; height: 24px; color: #0EA596; transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
+.qb-dial svg { width: 18px; height: 18px; color: #0EA596; transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
 .qb-info { min-width: 0; }
-.qb-info b { display: block; font-size: 13px; margin-bottom: 2px; }
-.qb-info span { display: block; font-size: 11.5px; line-height: 1.9; color: var(--muted); }
+.qb-info b { display: block; font-size: 11.5px; margin-bottom: 1px; }
+.qb-info span { display: block; font-size: 10px; line-height: 1.8; color: var(--muted); }
 
 /* ───────── نمای فهرستی کاشی‌ها ───────── */
 .theme-btn[aria-pressed="true"] { background: var(--chip-on-bg); color: var(--chip-on-ink); border-color: transparent; }
@@ -1054,6 +1059,7 @@ body.list-view .edit-btn { left: 69px; }
   <span class="orb o1" aria-hidden="true"></span>
   <span class="orb o2" aria-hidden="true"></span>
   <button class="install-btn" id="installBtn" type="button" hidden>📲 نصب برنامه</button>
+  <h1 id="greet"><span class="g1" id="g1">میز کار</span><span class="g2" id="g2">علی رأفتی</span></h1>
   <div class="hero-top">
     <button class="shift-line" id="shiftPill" type="button"><span id="shiftIcon" aria-hidden="true">🌙</span><span id="shiftText"></span></button>
     <button class="hero-wx" id="wxPill" type="button" hidden aria-label="نمایش جزئیات آب‌وهوای مشهد">
@@ -1063,7 +1069,6 @@ body.list-view .edit-btn { left: 69px; }
       <span class="wx-hilo" id="wxHiLo" aria-hidden="true"></span>
     </button>
   </div>
-  <h1 id="greet"><span class="g1" id="g1">میز کار</span><span class="g2" id="g2">علی رأفتی</span></h1>
   <div class="occ" id="occ" hidden></div>
   <a class="hero-cal" href="https://badesaba.ir/" aria-label="تقویم، ساعت و آب‌وهوا در باد صبا">
     <span class="hero-dates"><span class="date" id="date"></span><span class="date-g" id="dateG"></span></span>
@@ -1969,7 +1974,7 @@ body.list-view .edit-btn { left: 69px; }
   function syncBar() {
     var de = document.documentElement, ch = $('#chips');
     de.style.setProperty('--bar-h', bar.offsetHeight + 'px');
-    de.style.setProperty('--chips-h', ch ? ch.offsetHeight + 'px' : '0px');
+    de.style.setProperty('--chips-h', ch && window.matchMedia('(min-width: 700px)').matches ? ch.offsetHeight + 'px' : '0px');
   }
   syncBar(); window.addEventListener('resize', syncBar);
   if (window.ResizeObserver) {
@@ -2122,12 +2127,11 @@ body.list-view .edit-btn { left: 69px; }
     var now = Date.now(), st = shiftState(now), icon, txt;
     if (st.on) {
       icon = isNight(st.start) ? '🌙' : '☀️';
-      txt = 'در شیفتی تا ' + tfmt(st.end) + ' (' + hm(st.end - now) + ' مانده)';
+      txt = 'در شیفتی';
     } else {
-      var left = st.start - now, far = left > 12 * H, wl = whenLabel(st.start, now);
+      var far = st.start - now > 12 * H, wl = whenLabel(st.start, now);
       icon = far ? '😴' : (isNight(st.start) ? '🌙' : '☀️');
-      txt = far ? 'استراحتی؛ شیفت بعدی ' + wl + ' ' + tfmt(st.start)
-                : (wl === 'امشب' ? 'امشب شیفتی' : 'شیفت ' + wl) + ' ' + tfmt(st.start) + ' تا ' + tfmt(st.end) + ' (' + hm(left) + ' دیگر)';
+      txt = wl + ' شیفتی';
     }
     $('#shiftIcon').textContent = icon; $('#shiftText').textContent = txt;
 
