@@ -3530,11 +3530,10 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       return { k: it[0], label: it[1], ts: day0 + toMin(owqT[it[0]]) * 6e4 };
     });
     var next = null;
-    OWQ_ALARM.forEach(function (k) {
-      var r = rows.filter(function (x) { return x.k === k; })[0];
-      if (r.ts > now && (!next || r.ts < next.ts)) next = r;
+    rows.forEach(function (r) {
+      if (r.ts > now && (!next || r.ts < next.ts)) next = r;   /* همهٔ لحظه‌های شرعی، حتی غروب آفتاب و نیمه‌شب شرعی */
     });
-    if (!next) {   /* همهٔ اذان‌های امروز گذشته؛ اذان صبح فردا */
+    if (!next) {   /* همهٔ لحظه‌های امروز (تا نیمه‌شب شرعی) گذشته؛ اذان صبح فردا */
       var t2 = prayerTimes(now + DAY), mm2 = toMin(t2.fajr);
       next = { k: 'fajr', label: 'اذان صبح فردا', ts: day0 + DAY + mm2 * 6e4 };
     }
