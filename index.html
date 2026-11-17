@@ -524,21 +524,6 @@ body.searching #favPanel { display: none; }
   font-size: 12px; font-weight: 600; line-height: 1.5;
 }
 
-/* دکمهٔ سنجاق */
-.pin-btn {
-  position: absolute; z-index: 3; top: 5px; right: 5px;
-  width: 26px; height: 26px;
-  display: grid; place-items: center;
-  border: 1px solid var(--line); border-radius: 9px;
-  background: var(--surface-solid); color: #8B6A22;
-  font-size: 14px; line-height: 1; cursor: pointer; opacity: .82;
-  transition: opacity .15s, transform .15s, background .15s, color .15s, border-color .15s;
-}
-.pin-btn:hover { opacity: 1; transform: scale(1.08); }
-.pin-btn[aria-pressed="true"] { background: #FFF0BD; color: #A35C00; border-color: #E7BE65; opacity: 1; }
-[data-theme="dark"] .pin-btn { background: rgba(30, 38, 74, .9); color: #E7C878; }
-[data-theme="dark"] .pin-btn[aria-pressed="true"] { background: #59421E; color: #FFD98A; border-color: #927039; }
-
 /* دکمهٔ حذف — فقط در «حالت ویرایش» دیده می‌شود تا همیشه جلوی چشم نباشد */
 .del-btn {
   position: absolute; z-index: 3; top: 5px; left: 5px;
@@ -1074,10 +1059,9 @@ body.list-view .tile a {
 }
 body.list-view .tile .mono { flex: none; }
 body.list-view .tile .name { flex: 1; -webkit-line-clamp: 1; font-size: 13.5px; padding: 0; }
-body.list-view .pin-btn, body.list-view .del-btn { top: 50%; margin-top: -12px; }
-body.list-view .pin-btn { right: auto; left: 9px; }
-body.list-view .del-btn { left: 39px; }
-body.list-view .edit-btn { left: 69px; }
+body.list-view .del-btn, body.list-view .edit-btn { top: 50%; margin-top: -12px; }
+body.list-view .del-btn { left: 9px; }
+body.list-view .edit-btn { left: 39px; }
 
 /* ───────── توست اطلاع‌رسانی ───────── */
 .toast-wrap {
@@ -2054,13 +2038,16 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       box.appendChild(link);
     });
   }
-  function attachPin(t) {
-    var a=$('a',t), href=a.getAttribute('href'), pin=el('button','pin-btn',favs.indexOf(href)>-1?'★':'☆');
-    pin.type='button'; pin.setAttribute('aria-label','سنجاق کردن '+$('.name',t).textContent.trim()); pin.setAttribute('aria-pressed',favs.indexOf(href)>-1?'true':'false');
-    pin.addEventListener('click',function(ev){ ev.preventDefault(); ev.stopPropagation(); var i=favs.indexOf(href); if(i>-1) favs.splice(i,1); else favs.push(href); store.set('pinned_sites',JSON.stringify(favs)); tiles.forEach(function(tt){var aa=$('a',tt),bb=$('.pin-btn',tt),on=aa&&favs.indexOf(aa.getAttribute('href'))>-1;if(bb){bb.textContent=on?'★':'☆';bb.setAttribute('aria-pressed',on?'true':'false');}}); renderFavs(); showToast(favs.indexOf(href)>-1 ? '📌 سنجاق شد — بالای صفحه نمایش داده می‌شود' : 'از سنجاق‌ها برداشته شد'); });
-    t.appendChild(pin);
+  /* سنجاق فقط از منوی کاشی (لمس طولانی/کلیک راست) انجام می‌شود؛ ستاره روی خود کاشی‌ها حذف شده است */
+  function togglePin(href) {
+    if (!href) return;
+    var i = favs.indexOf(href);
+    if (i > -1) favs.splice(i, 1); else favs.push(href);
+    store.set('pinned_sites', JSON.stringify(favs));
+    renderFavs();
+    showToast(favs.indexOf(href) > -1 ? '📌 سنجاق شد — بالای صفحه نمایش داده می‌شود' : 'از سنجاق‌ها برداشته شد');
   }
-  tiles.forEach(function (t) { attachPin(t); attachHide(t); });
+  tiles.forEach(attachHide);
 
   /* ── ترتیب دستی کاشی‌ها و دسته‌ها (ذخیره روی همین دستگاه) ──
      ترتیب از آخر به اول اعمال می‌شود: هر کاشیِ موجود در فهرست، به انتهای شبکه منتقل می‌شود؛
@@ -2281,7 +2268,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function startLongPress(ev) {
     cancelLP();
     var t = ev.target.closest('#cats .tile');
-    if (!t || ev.target.closest('.pin-btn,.del-btn,.edit-btn')) return;
+    if (!t || ev.target.closest('.del-btn,.edit-btn')) return;
     if (ev.pointerType === 'mouse' && ev.button !== 0) return;
     lpX = ev.clientX; lpY = ev.clientY;
     lpTimer = setTimeout(function () {
@@ -2296,7 +2283,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     var grip = ev.target.closest('#cats .cat-head .grip');
     if (grip) { ev.preventDefault(); beginDrag(grip.closest('.cat'), ev, 'cat'); return; }
     var t = ev.target.closest('#cats .tile');
-    if (t && !ev.target.closest('.pin-btn,.del-btn,.edit-btn')) {
+    if (t && !ev.target.closest('.del-btn,.edit-btn')) {
       if (ev.pointerType === 'mouse' && ev.button !== 0) return;
       beginDrag(t, ev, 'tile');
     }
@@ -2313,7 +2300,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   }, true);
   document.addEventListener('contextmenu', function (ev) {
     var t = ev.target.closest('#cats .tile');
-    if (!t || ev.target.closest('.pin-btn,.del-btn,.edit-btn')) return;
+    if (!t || ev.target.closest('.del-btn,.edit-btn')) return;
     ev.preventDefault();
     if (document.body.classList.contains('edit-mode')) return;
     suppressNextClick = true;
@@ -2337,7 +2324,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     openSheet(dlg);
   }
   function closeDlg(d) { if (d.close) d.close(); else d.removeAttribute('open'); }
-  $('#ctxPin').addEventListener('click', function () { closeDlg($('#ctxDlg')); var pb = ctxTile && $('.pin-btn', ctxTile); if (pb) pb.click(); });
+  $('#ctxPin').addEventListener('click', function () { closeDlg($('#ctxDlg')); var a = ctxTile && $('a', ctxTile); if (a) togglePin(a.getAttribute('href')); });
   $('#ctxEdit').addEventListener('click', function () { closeDlg($('#ctxDlg')); if (ctxCustom && ctxTile) openEdit(ctxCustom, ctxTile); });
   $('#ctxDel').addEventListener('click', function () { closeDlg($('#ctxDlg')); requestDeleteFor(ctxTile); });
   $('#ctxSort').addEventListener('click', function () {
@@ -2399,7 +2386,6 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         if (ng && ng !== nt.parentNode) ng.appendChild(nt);
         if (customLinks.some(function (x) { return !x.cat || x.cat === 'c-mine'; })) showMine(true); else showMine(false);
         nt._hay = norm(nt.textContent + ' ' + url);
-        attachPin(nt);
         if (favs.indexOf(oldU) > -1 && oldU !== url) { favs.splice(favs.indexOf(oldU), 1); store.set('pinned_sites', JSON.stringify(favs)); }
         renderFavs(); refreshCounts();
         if (document.body.classList.contains('searching')) runSearch();
@@ -2423,7 +2409,6 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       if (catId === 'c-mine') showMine(true);
       tiles.push(t);
       t._hay = norm(t.textContent + ' ' + url);
-      attachPin(t);
       refreshCounts();
       showToast('لینک به «' + catName + '» اضافه شد ✓');
       if (document.body.classList.contains('searching')) runSearch();
