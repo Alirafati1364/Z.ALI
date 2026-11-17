@@ -158,10 +158,10 @@ body::before {
   margin: 0 0 8px; line-height: 1.7;
   display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 2px 7px;
 }
-/* ردیف وضعیت: شیفت راست، آب‌وهوا چپ — در یک خط روبروی هم */
+/* ردیف وضعیت: کادر شیفت راست، آب‌وهوا چپ — همیشه در یک خط روبروی هم، آب‌وهوا هرگز به خط بعد نمی‌رود */
 .hero-top {
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 8px; row-gap: 6px; flex-wrap: wrap;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap;
+  gap: 8px;
 }
 /* سلام و خوش‌آمد: یک خط، یک اندازه و طلایی — بالاترین قسمت */
 .g1, .g2 {
@@ -205,15 +205,20 @@ body::before {
   font-size: 12.5px; font-weight: 700; color: #FFE9A8;
 }
 .shift-line {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px; max-width: 100%;
-  padding: 6px 13px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: flex-start; gap: 8px;
+  flex: 1 1 auto; min-width: 0; text-align: start;
+  padding: 7px 13px; border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, .26); background: rgba(255, 255, 255, .11);
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, .96); font: inherit; font-size: 12.5px; font-weight: 600; line-height: 1.6; cursor: pointer;
   transition: background .2s, border-color .2s;
 }
+/* توضیحات شیفت روی هم (دو خط) داخل همان کادر: خط اول وضعیت الان، خط دوم شیفت بعدی */
+.shift-line #shiftIcon { font-size: 17px; line-height: 1; }
+.shift-lines { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+#shiftText2 { font-size: 11.5px; opacity: .78; }
 .shift-line:hover { background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .38); }
-.shift-line:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 8px; }
+.shift-line:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 16px; }
 
 /* ───────── داک جستجو (نوار شناور چسبان) ───────── */
 .bar {
@@ -954,7 +959,7 @@ dialog.sheet::before {
 
 /* ───────── پیل آب‌وهوای مشهد — گوشهٔ چپ سربرگ ───────── */
 .hero-wx {
-  display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
+  display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto; white-space: nowrap;
   padding: 6px 13px; border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, .26); background: rgba(255, 255, 255, .11);
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
@@ -962,7 +967,7 @@ dialog.sheet::before {
   transition: background .2s, border-color .2s;
 }
 .hero-wx:hover { background: rgba(255, 255, 255, .18); border-color: rgba(255, 226, 150, .45); }
-.hero-wx:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 8px; }
+.hero-wx:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 999px; }
 .hero-wx .wx-ico { font-size: 16px; line-height: 1; }
 .hero-wx .wx-temp { font-size: 14.5px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
 .hero-wx .wx-desc { display: none; }
@@ -972,7 +977,8 @@ dialog.sheet::before {
   font-size: 11px; opacity: .85; font-variant-numeric: tabular-nums; direction: ltr;
 }
 .hero-wx.wx-stale { opacity: .75; }
-@media (max-width: 379px) { .hero-wx .wx-hilo { display: none; } }
+/* در نمایشگرهای باریک، کمینه/بیشینهٔ دما پنهان می‌شود تا کادر شیفت دو خطِ تمیز داشته باشد و آب‌وهوا در همان خط بماند */
+@media (max-width: 459px) { .hero-wx .wx-hilo { display: none; } }
 
 /* ───────── پنل اوقات شرعی مشهد ───────── */
 .owq { --h: 150; }
@@ -1170,7 +1176,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   <button class="install-btn" id="installBtn" type="button" hidden>📲 نصب برنامه</button>
   <h1 id="greet"><span class="g1" id="g1">میز کار</span><span class="g2" id="g2">علی رأفتی</span></h1>
   <div class="hero-top">
-    <button class="shift-line" id="shiftPill" type="button"><span id="shiftIcon" aria-hidden="true">🌙</span><span id="shiftText"></span></button>
+    <button class="shift-line" id="shiftPill" type="button"><span id="shiftIcon" aria-hidden="true">🌙</span><span class="shift-lines"><span id="shiftText"></span><span id="shiftText2"></span></span></button>
     <button class="hero-wx" id="wxPill" type="button" hidden aria-label="نمایش جزئیات آب‌وهوای مشهد">
       <span class="wx-ico" id="wxIco" aria-hidden="true">🌡️</span>
       <span class="wx-temp" id="wxTemp">—</span>
@@ -1684,12 +1690,14 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   <h3>شیفت‌های بعدی</h3>
   <div id="shiftList"></div>
   <h3>تنظیم شیفت</h3>
+  <p class="dlg-note">الگوی دورهٔ سه‌روزه: شیفت روز ← ۲۴ ساعت استراحت ← شیفت شب ← ۲۴ ساعت استراحت، و تکرار. شیفت شب دقیقاً از پایان شیفت روز شروع می‌شود؛ فقط لنگر و مرز ساعت‌ها را تنظیم کن.</p>
   <div class="form">
-    <label>شروع یکی از شیفت‌ها (مثلاً شیفت امشب)<input type="datetime-local" id="cfgAnchor"></label>
+    <label>لنگر: شروع یکی از شیفت‌ها (روز یا شب)<input type="datetime-local" id="cfgAnchor"></label>
     <div class="two">
-      <label>ساعت کار<input type="number" id="cfgWork" min="1" max="48" step="0.5" inputmode="decimal"></label>
-      <label>ساعت استراحت<input type="number" id="cfgRest" min="0" max="168" step="0.5" inputmode="decimal"></label>
+      <label>شروع شیفت روز<input type="time" id="cfgDayS"></label>
+      <label>پایان شیفت روز<input type="time" id="cfgDayE"></label>
     </div>
+    <label>پایان شیفت شب (صبح فردا)<input type="time" id="cfgNightE"></label>
     <div class="btns"><button class="btn primary" type="button" id="cfgSave">ذخیره</button><button class="btn" type="button" id="cfgReset">بازنشانی</button></div>
   </div>
 </div></dialog>
@@ -2663,9 +2671,20 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     [12,9,1405,'شهادت حضرت علی (ع)','h'],[12,10,1405,'شب قدر','o'],
     [12,19,1405,'عید سعید فطر','h'],[12,20,1405,'تعطیلی عید فطر','h']
   ];
-  var SHIFT_DEFAULT = { anchor: new Date(2026, 10, 3, 19, 0).getTime(), work: 12, rest: 24 };   /* شیفت امشب ۱۹:۰۰، ۱۲ ساعت کار و ۲۴ ساعت استراحت */
+  /* دورهٔ سه‌روزهٔ شیفت: شیفت روز ۰۸–۱۹، استراحت ۲۴ ساعت، شیفت شب ۱۹–۰۸ (صبح فردا)، استراحت ۲۴ ساعت — و تکرار */
+  var SHIFT_DEFAULT = { v: 2, anchor: new Date(2026, 10, 2, 8, 0).getTime(), dayS: 480, dayE: 1140, nightE: 480 };
   var cfg = SHIFT_DEFAULT;
-  try { var c0 = JSON.parse(store.get('shift_cfg', 'null')); if (c0 && isFinite(c0.anchor) && c0.work > 0 && c0.rest >= 0) cfg = c0; } catch (e) {}
+  try {
+    var c0 = JSON.parse(store.get('shift_cfg', 'null'));
+    if (c0 && c0.v === 2 && isFinite(c0.anchor) && c0.dayE > c0.dayS && c0.nightE >= 0 && c0.nightE < 1440) cfg = c0;
+    else if (c0 && isFinite(c0.anchor) && c0.work > 0 && c0.rest >= 0) {
+      /* قالب قدیمی (دورهٔ کار+استراحت): الگوی روزهای شیفت حفظ می‌شود و مرز ساعت‌ها با ساعت واقعی شیفت‌ها (۰۸/۱۹/۰۸) هم‌تراز می‌شود */
+      var _h = new Date(c0.anchor).getHours();
+      var _a = (_h >= 17 || _h < 5) ? c0.anchor - 2100 * 6e4 : startOfDay(c0.anchor) + 480 * 6e4;
+      cfg = { v: 2, anchor: _a, dayS: 480, dayE: 1140, nightE: 480 };
+      store.set('shift_cfg', JSON.stringify(cfg));
+    }
+  } catch (e) {}
 
   var H = 36e5, DAY = 864e5;
   var jFmt, dayFmt;
@@ -2692,14 +2711,30 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function isNight(ts) { var h = new Date(ts).getHours(); return h >= 17 || h < 5; }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
-  function shiftState(now) {
-    var w = cfg.work * H, cyc = (cfg.work + cfg.rest) * H;
-    var k = Math.floor((now - cfg.anchor) / cyc), s = cfg.anchor + k * cyc;
-    return now < s + w ? { on: true, start: s, end: s + w } : { on: false, start: s + cyc, end: s + cyc + w };
+  function segInfo() {   /* طول بخش‌های دورهٔ سه‌روزه بر حسب میلی‌ثانیه: شیفت روز، استراحت ۲۴ ساعته، شیفت شب، استراحت تا شیفت روز بعدی */
+    var wD = (cfg.dayE - cfg.dayS) * 6e4, wN = (1440 - cfg.dayE + cfg.nightE) * 6e4, rN = (1440 + cfg.dayS - cfg.nightE) * 6e4, restD = 1440 * 6e4;
+    return { wD: wD, restD: restD, wN: wN, P: wD + restD + wN + Math.max(rN, 0) };
+  }
+  function shiftSlots() {
+    var L = segInfo();
+    return [[0, L.wD, 'day'], [L.wD + L.restD, L.wN, 'night']];
+  }
+  function shiftState(now) {   /* جای فعلی در دوره: روی شیفت روز/شب یا در استراحتِ قبل از شیفت بعدی */
+    var L = segInfo(), e = now - cfg.anchor, m = ((e % L.P) + L.P) % L.P, base = cfg.anchor + e - m;
+    if (m < L.wD) return { on: true, kind: 'day', start: base, end: base + L.wD };
+    if (m < L.wD + L.restD) return { on: false, kind: 'night', start: base + L.wD + L.restD, end: base + L.wD + L.restD + L.wN };
+    if (m < L.wD + L.restD + L.wN) return { on: true, kind: 'night', start: base + L.wD + L.restD, end: base + L.wD + L.restD + L.wN };
+    return { on: false, kind: 'day', start: base + L.P, end: base + L.P + L.wD };
   }
   function shiftList(now, n) {
-    var st = shiftState(now), cyc = (cfg.work + cfg.rest) * H, out = [];
-    for (var i = 0; i < n; i++) out.push({ start: st.start + i * cyc, end: st.start + i * cyc + cfg.work * H, now: i === 0 && st.on });
+    var L = segInfo(), e = now - cfg.anchor, m = ((e % L.P) + L.P) % L.P, base0 = cfg.anchor + e - m, out = [], slots = shiftSlots();
+    for (var k = 0; k < 400 && out.length < n; k++) {
+      for (var i = 0; i < slots.length && out.length < n; i++) {
+        var s = base0 + k * L.P + slots[i][0], e2 = s + slots[i][1];
+        if (e2 <= now) continue;   /* شیفت تمام‌شده در فهرست نمی‌آید */
+        out.push({ start: s, end: e2, kind: slots[i][2], now: now >= s && now < e2 });
+      }
+    }
     return out;
   }
   function whenLabel(ts, now) {
@@ -2727,16 +2762,22 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   }
 
   function renderPills() {
-    var now = Date.now(), st = shiftState(now), icon, txt;
+    var now = Date.now(), st = shiftState(now), icon, txt, txt2 = '', kw = st.kind === 'night' ? 'شب' : 'روز';
+    var list = shiftList(now, 2), nx = st.on ? list[1] : list[0];   /* شیفت بعدی: روی شیفت → دومی؛ در استراحت → اولی */
     if (st.on) {
-      icon = isNight(st.start) ? '🌙' : '☀️';
-      txt = 'در شیفتی';
+      icon = st.kind === 'night' ? '🌙' : '☀️';
+      txt = 'الان شیفت ' + kw + 'م — تا ' + tfmt(st.end);
     } else {
-      var far = st.start - now > 12 * H, wl = whenLabel(st.start, now);
-      icon = far ? '😴' : (isNight(st.start) ? '🌙' : '☀️');
-      txt = wl + ' شیفتی';
+      var far = st.start - now > 12 * H;
+      icon = far ? '😴' : (st.kind === 'night' ? '🌙' : '☀️');
+      if (nx) {
+        var lbl = whenLabel(nx.start, now);
+        if (dayDiff(nx.start, now) === 0 && new Date(nx.start).getHours() < 17) lbl = '';   /* امروز → فقط ساعت */
+        txt = 'الان استراحتم — تا ' + (lbl ? lbl + ' ' : '') + tfmt(nx.start);
+      } else txt = 'الان استراحتم';
     }
-    $('#shiftIcon').textContent = icon; $('#shiftText').textContent = txt;
+    if (nx) txt2 = whenLabel(nx.start, now) + ' شیفت ' + (nx.kind === 'night' ? 'شب' : 'روز') + ' — ' + tfmt(nx.start) + ' تا ' + tfmt(nx.end);
+    $('#shiftIcon').textContent = icon; $('#shiftText').textContent = txt; $('#shiftText2').textContent = txt2;
 
     var occ = $('#occ');
     if (!jFmt) { occ.hidden = true; return; }
@@ -2767,21 +2808,31 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     var d = new Date(ts), p = function (n) { return ('0' + n).slice(-2); };
     return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes());
   }
+  function toTime(min) { return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + min % 60).slice(-2); }
+  function toMin2(v) { var p = String(v || '').split(':'), h = parseInt(p[0], 10) || 0, m = parseInt(p[1], 10) || 0; return h * 60 + m; }
+  function nextPhrase(s, now) {   /* مثل: «فردا شیفت شب — ۱۹:۰۰ تا ۰۸:۰۰» */
+    return whenLabel(s.start, now) + ' شیفت ' + (s.kind === 'night' ? 'شب' : 'روز') + ' — ' + tfmt(s.start) + ' تا ' + tfmt(s.end);
+  }
   function renderShiftDlg() {
-    var now = Date.now(), st = shiftState(now);
-    $('#shiftBig').textContent = st.on
-      ? 'الان در شیفتی؛ ' + hm(st.end - now) + ' تا پایان شیفت (' + tfmt(st.end) + ').'
-      : 'الان استراحتی؛ شیفت بعدی ' + whenLabel(st.start, now) + ' ساعت ' + tfmt(st.start) + ' شروع می‌شود (' + hm(st.start - now) + ' دیگر).';
+    var now = Date.now(), st = shiftState(now), list = shiftList(now, 3), nx = st.on ? list[1] : list[0], kw = st.kind === 'night' ? 'شب' : 'روز', big;
+    if (st.on) {
+      big = 'الان در شیفت ' + kw + ' هستی؛ تا ' + tfmt(st.end) + ' ادامه دارد (' + hm(st.end - now) + ' مانده).';
+      if (nx && dayDiff(nx.start, now) >= 2) big += ' فردا استراحت داری.';
+      if (nx) big += ' شیفت بعدی: ' + nextPhrase(nx, now) + ' (' + hm(nx.start - now) + ' دیگر).';
+    } else {
+      big = 'الان استراحتی' + (nx ? '؛ شیفت بعدی: ' + nextPhrase(nx, now) + ' (' + hm(nx.start - now) + ' دیگر).' : '.');
+    }
+    $('#shiftBig').textContent = big;
     var box = $('#shiftList'); box.textContent = '';
     shiftList(now, 5).forEach(function (s) {
       var r = el('div', 'row');
-      r.appendChild(el('div', 'when', now >= s.start && now < s.end ? 'الان' : whenLabel(s.start, now) + (dayDiff(s.start, now) > 2 ? '' : '، ' + dayText(s.start))));
+      r.appendChild(el('div', 'when', s.now ? 'الان' : whenLabel(s.start, now) + (dayDiff(s.start, now) > 2 ? '' : '، ' + dayText(s.start))));
       r.appendChild(el('div', 'what', tfmt(s.start) + ' تا ' + tfmt(s.end)));
-      r.appendChild(el('span', 'tag' + (s.now ? ' on' : ''), s.now ? 'در حال انجام' : (isNight(s.start) ? 'شب' : 'روز')));
+      r.appendChild(el('span', 'tag' + (s.now ? ' on' : ''), s.now ? 'در حال انجام' : (s.kind === 'night' ? 'شب' : 'روز')));
       box.appendChild(r);
     });
     $('#cfgAnchor').value = toInput(cfg.anchor);
-    $('#cfgWork').value = cfg.work; $('#cfgRest').value = cfg.rest;
+    $('#cfgDayS').value = toTime(cfg.dayS); $('#cfgDayE').value = toTime(cfg.dayE); $('#cfgNightE').value = toTime(cfg.nightE);
   }
   $('#shiftPill').addEventListener('click', function () { renderShiftDlg(); openSheet($('#shiftDlg')); });
 
@@ -2791,11 +2842,13 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function jMonthStart(ts) { var d = startOfDay(ts) + 12 * H; for (var i = 0; i < 32; i++) { if (jparts(d).day === 1) return d; d -= DAY; } return d; }
   function jNextStart(ms) { var d = ms + 28 * DAY; for (var i = 0; i < 6; i++) { if (jparts(d).day === 1) return d; d += DAY; } return d; }
   function shiftsBetween(a, b) {
-    var w = cfg.work * H, cyc = (cfg.work + cfg.rest) * H, out = [];
-    if (!(cyc > 0)) return out;
-    for (var k = Math.floor((a - cfg.anchor) / cyc) - 1; k <= Math.ceil((b - cfg.anchor) / cyc) + 1; k++) {
-      var s = cfg.anchor + k * cyc, e = s + w;
-      if (e > a && s < b) out.push({ start: s, end: e });
+    var L = segInfo(), slots = shiftSlots(), out = [];
+    if (!(L.P > 0)) return out;
+    for (var k = Math.floor((a - cfg.anchor) / L.P) - 1; k <= Math.ceil((b - cfg.anchor) / L.P) + 1; k++) {
+      for (var i = 0; i < slots.length; i++) {
+        var s = cfg.anchor + k * L.P + slots[i][0], e = s + slots[i][1];
+        if (e > a && s < b) out.push({ start: s, end: e });
+      }
     }
     return out;
   }
@@ -2935,14 +2988,18 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 
   $('#shiftPill').addEventListener('click', function () { renderWeekends(); });
   $('#cfgSave').addEventListener('click', function () {
-    var a = new Date($('#cfgAnchor').value).getTime(), w = parseFloat($('#cfgWork').value), r = parseFloat($('#cfgRest').value);
-    if (!isFinite(a) || !(w >= 1 && w <= 48) || !(r >= 0 && r <= 168) || !isFinite(w) || !isFinite(r)) { alert('مقادیر شیفت معتبر نیستند؛ ساعت کار باید بین ۱ تا ۴۸ و استراحت بین ۰ تا ۱۶۸ باشد.'); return; }
-    cfg = { anchor: a, work: w, rest: r };
+    var dS = toMin2($('#cfgDayS').value), dE = toMin2($('#cfgDayE').value), nE = toMin2($('#cfgNightE').value) % 1440;
+    var a = new Date($('#cfgAnchor').value).getTime();
+    if (!isFinite(a)) { alert('لنگر شیفت معتبر نیست؛ تاریخ و ساعت شروع یکی از شیفت‌ها را وارد کن.'); return; }
+    if (!(dE > dS) || dS < 0 || dE > 1440 || !(nE >= 0)) { alert('ساعت‌های شیفت معتبر نیستند؛ پایان شیفت روز باید بعد از شروع آن باشد.'); return; }
+    var h = new Date(a).getHours();
+    if (h >= 17 || h < 5) a -= (dE - dS + 1440) * 6e4;   /* لنگر روی شیفت شب بود؛ به شروعِ شیفت روزِ همان دوره برگرد (شب = روز + ۲۴ ساعت استراحت) */
+    cfg = { v: 2, anchor: a, dayS: dS, dayE: dE, nightE: nE };
     store.set('shift_cfg', JSON.stringify(cfg));
     renderPills(); renderShiftDlg(); renderAllShift();
   });
   $('#cfgReset').addEventListener('click', function () {
-    cfg = SHIFT_DEFAULT; store.set('shift_cfg', ''); renderPills(); renderShiftDlg(); renderAllShift();
+    cfg = SHIFT_DEFAULT; store.set('shift_cfg', JSON.stringify(SHIFT_DEFAULT)); renderPills(); renderShiftDlg(); renderAllShift();
   });
   renderMonth(); renderDet();
   var calDay = startOfDay(Date.now());
