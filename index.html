@@ -246,28 +246,39 @@ body::before {
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
 }
-.search-row { display: flex; gap: 8px; }
-.voice-btn {
-  flex: none; width: 50px; height: 50px; display: grid; place-items: center;
-  border-radius: 16px; border: 1px solid var(--line); background: var(--field); color: var(--ink);
-  font-size: 21px; cursor: pointer; transition: border-color .2s, transform .15s;
+.search-row { display: flex; gap: 6px; align-items: stretch; }
+/* نوار ابزار جمع‌وجور: همهٔ دکمه‌ها داخل یک مستطیل واحد کنار کادر جستجو */
+.tools {
+  flex: none; display: flex; align-items: stretch;
+  border-radius: 13px; border: 1px solid var(--line);
+  background: var(--field); overflow: hidden;
 }
-.voice-btn:hover { border-color: color-mix(in srgb, var(--ink) 26%, transparent); }
-.voice-btn:active { transform: scale(.94); }
-.voice-btn.listening { background: #FDE7E7; border-color: #D9485F; color: #B4233B; animation: micPulse 1s infinite alternate; }
-@keyframes micPulse { to { box-shadow: 0 0 0 5px rgba(217, 72, 95, .16); } }
+.t-btn {
+  width: 34px; display: grid; place-items: center;
+  border: 0; border-inline-start: 1px solid var(--line);
+  background: none; color: var(--ink); cursor: pointer; font: inherit; font-size: 17px; padding: 0;
+  transition: background .15s, transform .1s;
+}
+.t-btn:first-child { border-inline-start: 0; }
+.t-btn:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.t-btn:active { transform: scale(.92); }
+.t-btn svg { width: 18px; height: 18px; }
+.t-btn[aria-pressed="true"] { background: var(--chip-on-bg); color: var(--chip-on-ink); }
+.t-btn .vb { font-size: 16px; line-height: 1; }
+.t-btn.listening { background: #FDE7E7; color: #B4233B; animation: micPulse 1s infinite alternate; }
+@keyframes micPulse { to { box-shadow: inset 0 0 0 3px rgba(217, 72, 95, .3); } }
 .search { position: relative; flex: 1; min-width: 0; }
 
 #searchInput {
   width: 100%;
-  height: 50px;
-  padding: 0 48px 0 44px;
-  border-radius: 16px;
+  height: 42px;
+  padding: 0 42px 0 40px;
+  border-radius: 13px;
   border: 1px solid var(--line);
   background: var(--field);
   color: var(--ink);
   font: inherit;
-  font-size: 15px;
+  font-size: 14.5px;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -279,32 +290,22 @@ body::before {
 #searchInput:focus { border-color: var(--focus); box-shadow: 0 0 0 3.5px var(--focus-ring); }
 
 .s-icon {
-  position: absolute; right: 16px; top: 50%;
-  width: 20px; height: 20px; margin-top: -10px;
+  position: absolute; right: 13px; top: 50%;
+  width: 18px; height: 18px; margin-top: -9px;
   color: var(--muted); pointer-events: none;
 }
 .clear {
-  position: absolute; left: 5px; top: 50%;
-  width: 40px; height: 40px; margin-top: -20px;
+  position: absolute; left: 3px; top: 50%;
+  width: 36px; height: 36px; margin-top: -18px;
   display: none; place-items: center;
   border: 0; border-radius: 50%;
   background: none; color: var(--muted); cursor: pointer;
 }
 .clear:hover { color: var(--ink); }
-.clear svg { width: 18px; height: 18px; }
+.clear svg { width: 16px; height: 16px; }
 body.searching .clear { display: grid; }
 
-.theme-btn {
-  flex: none; width: 50px; height: 50px;
-  display: grid; place-items: center;
-  border-radius: 16px; border: 1px solid var(--line);
-  background: var(--field); color: var(--ink); cursor: pointer;
-  transition: border-color .2s, transform .15s, opacity .2s;
-}
-.theme-btn:hover { border-color: color-mix(in srgb, var(--ink) 26%, transparent); }
-.theme-btn:active { transform: scale(.94); }
-.theme-btn svg { width: 22px; height: 22px; }
-.up-btn { transition: opacity .2s; }
+.up-btn { transition: opacity .2s, background .15s; }
 .up-btn.dim { opacity: .4; }
 .i-sun { display: none; }
 [data-theme="dark"] .i-sun { display: block; }
@@ -566,7 +567,11 @@ body.edit-mode #cats .cat { outline: 1.5px dashed hsl(var(--h) 60% 55% / .55); o
 body.edit-mode #cats .tile { outline: 1.5px dashed hsl(var(--h) 55% 50% / .45); outline-offset: 2px; }
 body.dragging-tile { user-select: none; -webkit-user-select: none; }
 body.dragging-tile .tile a, body.dragging-tile a.tk { pointer-events: none; }
-.tile.dragging { z-index: 60; }
+/* برای روانی کشیدن: در حالت ویرایش ترنزیشن کاشی/دسته خاموش است و کاشیِ درحال‌کشیدن لایهٔ مستقل می‌گیرد */
+body.edit-mode .tile, body.edit-mode #cats .cat,
+body.dragging-tile .tile, body.dragging-tile #cats .cat { transition: none !important; }
+.tile.dragging { z-index: 60; will-change: transform; }
+#cats .cat.dragging { will-change: transform; }
 .tile.dragging a { box-shadow: 0 18px 42px -12px rgba(10, 16, 40, .5); }
 #cats .cat.dragging { position: relative; z-index: 40; opacity: .98; box-shadow: 0 20px 48px -16px rgba(10, 16, 40, .45); }
 /* دستگیرهٔ جابه‌جایی دسته و دکمهٔ تغییر نام — فقط در حالت ویرایش */
@@ -1041,20 +1046,11 @@ dialog.sheet::before {
 .qb-info span { display: block; font-size: 10px; line-height: 1.8; color: var(--muted); }
 
 /* ───────── نمای فهرستی کاشی‌ها ───────── */
-.theme-btn[aria-pressed="true"] { background: var(--chip-on-bg); color: var(--chip-on-ink); border-color: transparent; }
-.theme-btn .vb { font-size: 19px; line-height: 1; }
-
-/* ── نوار ابزار: دسکتاپ همه در یک ردیف؛ موبایل چهار دکمهٔ ویرایش/بالا/نما/تم
-   مرتب در ردیف دوم زیر جستجو می‌روند تا کادر جستجو کامل بماند و
-   دکمهٔ «افزودن لینک» از جایش تکان نخورد ── */
-.bar-tools { display: contents; }
-@media (max-width: 599px) {
-  .search-row { flex-wrap: wrap; }
-  .bar-tools { display: flex; flex: 1 1 100%; gap: 8px; }
-  .bar-tools .theme-btn { flex: 1 1 0; width: auto; }
-  .theme-btn svg { width: 20px; height: 20px; }
-  .theme-btn .vb { font-size: 17px; }
-  .voice-btn { font-size: 19px; }
+/* نوار ابزار در همهٔ عرض‌ها یک ردیف است: دکمه‌های کوچک داخل همان مستطیل ابزار؛ ردیف دوم حذف شد */
+@media (max-width: 349px) {
+  .t-btn { width: 29px; font-size: 15px; }
+  .t-btn svg { width: 16px; height: 16px; }
+  #searchInput { padding: 0 38px 0 34px; font-size: 14px; }
 }
 body.list-view #cats .grid { display: flex; flex-direction: column; gap: 7px; }
 body.list-view .tile a {
@@ -1198,13 +1194,13 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <input id="searchInput" type="search" dir="auto" placeholder="جستجو…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="جستجو در همهٔ لینک‌ها">
         <button class="clear" id="clearBtn" type="button" aria-label="پاک کردن جستجو"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
       </div>
-      <button class="voice-btn" id="voiceBtn" type="button" aria-label="جستجوی صوتی" title="جستجوی صوتی">🎙️</button>
-      <button class="theme-btn" id="addLinkBtn" type="button" aria-label="افزودن لینک جدید" title="افزودن لینک جدید به «لینک‌های من»">＋</button>
-      <div class="bar-tools">
-        <button class="theme-btn" id="editBtn" type="button" aria-label="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" title="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" aria-pressed="false">✎</button>
-        <button class="theme-btn up-btn" id="upBtn" type="button" aria-label="برگشت به بالای صفحه"><svg aria-hidden="true"><use href="#i-up"/></svg></button>
-        <button class="theme-btn" id="viewBtn" type="button" aria-label="تغییر نمای کاشی‌ها" title="نمایش فهرستی" aria-pressed="false"><span class="vb" aria-hidden="true">☰</span></button>
-        <button class="theme-btn" id="themeBtn" type="button" aria-label="تغییر تم روشن/تیره">
+      <div class="tools" role="toolbar" aria-label="ابزارهای نوار بالا">
+        <button class="t-btn" id="voiceBtn" type="button" aria-label="جستجوی صوتی" title="جستجوی صوتی">🎙️</button>
+        <button class="t-btn" id="addLinkBtn" type="button" aria-label="افزودن لینک جدید" title="افزودن لینک جدید به «لینک‌های من»">＋</button>
+        <button class="t-btn" id="editBtn" type="button" aria-label="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" title="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" aria-pressed="false">✎</button>
+        <button class="t-btn up-btn" id="upBtn" type="button" aria-label="برگشت به بالای صفحه" title="برگشت به بالای صفحه"><svg aria-hidden="true"><use href="#i-up"/></svg></button>
+        <button class="t-btn" id="viewBtn" type="button" aria-label="تغییر نمای کاشی‌ها" title="نمایش فهرستی" aria-pressed="false"><span class="vb" aria-hidden="true">☰</span></button>
+        <button class="t-btn" id="themeBtn" type="button" aria-label="تغییر تم روشن/تیره" title="تغییر تم روشن/تیره">
           <svg class="i-moon" aria-hidden="true"><use href="#i-moon"/></svg>
           <svg class="i-sun" aria-hidden="true"><use href="#i-sun"/></svg>
         </button>
@@ -2182,55 +2178,66 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     setTimeout(function () { location.reload(); }, 800);
   });
 
-  /* موتور کشیدن با Pointer Events: هم موس و هم لمس */
+  /* موتور کشیدن با Pointer Events: هم موس و هم لمس.
+     روان‌سازی: مختصات همزادها فقط در شروع کشیدن و بعد از هر جابه‌جایی خوانده می‌شود (مختصات سند)؛
+     فریم‌های میانی محض حساب‌اند — بدون خواندن DOM — پس layout thrashing و لگ و تیک حذف می‌شود */
   var dragState = null;
+  function docRects(els) {   /* مستطیل عناصر در مختصات سند؛ همه با هم و در یک پاس خوانده می‌شوند */
+    var sx = window.scrollX, sy = window.scrollY, out = new Array(els.length);
+    for (var i = 0; i < els.length; i++) {
+      var r = els[i].getBoundingClientRect();
+      out[i] = { left: r.left + sx, right: r.right + sx, top: r.top + sy, bottom: r.bottom + sy };
+    }
+    return out;
+  }
+  function measureDragged(s) {   /* تبدیل موقتاً برداشته می‌شود، جای پایهٔ کاشی و مختصات همزادها یک‌جا تازه می‌شود */
+    s.el.style.transform = '';
+    var rects = docRects(s.sibEls.concat([s.el]));
+    s.sibRects = rects.slice(0, s.sibEls.length);
+    var r = rects[rects.length - 1];
+    s.baseX = r.left; s.baseY = r.top;
+    s.el.style.transform = 'translate(' + (s.lastX - s.sx) + 'px,' + (s.lastY - s.sy) + 'px)';
+  }
   function dragStep() {
     if (!dragState) return;
-    if (dragState.started) {
-      var m = 64, y = dragState.lastY, sp = 0;
+    var s = dragState;
+    if (s.started) {
+      var m = 64, y = s.lastY, sp = 0;
       if (y < m) sp = -Math.min(22, (m - y) / 3);
       else if (y > window.innerHeight - m) sp = Math.min(22, (y - (window.innerHeight - m)) / 3);
       if (sp) window.scrollBy(0, sp);   /* خودکار اسکرول لبهٔ صفحه */
-      placeDragged();   /* هر فریم: کاشی دنبال انگشت و جابه‌جایی با همزادها */
+      placeDragged();   /* هر فریم: فقط نوشتن transform + محاسبهٔ مقصد از مختصات ذخیره‌شده */
     }
     requestAnimationFrame(dragStep);
   }
-  function siblingUnder(s) {
-    var found = null;
-    var items = s.kind === 'tile' ? $$('.tile', s.el.parentNode) : $$('#cats .cat');
-    items.some(function (x) {
-      if (x === s.el) return false;
-      var r = x.getBoundingClientRect();
-      if (s.lastX >= r.left && s.lastX <= r.right && s.lastY >= r.top && s.lastY <= r.bottom) { found = x; return true; }
-      return false;
-    });
-    return found;
-  }
   function placeDragged() {
     var s = dragState; if (!s || !s.started) return;
-    s.el.style.transform = '';   /* برای اندازه‌گیری جای پایه، تبدیل لحظه‌ای برداشته می‌شود */
-    var r = s.el.getBoundingClientRect();
-    var dx = s.lastX - s.offX - r.left, dy = s.lastY - s.offY - r.top;
-    s.el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
-    var tgt = siblingUnder(s);
-    if (tgt) {
-      var tr = tgt.getBoundingClientRect();
-      var list = document.body.classList.contains('list-view');
-      /* قاعدهٔ لانچر: جابه‌جایی در جهت حرکت انگشت — وقتی کاشی به سمت همزاد می‌رود، با همان جابه‌جا می‌شود؛
-         بعد از جابه‌جایی جهتِ حرکتِ همین‌جهتی دیگر شرط جابه‌جایی را ندارد، پس نوسان رخ نمی‌دهد */
-      var elIsBefore = !!(s.el.compareDocumentPosition(tgt) & 4);   /* کاشیِ کشیده‌شده قبل از هدف در DOM است؟ */
-      var dxs = s.lastX - s.sx, dys = s.lastY - s.sy, swap;
-      if (s.kind === 'cat' || list) {                    /* عمودی */
-        swap = elIsBefore ? dys > 0 : dys < 0;
-        if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
-      } else if (Math.abs(dys) > Math.abs(dxs)) {        /* حرکت غالب عمودی در شبکه */
-        swap = elIsBefore ? dys > 0 : dys < 0;
-        if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
-      } else {                                           /* افقی — در RTL راست‌تر = قبل‌تر در DOM */
-        swap = elIsBefore ? dxs < 0 : dxs > 0;
-        if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
-      }
-      if (swap && s.kind === 'cat') syncChipsOrder();
+    s.el.style.transform = 'translate(' + (s.lastX - s.sx) + 'px,' + (s.lastY - s.sy) + 'px)';
+    var px = s.lastX + window.scrollX, py = s.lastY + window.scrollY, ti = -1;
+    for (var i = 0; i < s.sibRects.length; i++) {
+      var rr = s.sibRects[i];
+      if (px >= rr.left && px <= rr.right && py >= rr.top && py <= rr.bottom) { ti = i; break; }
+    }
+    if (ti < 0) return;
+    var tgt = s.sibEls[ti];
+    var list = document.body.classList.contains('list-view');
+    /* قاعدهٔ لانچر: جابه‌جایی در جهت حرکت انگشت — وقتی کاشی به سمت همزاد می‌رود، با همان جابه‌جا می‌شود؛
+       بعد از جابه‌جایی جهتِ حرکتِ همین‌جهتی دیگر شرط جابه‌جایی را ندارد، پس نوسان رخ نمی‌دهد */
+    var elIsBefore = !!(s.el.compareDocumentPosition(tgt) & 4);   /* کاشیِ کشیده‌شده قبل از هدف در DOM است؟ */
+    var dxs = s.lastX - s.sx, dys = s.lastY - s.sy, swap;
+    if (s.kind === 'cat' || list) {                    /* عمودی */
+      swap = elIsBefore ? dys > 0 : dys < 0;
+      if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
+    } else if (Math.abs(dys) > Math.abs(dxs)) {        /* حرکت غالب عمودی در شبکه */
+      swap = elIsBefore ? dys > 0 : dys < 0;
+      if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
+    } else {                                           /* افقی — در RTL راست‌تر = قبل‌تر در DOM */
+      swap = elIsBefore ? dxs < 0 : dxs > 0;
+      if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
+    }
+    if (swap) {
+      if (s.kind === 'cat') syncChipsOrder();
+      measureDragged(s);   /* بعد از جابه‌جایی: یک پاس خواندن برای جای پایه و مختصات تازهٔ همزادها */
     }
   }
   function onDragMove(ev) {
@@ -2242,8 +2249,9 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       s.started = true;
       s.el.classList.add('dragging');
       document.body.classList.add('dragging-tile');
+      measureDragged(s);   /* تنها خواندن DOM در سراسر کشیدن (به‌جز بعد از جابه‌جایی‌ها) */
     }
-    placeDragged();
+    /* جای‌گذاری همان فریم را rAF انجام می‌دهد؛ اینجا فقط مختصات تازه می‌شود */
   }
   function onDragEnd(ev) {
     var s = dragState; if (!s || (ev.pointerId !== undefined && ev.pointerId !== s.id)) return;
@@ -2260,8 +2268,10 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function beginDrag(elm, ev, kind) {
     if (dragState) return;
     cancelLP();
-    var r = elm.getBoundingClientRect();
-    dragState = { el: elm, kind: kind, offX: ev.clientX - r.left, offY: ev.clientY - r.top,
+    var sibs = kind === 'tile' ? $$('.tile', elm.parentNode) : $$('#cats .cat');
+    var list = [];
+    for (var i = 0; i < sibs.length; i++) if (sibs[i] !== elm) list.push(sibs[i]);
+    dragState = { el: elm, kind: kind, sibEls: list, sibRects: [], baseX: 0, baseY: 0,
       sx: ev.clientX, sy: ev.clientY, lastX: ev.clientX, lastY: ev.clientY, started: false, id: ev.pointerId };
     window.addEventListener('pointermove', onDragMove, { passive: false });
     window.addEventListener('pointerup', onDragEnd);
