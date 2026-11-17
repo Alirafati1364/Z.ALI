@@ -27,6 +27,7 @@
 <link rel="dns-prefetch" href="https://api.gold-api.com">
 <link rel="dns-prefetch" href="https://api.nobitex.ir">
 <link rel="dns-prefetch" href="https://api.binance.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
 <!-- فایل کاملاً مستقل است: هیچ فونت، اسکریپت یا تصویری از بیرون لازم ندارد و بدون اینترنت هم باز می‌شود -->
 
@@ -3179,6 +3180,38 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       });
     };
   }
+  /* PAXG توکن طلای بایننس است؛ هر توکن = یک اونس طلای واقعی (قیمت لحظه‌ای، جهانی، بدون کلید) —
+     پاسخ برای انس طلا وقتی Gold-API با وی‌پی‌ان جواب نمی‌دهد (تست‌شده) */
+  function fromPaxg() {
+    return function () {
+      return getJSON('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT').then(function (j) {
+        var v = num(j && j.lastPrice);
+        if (!isFinite(v) || v <= 0) throw new Error('paxg bad');
+        return { v: v, pct: null };
+      });
+    };
+  }
+  /* همان PAXG از کوین‌گکو: وقتی IP خروجی وی‌پی‌ان در محدوده‌های محدود بایننس (مثل آمریکا) است */
+  function fromCoinGeckoPaxg() {
+    return function () {
+      return getJSON('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd').then(function (j) {
+        var v = num(j && j['pax-gold'] && j['pax-gold'].usd);
+        if (!isFinite(v) || v <= 0) throw new Error('coingecko paxg bad');
+        return { v: v, pct: null };
+      });
+    };
+  }
+  /* آخرین قیمت رسمی روزانهٔ جهانی فلز از currency-api روی CDN جی‌اس‌دلیور (بدون کلید، CORS باز)؛
+     به‌روزرسانی روزانه دارد و فقط پشتیبانِ پس از Gold-API است — تقریباً همیشه در دسترس */
+  function fromCurrencyApi(code) {
+    return function () {
+      return getJSON('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/' + code + '.json').then(function (j) {
+        var v = num(j && j[code] && j[code].usd);
+        if (!isFinite(v) || v <= 0) throw new Error('currency-api ' + code + ' bad');
+        return { v: v, pct: null };
+      });
+    };
+  }
   function firstOk(loaders) {
     return function () {
       var i = 0;
@@ -3200,13 +3233,13 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   }
   var TICKER = {
     g18: { load: firstOk([withSource(fromTgju('geram18'), 'https://www.tgju.org/profile/geram18', 'TGJU'), withSource(fromTalasea(), 'https://talasea.ir/', 'طلاسی'), withSource(fromMilli(), 'https://milli.gold/', 'میلی')]), div: 10 },
-    ons: { load: firstOk([ranged(withSource(fromGoldApi('XAU'), 'https://gold-api.com/', 'Gold-API'), 100, 50000), withSource(fromTgju('ons'), 'https://www.tgju.org/profile/ons', 'TGJU')]), div: 1 },
+    ons: { load: firstOk([ranged(withSource(fromGoldApi('XAU'), 'https://gold-api.com/', 'Gold-API'), 100, 50000), ranged(withSource(fromPaxg(), 'https://www.binance.com/en/trade/PAXG_USDT', 'بایننس PAXG'), 100, 50000), ranged(withSource(fromCoinGeckoPaxg(), 'https://www.coingecko.com/en/coins/pax-gold', 'CoinGecko PAXG'), 100, 50000), withSource(fromTgju('ons'), 'https://www.tgju.org/profile/ons', 'TGJU')]), div: 1 },
     usd: { load: firstOk([withSource(fromTgju('price_dollar_rl'), 'https://www.tgju.org/profile/price_dollar_rl', 'TGJU'), withSource(fromNobitexUsdt(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 10 },
     btc: { load: firstOk([withSource(fromCoinGecko(), 'https://www.coingecko.com/en/coins/bitcoin', 'CoinGecko'), withSource(fromBinance(), 'https://www.binance.com/en/trade/BTC_USDT', 'بایننس'), withSource(fromTgju('crypto-bitcoin'), 'https://www.tgju.org/profile/crypto-bitcoin', 'TGJU'), withSource(fromNobitex(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 1 },
     tse: { load: withSource(fromTseIndex(), 'https://www.tsetmc.com/', 'TSETMC'), div: 1 },
     oil: { load: withSource(fromTgju('oil_brent'), 'https://www.tgju.org/profile/oil_brent', 'TGJU'), div: 1 },
-    /* نقره: دلار برای هر اونس (Gold-API بین‌المللی، tgju جایگزین داخلی). مس جهانی: دلار برای هر تن */
-    slv: { load: firstOk([ranged(withSource(fromGoldApi('XAG'), 'https://gold-api.com/', 'Gold-API'), 5, 500), ranged(withSource(fromTgju('silver'), 'https://www.tgju.org/profile/silver', 'TGJU'), 5, 500)]), div: 1 },
+    /* نقره: دلار برای هر اونس (Gold-API بین‌المللی ← Currency-API روی CDN جهانی ← tgju جایگزین داخلی). مس جهانی: دلار برای هر تن */
+    slv: { load: firstOk([ranged(withSource(fromGoldApi('XAG'), 'https://gold-api.com/', 'Gold-API'), 5, 500), ranged(withSource(fromCurrencyApi('xag'), 'https://github.com/fawazahmed0/currency-api', 'Currency-API (CDN)'), 5, 500), ranged(withSource(fromTgju('silver'), 'https://www.tgju.org/profile/silver', 'TGJU'), 5, 500)]), div: 1 },
     cu: { load: firstOk([
       ranged(withSource(fromTgju('basemetal-london-copper'), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU'), 3000, 40000),
       withSource(fromTgjuCopper(), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU')   /* پشتیبان: اگر کلید فرق کرد، کلیدی که اسمش copper دارد */
@@ -3238,11 +3271,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function validSource(id, url) {
     var allowed = {
       g18: ['https://www.tgju.org/profile/geram18', 'https://talasea.ir/', 'https://milli.gold/'],
-      ons: ['https://gold-api.com/', 'https://www.tgju.org/profile/ons'],
+      ons: ['https://gold-api.com/', 'https://www.binance.com/en/trade/PAXG_USDT', 'https://www.coingecko.com/en/coins/pax-gold', 'https://www.tgju.org/profile/ons'],
       usd: ['https://www.tgju.org/profile/price_dollar_rl', 'https://nobitex.ir/'],
       btc: ['https://www.coingecko.com/en/coins/bitcoin', 'https://www.binance.com/en/trade/BTC_USDT', 'https://www.tgju.org/profile/crypto-bitcoin', 'https://nobitex.ir/'],
       tse: ['https://www.tsetmc.com/'], oil: ['https://www.tgju.org/profile/oil_brent'],
-      slv: ['https://gold-api.com/', 'https://www.tgju.org/profile/silver'],
+      slv: ['https://gold-api.com/', 'https://github.com/fawazahmed0/currency-api', 'https://www.tgju.org/profile/silver'],
       cu: ['https://www.tgju.org/profile/basemetal-london-copper']
     };
     return allowed[id] && allowed[id].indexOf(url) >= 0;
