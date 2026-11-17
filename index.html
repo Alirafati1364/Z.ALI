@@ -17,8 +17,9 @@
 })();
 </script>
 
-<!-- گرم‌کردن اتصال به منابع قیمت/آب‌وهوا/فاویکون: اولین درخواست‌ها سریع‌تر برقرار می‌شوند -->
+<!-- گرم‌کردن اتصال به منابع قیمت/آب‌وهوا/فاویکون/موقعیت اینترنتی: اولین درخواست‌ها سریع‌تر برقرار می‌شوند -->
 <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
+<link rel="preconnect" href="https://ipwho.is" crossorigin>
 <link rel="preconnect" href="https://api.coingecko.com" crossorigin>
 <link rel="preconnect" href="https://call4.tgju.org" crossorigin>
 <link rel="preconnect" href="https://cdn.tsetmc.com" crossorigin>
@@ -782,6 +783,7 @@ body.no-results .empty { display: block; }
 .caltab {
   flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis;
   height: 36px; padding: 0 6px;
+  text-align: center;
   border: 0; border-radius: 12px;
   background: transparent; color: var(--ink);
   font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
@@ -1051,6 +1053,19 @@ dialog.sheet::before {
 /* ───────── نمای فهرستی کاشی‌ها ───────── */
 .theme-btn[aria-pressed="true"] { background: var(--chip-on-bg); color: var(--chip-on-ink); border-color: transparent; }
 .theme-btn .vb { font-size: 19px; line-height: 1; }
+
+/* ── نوار ابزار: دسکتاپ همه در یک ردیف؛ موبایل چهار دکمهٔ ویرایش/بالا/نما/تم
+   مرتب در ردیف دوم زیر جستجو می‌روند تا کادر جستجو کامل بماند و
+   دکمهٔ «افزودن لینک» از جایش تکان نخورد ── */
+.bar-tools { display: contents; }
+@media (max-width: 599px) {
+  .search-row { flex-wrap: wrap; }
+  .bar-tools { display: flex; flex: 1 1 100%; gap: 8px; }
+  .bar-tools .theme-btn { flex: 1 1 0; width: auto; }
+  .theme-btn svg { width: 20px; height: 20px; }
+  .theme-btn .vb { font-size: 17px; }
+  .voice-btn { font-size: 19px; }
+}
 body.list-view #cats .grid { display: flex; flex-direction: column; gap: 7px; }
 body.list-view .tile a {
   flex-direction: row; align-items: center; gap: 12px;
@@ -1196,13 +1211,15 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       </div>
       <button class="voice-btn" id="voiceBtn" type="button" aria-label="جستجوی صوتی" title="جستجوی صوتی">🎙️</button>
       <button class="theme-btn" id="addLinkBtn" type="button" aria-label="افزودن لینک جدید" title="افزودن لینک جدید به «لینک‌های من»">＋</button>
-      <button class="theme-btn" id="editBtn" type="button" aria-label="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" title="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" aria-pressed="false">✎</button>
-      <button class="theme-btn up-btn" id="upBtn" type="button" aria-label="برگشت به بالای صفحه"><svg aria-hidden="true"><use href="#i-up"/></svg></button>
-      <button class="theme-btn" id="viewBtn" type="button" aria-label="تغییر نمای کاشی‌ها" title="نمایش فهرستی" aria-pressed="false"><span class="vb" aria-hidden="true">☰</span></button>
-      <button class="theme-btn" id="themeBtn" type="button" aria-label="تغییر تم روشن/تیره">
-        <svg class="i-moon" aria-hidden="true"><use href="#i-moon"/></svg>
-        <svg class="i-sun" aria-hidden="true"><use href="#i-sun"/></svg>
-      </button>
+      <div class="bar-tools">
+        <button class="theme-btn" id="editBtn" type="button" aria-label="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" title="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" aria-pressed="false">✎</button>
+        <button class="theme-btn up-btn" id="upBtn" type="button" aria-label="برگشت به بالای صفحه"><svg aria-hidden="true"><use href="#i-up"/></svg></button>
+        <button class="theme-btn" id="viewBtn" type="button" aria-label="تغییر نمای کاشی‌ها" title="نمایش فهرستی" aria-pressed="false"><span class="vb" aria-hidden="true">☰</span></button>
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="تغییر تم روشن/تیره">
+          <svg class="i-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+          <svg class="i-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+        </button>
+      </div>
     </div>
     <div class="status" id="status" aria-live="polite"></div>
   </div>
@@ -1721,7 +1738,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   <div class="kbd-row"><kbd>l</kbd><div class="what">تغییر نمای شبکه‌ای و فهرستی</div></div>
   <div class="kbd-row"><kbd>u</kbd><div class="what">برگشت به بالای صفحه</div></div>
   <div class="kbd-row"><kbd>?</kbd><div class="what">نمایش همین راهنما</div></div>
-  <p class="owq-note">📍 موقعیت جغرافیایی پیش‌فرض برنامه: مشهد — ۳۶٫۲۹۷۲ شمالی، ۵۹٫۶۰۶۷ شرقی. اوقات شرعی، جهت قبله و آب‌وهوا بر همین پایه حساب می‌شوند؛ با دکمهٔ «📍 موقعیت من» در بخش اوقات شرعی می‌توانی موقعیت خودت را جایگزین کنی و با چیپ کنارش به مشهد برگردی.</p>
+  <p class="owq-note">📍 موقعیت جغرافیایی پیش‌فرض برنامه: مشهد — ۳۶٫۲۹۷۲ شمالی، ۵۹٫۶۰۶۷ شرقی. اوقات شرعی، جهت قبله و آب‌وهوا بر همین پایه حساب می‌شوند؛ با دکمهٔ «📍 موقعیت من» در بخش اوقات شرعی می‌توانی موقعیت خودت را جایگزین کنی و با چیپ کنارش به مشهد برگردی. اگر مرورگر اجازهٔ GPS نداد (مثلاً فایل به‌صورت محلی باز شده باشد)، برنامه خودکار با موقعیت تقریبی اینترنت (IP) ادامه می‌دهد؛ دقتش حدود یک شهر است.</p>
 </div></dialog>
 
 <!-- منوی لمس طولانی روی هر کاشی -->
@@ -1772,7 +1789,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   var geo = { lat: MASHHAD.lat, lng: MASHHAD.lng, src: 'mashhad' };
   try {
     var g0 = JSON.parse(store.get('geo_pos', 'null'));
-    if (g0 && isFinite(g0.lat) && isFinite(g0.lng)) geo = { lat: g0.lat, lng: g0.lng, src: 'gps' };
+    if (g0 && isFinite(g0.lat) && isFinite(g0.lng)) geo = { lat: g0.lat, lng: g0.lng, src: g0.src === 'ip' ? 'ip' : 'gps' };
   } catch (e) {}
 
   /* ── سلام، تاریخ شمسی و ساعت ── */
@@ -3582,12 +3599,12 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function wxStale() { return !wxCache || Date.now() - wxCache.ts > 20 * 6e4; }
   function paintWx() {
     var pill = $('#wxPill'); if (!pill) return;
-    var ttl = $('#wxDlgTitle'); if (ttl) ttl.textContent = geo.src === 'gps' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
+    var ttl = $('#wxDlgTitle'); if (ttl) ttl.textContent = geo.src !== 'mashhad' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
     if (!wxCache) {   /* نه دادهٔ تازه، نه ذخیره‌شده */
       pill.hidden = false;
       $('#wxIco').textContent = '🌡️';
       $('#wxTemp').textContent = '—';
-      $('#wxDesc').textContent = geo.src === 'gps' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
+      $('#wxDesc').textContent = geo.src !== 'mashhad' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
       $('#wxHiLo').textContent = '';
       pill.setAttribute('title', 'دریافت آب‌وهوا ناموفق بود؛ بعداً خودکار دوباره تلاش می‌شود.');
       return;
@@ -3639,11 +3656,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function renderWxDlg() {
     var box = $('#wxDays'), nowP = $('#wxNow');
     if (!box || !nowP) return;
-    $('#wxDlgTitle').textContent = geo.src === 'gps' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
+    $('#wxDlgTitle').textContent = geo.src !== 'mashhad' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
     box.textContent = '';
     if (!wxCache) { nowP.textContent = 'هنوز داده‌ای دریافت نشده است؛ با اینترنت، خودکار دوباره تلاش می‌شود.'; return; }
     var c = wxCache.cur, w = wcode(c.code);
-    nowP.textContent = 'الان در ' + (geo.src === 'gps' ? 'موقعیت شما' : 'مشهد') + ': ' + w[0] + '، حدود ' + fa(Math.round(c.t)) + ' درجه (احساس واقعی ' + fa(Math.round(c.app)) + '°)، رطوبت ' + fa(Math.round(c.hum)) + '٪، باد ' + fa(Math.round(c.wind)) + ' کیلومتر بر ساعت.';
+    nowP.textContent = 'الان در ' + (geo.src !== 'mashhad' ? 'موقعیت شما' : 'مشهد') + ': ' + w[0] + '، حدود ' + fa(Math.round(c.t)) + ' درجه (احساس واقعی ' + fa(Math.round(c.app)) + '°)، رطوبت ' + fa(Math.round(c.hum)) + '٪، باد ' + fa(Math.round(c.wind)) + ' کیلومتر بر ساعت.';
     wxCache.daily.forEach(function (d, i) {
       var wd = wcode(d.code);
       var r = el('div', 'row');
@@ -3682,42 +3699,65 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   }
   function syncGeoChip() {
     var chip = $('#geoChip'); if (!chip) return;
-    var isM = geo.src !== 'gps';
-    chip.textContent = isM ? 'مشهد (پیش‌فرض)' : 'موقعیت GPS شما';
-    chip.title = isM ? 'برای استفاده از موقعیت خودت، «موقعیت من» را بزن' : 'برای بازگشت به پیش‌فرض مشهد بزن';
+    if (geo.src === 'mashhad') {
+      chip.textContent = 'مشهد (پیش‌فرض)';
+      chip.title = 'برای استفاده از موقعیت خودت، «موقعیت من» را بزن';
+    } else {
+      chip.textContent = geo.src === 'ip' ? 'موقعیت اینترنت شما' : 'موقعیت GPS شما';
+      chip.title = 'برای بازگشت به پیش‌فرض مشهد بزن';
+    }
   }
   function refreshQibla() {
     var box = $('#qiblaBox'); if (!box) return;
     var b = bearingDeg(geo.lat, geo.lng, KAABA.lat, KAABA.lng);
     var d = distKm(geo.lat, geo.lng, KAABA.lat, KAABA.lng);
     var arr = $('#qbArrow'); if (arr) arr.style.transform = 'rotate(' + b.toFixed(1) + 'deg)';
-    $('#qbTxt').textContent = (geo.src === 'gps' ? 'از موقعیت شما' : 'از مشهد') + ': ' + fa(Math.round(b)) + ' درجه (' + dirName(b) + ') — فاصله تا کعبه حدود ' + fa(Math.round(d / 10) * 10) + ' کیلومتر';
+    $('#qbTxt').textContent = (geo.src !== 'mashhad' ? 'از موقعیت شما' : 'از مشهد') + ': ' + fa(Math.round(b)) + ' درجه (' + dirName(b) + ') — فاصله تا کعبه حدود ' + fa(Math.round(d / 10) * 10) + ' کیلومتر';
     box.hidden = false;
   }
   (function () {
     var btn = $('#geoBtn'); if (!btn) return;
+    function useLoc(lat, lng, src, msg) {
+      geo = { lat: Math.round(lat * 1e4) / 1e4, lng: Math.round(lng * 1e4) / 1e4, src: src };
+      store.set('geo_pos', JSON.stringify(geo));
+      applyGeo(); syncGeoChip(); fetchWx();   /* اوقات شرعی، قبله و آب‌وهوا با مختصات تازه */
+      showToast(msg);
+    }
+    /* اگر GPS جواب نداد (اجازه داده نشد، فایل محلی، وقفه یا بی‌سیگنال)
+       → موقعیت تقریبی اینترنت (IP)؛ دقت حدود شهر است ولی بهتر از مشهد پیش‌فرض */
+    function ipFallback() {
+      showToast('GPS جواب نداد؛ موقعیت تقریبی اینترنت را امتحان می‌کنم…');
+      fetch('https://ipwho.is/', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.success !== false && isFinite(j.latitude) && isFinite(j.longitude)) {
+          var city = (j.city && j.country) ? ' — حدود ' + j.city + '، ' + j.country : '';
+          useLoc(j.latitude, j.longitude, 'ip', 'موقعیت تقریبی اینترنت اعمال شد ✓' + city);
+        } else {
+          showToast('دریافت موقعیت ممکن نشد؛ پیش‌فرض مشهد ماند');
+        }
+      }).catch(function () {
+        showToast('دریافت موقعیت ممکن نشد؛ پیش‌فرض مشهد ماند');
+      });
+    }
     btn.addEventListener('click', function () {
-      if (!navigator.geolocation) { showToast('مرورگر شما موقعیت‌یابی ندارد؛ مشهد پیش‌فرض ماند'); return; }
+      if (!navigator.geolocation) { ipFallback(); return; }
       showToast('در حال دریافت موقعیت…');
       navigator.geolocation.getCurrentPosition(function (p) {
-        geo = { lat: Math.round(p.coords.latitude * 1e4) / 1e4, lng: Math.round(p.coords.longitude * 1e4) / 1e4, src: 'gps' };
-        store.set('geo_pos', JSON.stringify(geo));
-        applyGeo(); syncGeoChip();
-        showToast('موقعیت شما اعمال شد ✓ — اوقات شرعی، قبله و آب‌وهوا به‌روز شدند');
-      }, function () {
-        showToast('دریافت موقعیت ممکن نشد؛ پیش‌فرض مشهد ماند');
-      }, { timeout: 8000, maximumAge: 300000 });
+        useLoc(p.coords.latitude, p.coords.longitude, 'gps', 'موقعیت شما اعمال شد ✓ — اوقات شرعی، قبله و آب‌وهوا به‌روز شدند');
+      }, function (err) {
+        if (err && err.code === 1) showToast('دسترسی به GPS داده نشد؛ با موقعیت تقریبی اینترنت ادامه می‌دهم…');
+        ipFallback();
+      }, { timeout: 15000, maximumAge: 600000, enableHighAccuracy: false });
     });
     var chip = $('#geoChip');
     if (chip) chip.addEventListener('click', function () {
-      if (geo.src !== 'gps') { showToast('موقعیت فعال همین حالا مشهد است (پیش‌فرض)'); return; }
+      if (geo.src === 'mashhad') { showToast('موقعیت فعال همین حالا مشهد است (پیش‌فرض)'); return; }
       geo = { lat: MASHHAD.lat, lng: MASHHAD.lng, src: 'mashhad' };
       store.set('geo_pos', '');
       applyGeo(); syncGeoChip();
       showToast('بازگشت به پیش‌فرض مشهد ✓');
     });
     syncGeoChip(); refreshQibla();
-    if (geo.src === 'gps') fetchWx();   /* آب‌وهوا با مختصات ذخیره‌شده تازه شود */
+    if (geo.src !== 'mashhad') fetchWx();   /* آب‌وهوا با مختصات ذخیره‌شده تازه شود */
   })();
 
   /* ── پشتیبان‌گیری و بازیابی تنظیمات (سنجاق‌ها، شیفت، دفترچه، لینک‌های شخصی) ── */
