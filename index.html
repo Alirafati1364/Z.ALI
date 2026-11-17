@@ -17,6 +17,16 @@
 })();
 </script>
 
+<!-- گرم‌کردن اتصال به منابع قیمت/آب‌وهوا/فاویکون: اولین درخواست‌ها سریع‌تر برقرار می‌شوند -->
+<link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
+<link rel="preconnect" href="https://api.coingecko.com" crossorigin>
+<link rel="preconnect" href="https://call4.tgju.org" crossorigin>
+<link rel="preconnect" href="https://cdn.tsetmc.com" crossorigin>
+<link rel="preconnect" href="https://www.google.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.gold-api.com">
+<link rel="dns-prefetch" href="https://api.nobitex.ir">
+<link rel="dns-prefetch" href="https://api.binance.com">
+
 <!-- فایل کاملاً مستقل است: هیچ فونت، اسکریپت یا تصویری از بیرون لازم ندارد و بدون اینترنت هم باز می‌شود -->
 
 <style>
@@ -391,6 +401,15 @@ a.tk {
   transition: box-shadow .25s;
 }
 @media (hover: hover) { .panel:hover { box-shadow: var(--shadow-lift); } }
+/* سرعت لود: بخش‌های پایین صفحه تا رسیدن اسکرول رندر نمی‌شوند (content-visibility)؛
+   ارتفاع تقریبی ذخیره می‌شود تا پرش اسکرول نداشته باشیم */
+@supports (content-visibility: auto) {
+  #cats .panel, .fav-panel { content-visibility: auto; contain-intrinsic-size: auto 500px; }
+}
+/* در حالت ویرایش همه‌چیز رندر می‌شود تا ارتفاع‌ها ثابت بمانند و کشیدنِ کاشی با جابه‌جایی ناگهانی چیدمان خراب نشود */
+@supports (content-visibility: auto) {
+  body.edit-mode #cats .panel, body.edit-mode .fav-panel { content-visibility: visible; }
+}
 
 .cat-head {
   appearance: none; -webkit-appearance: none;
@@ -467,8 +486,10 @@ body.searching #favPanel { display: none; }
   color: var(--ink);
   text-decoration: none; text-align: center;
   -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;   /* پیش‌نمایش لینک در لمس طولانی iOS باز نشود */
   transition: transform .16s, border-color .16s, box-shadow .16s;
 }
+.tile { border-radius: 18px; }
 [data-theme="dark"] .tile a { background: linear-gradient(165deg, hsl(var(--h) 32% 17% / .95), hsl(var(--h) 28% 13% / .9)); }
 .tile a::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
@@ -517,11 +538,11 @@ body.searching #favPanel { display: none; }
 [data-theme="dark"] .pin-btn { background: rgba(30, 38, 74, .9); color: #E7C878; }
 [data-theme="dark"] .pin-btn[aria-pressed="true"] { background: #59421E; color: #FFD98A; border-color: #927039; }
 
-/* دکمهٔ حذف (فقط روی لینک‌های شخصی) */
+/* دکمهٔ حذف — فقط در «حالت ویرایش» دیده می‌شود تا همیشه جلوی چشم نباشد */
 .del-btn {
   position: absolute; z-index: 3; top: 5px; left: 5px;
   width: 24px; height: 24px;
-  display: grid; place-items: center;
+  display: none; place-items: center;
   border: 1px solid var(--line); border-radius: 9px;
   background: var(--surface-solid); color: #B3423B;
   font-size: 15px; line-height: 1; cursor: pointer; opacity: .82;
@@ -531,11 +552,11 @@ body.searching #favPanel { display: none; }
 [data-theme="dark"] .del-btn { background: rgba(30, 38, 74, .9); color: #FF9E93; }
 [data-theme="dark"] .del-btn:hover { background: #5A2C28; }
 
-/* دکمهٔ ویرایش (فقط روی لینک‌های شخصی، کنار دکمهٔ حذف) */
+/* دکمهٔ ویرایش (فقط روی لینک‌های شخصی، کنار دکمهٔ حذف — فقط در حالت ویرایش) */
 .edit-btn {
   position: absolute; z-index: 3; top: 5px; left: 33px;
   width: 24px; height: 24px;
-  display: grid; place-items: center;
+  display: none; place-items: center;
   border: 1px solid var(--line); border-radius: 9px;
   background: var(--surface-solid); color: #0B7A6E;
   font-size: 13px; line-height: 1; cursor: pointer; opacity: .82;
@@ -544,6 +565,72 @@ body.searching #favPanel { display: none; }
 .edit-btn:hover { opacity: 1; transform: scale(1.08); background: #E0F5F2; }
 [data-theme="dark"] .edit-btn { background: rgba(30, 38, 74, .9); color: #5EDBC9; }
 [data-theme="dark"] .edit-btn:hover { background: #1D4A44; }
+body.edit-mode .del-btn, body.edit-mode .edit-btn { display: grid; }
+
+/* ───────── حالت ویرایش: جابه‌جایی دستی کاشی‌ها و دسته‌ها ───────── */
+body.edit-mode .tile { cursor: grab; touch-action: none; }
+body.edit-mode .tile a { pointer-events: none; }
+body.edit-mode .tile a:active { transform: none; }
+body.edit-mode #cats .cat { outline: 1.5px dashed hsl(var(--h) 60% 55% / .55); outline-offset: 5px; }
+body.edit-mode #cats .tile { outline: 1.5px dashed hsl(var(--h) 55% 50% / .45); outline-offset: 2px; }
+body.dragging-tile { user-select: none; -webkit-user-select: none; }
+body.dragging-tile .tile a, body.dragging-tile a.tk { pointer-events: none; }
+.tile.dragging { z-index: 60; }
+.tile.dragging a { box-shadow: 0 18px 42px -12px rgba(10, 16, 40, .5); }
+#cats .cat.dragging { position: relative; z-index: 40; opacity: .98; box-shadow: 0 20px 48px -16px rgba(10, 16, 40, .45); }
+/* دستگیرهٔ جابه‌جایی دسته و دکمهٔ تغییر نام — فقط در حالت ویرایش */
+.grip, .cat-ren {
+  display: none;
+  flex: none; width: 34px; height: 34px;
+  place-items: center;
+  border: 1px solid var(--line); border-radius: 11px;
+  background: var(--field); color: var(--muted);
+  font-size: 15px; line-height: 1;
+  cursor: grab; touch-action: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+}
+body.edit-mode .grip, body.edit-mode .cat-ren { display: grid; }
+.grip:active { transform: scale(.94); }
+.cat-ren { color: #0B7A6E; cursor: pointer; }
+[data-theme="dark"] .cat-ren { color: #5EDBC9; }
+/* هایلایت کاشی پس از «جابه‌جایی» از منوی لمس طولانی */
+.flash-tile a { animation: tileFlash 1.4s ease-out; }
+@keyframes tileFlash { 0% { box-shadow: 0 0 0 3px var(--focus-ring); } 100% { box-shadow: 0 0 0 3px transparent; } }
+/* نوار شناور حالت ویرایش */
+#editBar {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 55;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: var(--chip-on-bg); color: var(--chip-on-ink);
+  box-shadow: 0 16px 40px -14px rgba(5, 10, 25, .55);
+}
+#editBar[hidden] { display: none; }
+#editBar .eb-msg { flex: 1; font-size: 12.5px; font-weight: 700; line-height: 1.7; }
+#editBar button {
+  flex: none; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35);
+  background: rgba(255, 255, 255, .14); color: inherit; font: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer;
+}
+[data-theme="dark"] #editBar button { border-color: rgba(10, 16, 34, .3); background: rgba(10, 16, 34, .08); }
+#editBar #ebDone { background: var(--focus); color: #fff; border-color: transparent; }
+/* منوی لمس طولانی روی کاشی */
+.ctx-list { display: flex; flex-direction: column; margin-top: 4px; }
+.ctx-item {
+  appearance: none; -webkit-appearance: none;
+  text-align: start; width: 100%;
+  padding: 13px 6px; border: 0; border-top: 1px solid var(--line); background: none;
+  color: var(--ink); font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer;
+  border-radius: 0;
+}
+.ctx-item:first-child { border-top: 0; }
+.ctx-item:active { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.ctx-item.danger { color: #C03434; }
+[data-theme="dark"] .ctx-item.danger { color: #FF9E93; }
+.btn.danger { background: #C03434; border-color: #C03434; color: #fff; }
+.btn.danger:hover { background: #A82C2C; }
+[data-theme="dark"] .btn.danger { background: #7E2A2A; border-color: #A03A3A; }
 
 /* ───────── پنل علاقه‌مندی‌ها ───────── */
 .fav-panel {
@@ -984,6 +1071,8 @@ body.list-view .edit-btn { left: 69px; }
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   width: max-content; max-width: min(92vw, 440px); pointer-events: none;
 }
+/* در حالت ویرایش توست بالای نوار شناور می‌ایستد تا روی دکمه‌ها نیفتد */
+body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
 .toast {
   max-width: 100%; padding: 10px 18px; border-radius: 999px; text-align: center;
   background: #14214D; color: #fff; font-size: 13px; font-weight: 700; line-height: 1.7;
@@ -1107,6 +1196,7 @@ body.list-view .edit-btn { left: 69px; }
       </div>
       <button class="voice-btn" id="voiceBtn" type="button" aria-label="جستجوی صوتی" title="جستجوی صوتی">🎙️</button>
       <button class="theme-btn" id="addLinkBtn" type="button" aria-label="افزودن لینک جدید" title="افزودن لینک جدید به «لینک‌های من»">＋</button>
+      <button class="theme-btn" id="editBtn" type="button" aria-label="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" title="حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها" aria-pressed="false">✎</button>
       <button class="theme-btn up-btn" id="upBtn" type="button" aria-label="برگشت به بالای صفحه"><svg aria-hidden="true"><use href="#i-up"/></svg></button>
       <button class="theme-btn" id="viewBtn" type="button" aria-label="تغییر نمای کاشی‌ها" title="نمایش فهرستی" aria-pressed="false"><span class="vb" aria-hidden="true">☰</span></button>
       <button class="theme-btn" id="themeBtn" type="button" aria-label="تغییر تم روشن/تیره">
@@ -1563,7 +1653,7 @@ body.list-view .edit-btn { left: 69px; }
 
 <footer class="foot">
   <p id="summary"></p>
-  <p class="kbd-hint">میانبرهای صفحه‌کلید: <kbd>/</kbd> جستجو، <kbd>t</kbd> تم روشن و تیره، <kbd>n</kbd> لینک جدید، <kbd>l</kbd> نمای شبکه‌ای و فهرستی، <kbd>u</kbd> برگشت به بالا، <kbd>?</kbd> راهنما</p>
+  <p class="kbd-hint">میانبرهای صفحه‌کلید: <kbd>/</kbd> جستجو، <kbd>t</kbd> تم روشن و تیره، <kbd>e</kbd> حالت ویرایش و مرتب‌سازی، <kbd>n</kbd> لینک جدید، <kbd>l</kbd> نمای شبکه‌ای و فهرستی، <kbd>u</kbd> برگشت به بالا، <kbd>?</kbd> راهنما</p>
   <p class="geo-line">📍 موقعیت پیش‌فرض برنامه: مشهد — ۳۶٫۲۹۷۲ شمالی، ۵۹٫۶۰۶۷ شرقی (با دکمهٔ «موقعیت من» در اوقات شرعی قابل تغییر است)</p>
   <div class="backup-row">
     <button type="button" id="bkExport">↓ پشتیبان‌گیری از تنظیمات</button>
@@ -1573,6 +1663,15 @@ body.list-view .edit-btn { left: 69px; }
   </div>
   <p>🌸 اختصاصی علی رأفتی</p>
 </footer>
+
+<!-- نوار حالت ویرایش: جابه‌جایی کاشی‌ها و دسته‌ها با کشیدن -->
+<div id="editBar" hidden>
+  <span class="eb-msg">کاشی‌ها را بکش و رها کن؛ دسته‌ها را با ⠿ جابه‌جا کن و با ✎ نامشان را عوض کن</span>
+  <span class="eb-btns">
+    <button type="button" id="ebReset">بازنشانی ترتیب</button>
+    <button type="button" id="ebDone">تمام شد ✓</button>
+  </span>
+</div>
 
 <dialog class="sheet" id="shiftDlg"><div class="sheet-in">
   <div class="sheet-head"><h2>شیفت کاری</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
@@ -1617,11 +1716,41 @@ body.list-view .edit-btn { left: 69px; }
   <div class="sheet-head"><h2>راهنمای میانبرها و موقعیت</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
   <div class="kbd-row"><kbd>/</kbd><div class="what">رفتن به جستجو</div></div>
   <div class="kbd-row"><kbd>t</kbd><div class="what">تغییر تم روشن و تیره</div></div>
+  <div class="kbd-row"><kbd>e</kbd><div class="what">حالت ویرایش: مرتب‌سازی کاشی‌ها و دسته‌ها، حذف و تغییر نام</div></div>
   <div class="kbd-row"><kbd>n</kbd><div class="what">افزودن لینک جدید</div></div>
   <div class="kbd-row"><kbd>l</kbd><div class="what">تغییر نمای شبکه‌ای و فهرستی</div></div>
   <div class="kbd-row"><kbd>u</kbd><div class="what">برگشت به بالای صفحه</div></div>
   <div class="kbd-row"><kbd>?</kbd><div class="what">نمایش همین راهنما</div></div>
   <p class="owq-note">📍 موقعیت جغرافیایی پیش‌فرض برنامه: مشهد — ۳۶٫۲۹۷۲ شمالی، ۵۹٫۶۰۶۷ شرقی. اوقات شرعی، جهت قبله و آب‌وهوا بر همین پایه حساب می‌شوند؛ با دکمهٔ «📍 موقعیت من» در بخش اوقات شرعی می‌توانی موقعیت خودت را جایگزین کنی و با چیپ کنارش به مشهد برگردی.</p>
+</div></dialog>
+
+<!-- منوی لمس طولانی روی هر کاشی -->
+<dialog class="sheet" id="ctxDlg"><div class="sheet-in">
+  <div class="sheet-head"><h2 id="ctxName">کاشی</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="ctx-list">
+    <button class="ctx-item" type="button" id="ctxPin">📌 سنجاق کردن</button>
+    <button class="ctx-item" type="button" id="ctxEdit" hidden>✎ ویرایش لینک</button>
+    <button class="ctx-item danger" type="button" id="ctxDel">🗑 حذف…</button>
+    <button class="ctx-item" type="button" id="ctxSort">↕ جابه‌جایی کاشی‌ها</button>
+    <button class="ctx-item" type="button" data-close>انصراف</button>
+  </div>
+</div></dialog>
+
+<!-- تأیید حذف -->
+<dialog class="sheet" id="delDlg"><div class="sheet-in">
+  <div class="sheet-head"><h2>حذف لینک</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <p class="big" id="delMsg"></p>
+  <p class="dlg-note" id="delNote"></p>
+  <div class="btns"><button class="btn danger" type="button" id="delYes">حذف</button><button class="btn" type="button" data-close>انصراف</button></div>
+</div></dialog>
+
+<!-- تغییر نام دسته -->
+<dialog class="sheet" id="renDlg"><div class="sheet-in">
+  <div class="sheet-head"><h2>تغییر نام دسته</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <form class="form" id="renForm" novalidate>
+    <label>اسم جدید دسته<input type="text" id="renName" maxlength="40" autocomplete="off"></label>
+    <div class="btns"><button class="btn primary" type="submit">ذخیره</button><button class="btn" type="button" data-close>انصراف</button></div>
+  </form>
 </div></dialog>
 
 
@@ -1716,29 +1845,7 @@ body.list-view .edit-btn { left: 69px; }
     d.setAttribute('aria-label', 'حذف ' + l.n);
     d.addEventListener('click', function (ev) {
       ev.preventDefault(); ev.stopPropagation();
-      var wasPinned = favs.indexOf(l.u) > -1;
-      customLinks = customLinks.filter(function (x) { return x.u !== l.u; });
-      deletedCustom.push({ n: l.n, u: l.u, cat: l.cat || 'c-mine' });
-      saveCustomLinks(); saveDeletedCustom();
-      if (wasPinned) { favs.splice(favs.indexOf(l.u), 1); store.set('pinned_sites', JSON.stringify(favs)); }
-      var ti = tiles.indexOf(t); if (ti > -1) tiles.splice(ti, 1);
-      var home = t.parentNode, next = t.nextSibling;
-      t.remove();
-      refreshCounts(); renderFavs();
-      if (!customLinks.length && !document.body.classList.contains('searching')) showMine(false);
-      restoreBtnSync();
-      showUndoToast('«' + l.n + '» حذف شد', function () {
-        var di = deletedCustom.map(function (x) { return x.u; }).indexOf(l.u);
-        if (di > -1) { deletedCustom.splice(di, 1); saveDeletedCustom(); }
-        customLinks.push(l); saveCustomLinks();
-        if (wasPinned) { favs.push(l.u); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
-        if (home) home.insertBefore(t, next || null);
-        if (tiles.indexOf(t) < 0) tiles.push(t);
-        refreshCounts(); renderFavs();
-        if (!l.cat || l.cat === 'c-mine') showMine(true);
-        restoreBtnSync();
-        showToast('«' + l.n + '» برگشت ✓');
-      });
+      confirmDelete(l.n, DEL_NOTE_CUSTOM, function () { deleteCustomTile(l, t); });
     });
     t.appendChild(d);
     var ed = el('button', 'edit-btn', '✎');
@@ -1789,6 +1896,70 @@ body.list-view .edit-btn { left: 69px; }
   } catch (e) {}
   function saveDeletedCustom() { store.set('custom_deleted', JSON.stringify(deletedCustom)); }
   function restoreBtnSync() { var b = $('#bkRestore'); if (b) b.hidden = !(hiddenTiles.length || deletedCustom.length); }
+
+  /* ── حذف با تأیید + توست «برگردان» ──
+     هر دو نوع لینک (شخصی و اصلی) از همین دو تابع حذف می‌شوند؛
+     حذف بی‌درنگ انجام نمی‌شود: اول پنجرهٔ تأیید می‌آید، بعد توستِ «برگردان» */
+  var DEL_NOTE_CUSTOM = 'لینک شخصی است؛ بعد از حذف با دکمهٔ «برگردان» یا ↺ پایین صفحه برمی‌گردد.';
+  var DEL_NOTE_PREDEF = 'این لینک از لینک‌های اصلی برنامه است و فقط روی همین دستگاه پنهان می‌شود؛ با دکمهٔ ↺ پایین صفحه برمی‌گردد.';
+  function deleteCustomTile(l, t) {
+    var wasPinned = favs.indexOf(l.u) > -1;
+    customLinks = customLinks.filter(function (x) { return x.u !== l.u; });
+    deletedCustom.push({ n: l.n, u: l.u, cat: l.cat || 'c-mine' });
+    saveCustomLinks(); saveDeletedCustom();
+    if (wasPinned) { favs.splice(favs.indexOf(l.u), 1); store.set('pinned_sites', JSON.stringify(favs)); }
+    var ti = tiles.indexOf(t); if (ti > -1) tiles.splice(ti, 1);
+    var home = t.parentNode, next = t.nextSibling;
+    t.remove();
+    refreshCounts(); renderFavs();
+    if (!customLinks.length && !document.body.classList.contains('searching')) showMine(false);
+    restoreBtnSync();
+    showUndoToast('«' + l.n + '» حذف شد', function () {
+      var di = deletedCustom.map(function (x) { return x.u; }).indexOf(l.u);
+      if (di > -1) { deletedCustom.splice(di, 1); saveDeletedCustom(); }
+      customLinks.push(l); saveCustomLinks();
+      if (wasPinned) { favs.push(l.u); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+      if (home) home.insertBefore(t, next || null);
+      if (tiles.indexOf(t) < 0) tiles.push(t);
+      refreshCounts(); renderFavs();
+      if (!l.cat || l.cat === 'c-mine') showMine(true);
+      restoreBtnSync();
+      showToast('«' + l.n + '» برگشت ✓');
+    });
+  }
+  function deletePredefinedTile(t, href, nm) {
+    if (hiddenTiles.indexOf(href) < 0) hiddenTiles.push(href);
+    saveHidden();
+    var i = tiles.indexOf(t); if (i > -1) tiles.splice(i, 1);
+    var fi = favs.indexOf(href); var wasPinned = fi > -1;
+    if (wasPinned) { favs.splice(fi, 1); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+    var home = t.parentNode, next = t.nextSibling;
+    t.remove();
+    refreshCounts();
+    restoreBtnSync();
+    showUndoToast('«' + nm + '» حذف شد', function () {
+      var hi = hiddenTiles.indexOf(href);
+      if (hi > -1) { hiddenTiles.splice(hi, 1); saveHidden(); }
+      if (wasPinned) { favs.push(href); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+      if (home) home.insertBefore(t, next || null);
+      if (tiles.indexOf(t) < 0) tiles.splice(Math.min(i < 0 ? tiles.length : i, tiles.length), 0, t);
+      refreshCounts();
+      restoreBtnSync();
+      showToast('«' + nm + '» برگشت ✓');
+    });
+  }
+  var pendingDelete = null;
+  function confirmDelete(name, note, fn) {
+    pendingDelete = fn;
+    $('#delMsg').textContent = '«' + name + '» حذف شود؟';
+    $('#delNote').textContent = note;
+    openSheet($('#delDlg'));
+  }
+  $('#delYes').addEventListener('click', function () {
+    var d = $('#delDlg'); if (d.close) d.close(); else d.removeAttribute('open');
+    var f = pendingDelete; pendingDelete = null;
+    if (f) f();
+  });
   function attachHide(t) {
     var a = $('a', t);
     if (!a || $('.del-btn', t) || $('.hide-btn', t)) return;   /* لینک شخصی دکمهٔ حذف خودش را دارد */
@@ -1800,25 +1971,7 @@ body.list-view .edit-btn { left: 69px; }
     h.title = 'حذف این لینک';
     h.addEventListener('click', function (ev) {
       ev.preventDefault(); ev.stopPropagation();
-      if (hiddenTiles.indexOf(href) < 0) hiddenTiles.push(href);
-      saveHidden();
-      var i = tiles.indexOf(t); if (i > -1) tiles.splice(i, 1);
-      var fi = favs.indexOf(href); var wasPinned = fi > -1;
-      if (wasPinned) { favs.splice(fi, 1); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
-      var home = t.parentNode, next = t.nextSibling;
-      t.remove();
-      refreshCounts();
-      restoreBtnSync();
-      showUndoToast('«' + nm + '» حذف شد', function () {
-        var hi = hiddenTiles.indexOf(href);
-        if (hi > -1) { hiddenTiles.splice(hi, 1); saveHidden(); }
-        if (wasPinned) { favs.push(href); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
-        if (home) home.insertBefore(t, next || null);
-        if (tiles.indexOf(t) < 0) tiles.splice(Math.min(i < 0 ? tiles.length : i, tiles.length), 0, t);
-        refreshCounts();
-        restoreBtnSync();
-        showToast('«' + nm + '» برگشت ✓');
-      });
+      confirmDelete(nm, DEL_NOTE_PREDEF, function () { deletePredefinedTile(t, href, nm); });
     });
     t.appendChild(h);
   }
@@ -1891,6 +2044,305 @@ body.list-view .edit-btn { left: 69px; }
     t.appendChild(pin);
   }
   tiles.forEach(function (t) { attachPin(t); attachHide(t); });
+
+  /* ── ترتیب دستی کاشی‌ها و دسته‌ها (ذخیره روی همین دستگاه) ──
+     ترتیب از آخر به اول اعمال می‌شود: هر کاشیِ موجود در فهرست، به انتهای شبکه منتقل می‌شود؛
+     کاشی‌هایی که در فهرست نیستند (مثل لینک‌های بازیابی‌شده) به ترتیب فعلی آخر می‌ایستند */
+  var tileOrder = {};
+  try {
+    var _to = JSON.parse(store.get('tile_order', '{}'));
+    if (_to && typeof _to === 'object' && !Array.isArray(_to)) tileOrder = _to;
+  } catch (e) {}
+  function saveTileOrder() { store.set('tile_order', JSON.stringify(tileOrder)); }
+  var catOrder = [];
+  try {
+    var _co = JSON.parse(store.get('cat_order', '[]'));
+    if (Array.isArray(_co)) catOrder = _co.filter(function (x) { return typeof x === 'string'; });
+  } catch (e) {}
+  function saveCatOrder() { store.set('cat_order', JSON.stringify(catOrder)); }
+  function applySavedOrder() {
+    var wrap = $('#cats');
+    catOrder.forEach(function (id) { var s = document.getElementById(id); if (s && s.parentNode === wrap) wrap.appendChild(s); });
+    var chipsBox = $('#chips');
+    catOrder.forEach(function (id) {
+      var ch = chipsBox && $('.chip[data-target="' + id + '"]', chipsBox);
+      if (ch) chipsBox.appendChild(ch);
+    });
+    $$('#cats .body').forEach(function (b) {
+      var g = $('.grid', b); if (!g) return;
+      var list = Array.isArray(tileOrder[b.id]) ? tileOrder[b.id] : [];
+      list.forEach(function (href) {
+        $$('.tile', g).some(function (x) {
+          var a = $('a', x);
+          if (a && a.getAttribute('href') === href) { g.appendChild(x); return true; }
+          return false;
+        });
+      });
+      $$('.tile', g).forEach(function (x) { g.appendChild(x); });
+    });
+  }
+  function saveOrders() {
+    tileOrder = {};
+    $$('#cats .body').forEach(function (b) {
+      var g = $('.grid', b); if (!g) return;
+      tileOrder[b.id] = $$('.tile a', g).map(function (a) { return a.getAttribute('href'); });
+    });
+    saveTileOrder();
+    catOrder = $$('#cats .cat').map(function (s) { return s.id; });
+    saveCatOrder();
+  }
+  applySavedOrder();
+  tiles = $$('#cats .tile');   /* ترتیب آرایهٔ کاشی‌ها با ترتیب تازهٔ صفحه هماهنگ شود */
+
+  /* ── نام شخصی دسته‌ها (در حالت ویرایش با ✎ کنار شمارنده عوض می‌شود) ── */
+  var catNames = {};
+  try {
+    var _cn = JSON.parse(store.get('cat_names', '{}'));
+    if (_cn && typeof _cn === 'object' && !Array.isArray(_cn)) catNames = _cn;
+  } catch (e) {}
+  function saveCatNames() { store.set('cat_names', JSON.stringify(catNames)); }
+  function applyCatNames() {
+    $$('#cats .cat').forEach(function (sec) {
+      var nm = catNames[sec.id]; if (!nm) return;
+      var n0 = $('.cat-name', sec); if (n0) n0.textContent = nm;
+      var ch = $('.chip[data-target="' + sec.id + '"]');
+      if (ch && ch.firstChild && ch.firstChild.nodeType === 3) ch.firstChild.nodeValue = nm;
+    });
+  }
+  applyCatNames();
+  var renSec = null;
+  document.addEventListener('click', function (ev) {
+    var r = ev.target.closest('#cats .cat-head .cat-ren');
+    if (!r) return;
+    ev.preventDefault(); ev.stopPropagation();
+    renSec = r.closest('.cat');
+    $('#renName').value = catNames[renSec.id] || $('.cat-name', renSec).textContent.trim();
+    openSheet($('#renDlg'));
+    setTimeout(function () { $('#renName').focus(); }, 80);
+  });
+  $('#renForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!renSec) return;
+    var v = $('#renName').value.trim(); if (!v) return;
+    catNames[renSec.id] = v; saveCatNames(); applyCatNames();
+    var d = $('#renDlg'); if (d.close) d.close(); else d.removeAttribute('open');
+    showToast('نام دسته به «' + v + '» تغییر کرد ✓');
+  });
+
+  /* ── حالت ویرایش، کشیدن‌ورهاکردن و منوی لمس طولانی ──
+     • دکمهٔ ✎ نوار بالا: حالت ویرایش را روشن/خاموش می‌کند (مثل دکمهٔ ＋ افزودن لینک، یک گزینهٔ مجزا)
+     • در حالت ویرایش: کاشی‌ها با کشیدن جابه‌جا می‌شوند، × حذف و ✎ ویرایش هر کاشی پیدا می‌شود،
+       دسته‌ها با دستگیرهٔ ⠿ جابه‌جا و با ✎ تغییر نام می‌شوند؛ ترتیب بعد از رهاکردن ذخیره می‌شود
+     • در حالت عادی: نگه‌داشتن انگشت (یا کلیک راست) روی هر کاشی منوی سنجاق/ویرایش/حذف/جابه‌جایی را باز می‌کند */
+  $$('#cats .cat-head').forEach(function (h) {
+    var g = el('span', 'grip', '⠿');
+    g.setAttribute('aria-hidden', 'true');
+    g.title = 'جابه‌جایی این دسته';
+    h.insertBefore(g, h.firstChild);
+    var cnt = $('.count', h);
+    if (cnt) { var rn = el('span', 'cat-ren', '✎'); rn.title = 'تغییر نام این دسته'; h.insertBefore(rn, cnt); }
+  });
+  function syncChipsOrder() {
+    var box = $('#chips');
+    $$('#cats .cat').forEach(function (sec) {
+      var ch = box && $('.chip[data-target="' + sec.id + '"]', box);
+      if (ch) box.appendChild(ch);
+    });
+  }
+
+  var editBtnEl = $('#editBtn');
+  function setEdit(on) {
+    document.body.classList.toggle('edit-mode', on);
+    if (editBtnEl) editBtnEl.setAttribute('aria-pressed', on ? 'true' : 'false');
+    var bar = $('#editBar'); if (bar) bar.hidden = !on;
+    if (on) { if (input.value) clearSearch(); showToast('حالت ویرایش فعال شد — کاشی را بکش و رها کن، با × حذف کن'); }
+  }
+  if (editBtnEl) editBtnEl.addEventListener('click', function () { setEdit(!document.body.classList.contains('edit-mode')); });
+  var ebDone = $('#ebDone');
+  if (ebDone) ebDone.addEventListener('click', function () {
+    setEdit(false);
+    saveOrders();
+    showToast('ترتیب کاشی‌ها و دسته‌ها ذخیره شد ✓');
+  });
+  var ebReset = $('#ebReset');
+  if (ebReset) ebReset.addEventListener('click', function () {
+    tileOrder = {}; catOrder = []; saveTileOrder(); saveCatOrder();
+    showToast('ترتیب پیش‌فرض برمی‌گردد؛ صفحه دوباره باز می‌شود…');
+    setTimeout(function () { location.reload(); }, 800);
+  });
+
+  /* موتور کشیدن با Pointer Events: هم موس و هم لمس */
+  var dragState = null;
+  function dragStep() {
+    if (!dragState) return;
+    if (dragState.started) {
+      var m = 64, y = dragState.lastY, sp = 0;
+      if (y < m) sp = -Math.min(22, (m - y) / 3);
+      else if (y > window.innerHeight - m) sp = Math.min(22, (y - (window.innerHeight - m)) / 3);
+      if (sp) window.scrollBy(0, sp);   /* خودکار اسکرول لبهٔ صفحه */
+      placeDragged();   /* هر فریم: کاشی دنبال انگشت و جابه‌جایی با همزادها */
+    }
+    requestAnimationFrame(dragStep);
+  }
+  function siblingUnder(s) {
+    var found = null;
+    var items = s.kind === 'tile' ? $$('.tile', s.el.parentNode) : $$('#cats .cat');
+    items.some(function (x) {
+      if (x === s.el) return false;
+      var r = x.getBoundingClientRect();
+      if (s.lastX >= r.left && s.lastX <= r.right && s.lastY >= r.top && s.lastY <= r.bottom) { found = x; return true; }
+      return false;
+    });
+    return found;
+  }
+  function placeDragged() {
+    var s = dragState; if (!s || !s.started) return;
+    s.el.style.transform = '';   /* برای اندازه‌گیری جای پایه، تبدیل لحظه‌ای برداشته می‌شود */
+    var r = s.el.getBoundingClientRect();
+    var dx = s.lastX - s.offX - r.left, dy = s.lastY - s.offY - r.top;
+    s.el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    var tgt = siblingUnder(s);
+    if (tgt) {
+      var tr = tgt.getBoundingClientRect();
+      var list = document.body.classList.contains('list-view');
+      /* قاعدهٔ لانچر: جابه‌جایی در جهت حرکت انگشت — وقتی کاشی به سمت همزاد می‌رود، با همان جابه‌جا می‌شود؛
+         بعد از جابه‌جایی جهتِ حرکتِ همین‌جهتی دیگر شرط جابه‌جایی را ندارد، پس نوسان رخ نمی‌دهد */
+      var elIsBefore = !!(s.el.compareDocumentPosition(tgt) & 4);   /* کاشیِ کشیده‌شده قبل از هدف در DOM است؟ */
+      var dxs = s.lastX - s.sx, dys = s.lastY - s.sy, swap;
+      if (s.kind === 'cat' || list) {                    /* عمودی */
+        swap = elIsBefore ? dys > 0 : dys < 0;
+        if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
+      } else if (Math.abs(dys) > Math.abs(dxs)) {        /* حرکت غالب عمودی در شبکه */
+        swap = elIsBefore ? dys > 0 : dys < 0;
+        if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
+      } else {                                           /* افقی — در RTL راست‌تر = قبل‌تر در DOM */
+        swap = elIsBefore ? dxs < 0 : dxs > 0;
+        if (swap) s.el.parentNode.insertBefore(s.el, elIsBefore ? tgt.nextSibling : tgt);
+      }
+      if (swap && s.kind === 'cat') syncChipsOrder();
+    }
+  }
+  function onDragMove(ev) {
+    var s = dragState; if (!s || ev.pointerId !== s.id) return;
+    ev.preventDefault();
+    s.lastX = ev.clientX; s.lastY = ev.clientY;
+    if (!s.started) {
+      if (Math.abs(ev.clientX - s.sx) < 7 && Math.abs(ev.clientY - s.sy) < 7) return;
+      s.started = true;
+      s.el.classList.add('dragging');
+      document.body.classList.add('dragging-tile');
+    }
+    placeDragged();
+  }
+  function onDragEnd(ev) {
+    var s = dragState; if (!s || (ev.pointerId !== undefined && ev.pointerId !== s.id)) return;
+    window.removeEventListener('pointermove', onDragMove);
+    window.removeEventListener('pointerup', onDragEnd);
+    window.removeEventListener('pointercancel', onDragEnd);
+    dragState = null;
+    if (!s.started) return;
+    s.el.classList.remove('dragging');
+    s.el.style.transform = '';
+    document.body.classList.remove('dragging-tile');
+    saveOrders();
+  }
+  function beginDrag(elm, ev, kind) {
+    if (dragState) return;
+    cancelLP();
+    var r = elm.getBoundingClientRect();
+    dragState = { el: elm, kind: kind, offX: ev.clientX - r.left, offY: ev.clientY - r.top,
+      sx: ev.clientX, sy: ev.clientY, lastX: ev.clientX, lastY: ev.clientY, started: false, id: ev.pointerId };
+    window.addEventListener('pointermove', onDragMove, { passive: false });
+    window.addEventListener('pointerup', onDragEnd);
+    window.addEventListener('pointercancel', onDragEnd);
+    requestAnimationFrame(dragStep);
+  }
+
+  /* لمس طولانی: منوی کاشی — حذف بدون شلوغ‌کردن کاشی‌ها */
+  var lpTimer = null, lpX = 0, lpY = 0, suppressNextClick = false;
+  function cancelLP() { if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; } }
+  function startLongPress(ev) {
+    cancelLP();
+    var t = ev.target.closest('#cats .tile');
+    if (!t || ev.target.closest('.pin-btn,.del-btn,.edit-btn')) return;
+    if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+    lpX = ev.clientX; lpY = ev.clientY;
+    lpTimer = setTimeout(function () {
+      lpTimer = null;
+      suppressNextClick = true;   /* کلیکِ بعد از رهاکردن انگشت، لینک را باز نکند */
+      openTileMenu(t);
+    }, 470);
+  }
+  document.addEventListener('pointerdown', function (ev) {
+    suppressNextClick = false;
+    if (!document.body.classList.contains('edit-mode')) { startLongPress(ev); return; }
+    var grip = ev.target.closest('#cats .cat-head .grip');
+    if (grip) { ev.preventDefault(); beginDrag(grip.closest('.cat'), ev, 'cat'); return; }
+    var t = ev.target.closest('#cats .tile');
+    if (t && !ev.target.closest('.pin-btn,.del-btn,.edit-btn')) {
+      if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+      beginDrag(t, ev, 'tile');
+    }
+  });
+  document.addEventListener('pointermove', function (ev) {
+    if (lpTimer && (Math.abs(ev.clientX - lpX) > 11 || Math.abs(ev.clientY - lpY) > 11)) cancelLP();
+  });
+  document.addEventListener('pointerup', cancelLP);
+  document.addEventListener('pointercancel', cancelLP);
+  document.addEventListener('click', function (ev) {
+    if (!suppressNextClick) return;
+    suppressNextClick = false;
+    ev.preventDefault(); ev.stopPropagation();
+  }, true);
+  document.addEventListener('contextmenu', function (ev) {
+    var t = ev.target.closest('#cats .tile');
+    if (!t || ev.target.closest('.pin-btn,.del-btn,.edit-btn')) return;
+    ev.preventDefault();
+    if (document.body.classList.contains('edit-mode')) return;
+    suppressNextClick = true;
+    openTileMenu(t);
+  });
+
+  /* منوی کاشی */
+  var ctxTile = null, ctxCustom = null;
+  function openTileMenu(t) {
+    var a = $('a', t); if (!a) return;
+    ctxTile = t;
+    var href = a.getAttribute('href');
+    var nmEl = $('.name', t);
+    ctxCustom = null;
+    customLinks.some(function (x) { if (x.u === href) { ctxCustom = x; return true; } return false; });
+    $('#ctxName').textContent = (nmEl ? nmEl.textContent.trim() : href) || 'کاشی';
+    $('#ctxPin').textContent = favs.indexOf(href) > -1 ? '★ برداشتن از سنجاق‌ها' : '📌 سنجاق کردن';
+    $('#ctxEdit').hidden = !ctxCustom;
+    var dlg = $('#ctxDlg');
+    if (dlg.open) return;
+    openSheet(dlg);
+  }
+  function closeDlg(d) { if (d.close) d.close(); else d.removeAttribute('open'); }
+  $('#ctxPin').addEventListener('click', function () { closeDlg($('#ctxDlg')); var pb = ctxTile && $('.pin-btn', ctxTile); if (pb) pb.click(); });
+  $('#ctxEdit').addEventListener('click', function () { closeDlg($('#ctxDlg')); if (ctxCustom && ctxTile) openEdit(ctxCustom, ctxTile); });
+  $('#ctxDel').addEventListener('click', function () { closeDlg($('#ctxDlg')); requestDeleteFor(ctxTile); });
+  $('#ctxSort').addEventListener('click', function () {
+    closeDlg($('#ctxDlg'));
+    if (!document.body.classList.contains('edit-mode')) setEdit(true);
+    if (ctxTile) {
+      ctxTile.scrollIntoView({ block: 'center' });
+      ctxTile.classList.add('flash-tile');
+      setTimeout(function () { ctxTile.classList.remove('flash-tile'); }, 1500);
+    }
+  });
+  function requestDeleteFor(t) {
+    if (!t) return;
+    var a = $('a', t); if (!a) return;
+    var href = a.getAttribute('href');
+    var nmEl = $('.name', t); var nm = nmEl ? nmEl.textContent.trim() : href;
+    var l = null;
+    customLinks.some(function (x) { if (x.u === href) { l = x; return true; } return false; });
+    if (l) confirmDelete(l.n, DEL_NOTE_CUSTOM, function () { deleteCustomTile(l, t); });
+    else confirmDelete(nm, DEL_NOTE_PREDEF, function () { deletePredefinedTile(t, href, nm); });
+  }
+
   renderFavs();
 
   /* ── افزودن لینک از داخل خود صفحه (دستهٔ «لینک‌های من») ── */
@@ -1978,7 +2430,7 @@ body.list-view .edit-btn { left: 69px; }
     return (googleProbeP = new Promise(function (resolve) {
       var img = new Image(), done = false, timer = null;
       function fin(ok) { if (done) return; done = true; clearTimeout(timer); googleMode = ok ? 'ok' : 'down'; img.onload = img.onerror = null; resolve(); }
-      timer = setTimeout(function () { fin(false); }, 2500);
+      timer = setTimeout(function () { fin(false); }, 1800);
       img.onload = function () { fin(true); };
       img.onerror = function () { fin(false); };
       img.src = 'https://www.google.com/s2/favicons?domain=google.com&sz=64';
@@ -1997,15 +2449,16 @@ body.list-view .edit-btn { left: 69px; }
       function finish(ok) {
         if (done) return; done = true; clearTimeout(timer); img.onload = img.onerror = null;
         if (ok) {
-          if (n === 0 && img.naturalWidth <= 16) { img.remove(); attempt(1); return; }   /* ۱۶ پیکسل = کرهٔ زمینِ پیش‌فرض گوگل، یعنی آیکونی نیست */
+          if (n === 0 && img.naturalWidth <= 16) { attempt(1); return; }   /* ۱۶ پیکسل = کرهٔ زمینِ پیش‌فرض گوگل، یعنی آیکونی نیست */
+          mono.appendChild(img);   /* تصویر فقط بعد از لود موفق به صفحه اضافه می‌شود تا رویداد «لود» معطل درخواست‌های ناموفق نماند */
           mono.classList.add('has-icon');
           if (favs.indexOf(href) > -1) renderFavs();
           end();
-        } else { img.remove(); attempt(n + 1); }
+        } else { attempt(n + 1); }
       }
       img.onload = function () { finish(true); };
       img.onerror = function () { finish(false); };
-      mono.appendChild(img); img.src = urls[n];
+      img.src = urls[n];
       timer = setTimeout(function () { finish(false); }, n === 0 ? 3000 : 4000);
     }
     attempt(0);
@@ -2035,7 +2488,9 @@ body.list-view .edit-btn { left: 69px; }
       jobs.forEach(function (j) { io.observe(j.tile); });
     }
     function start() { probeGoogle().then(function () { go = true; pump(); }); }
-    if (document.readyState === 'complete') setTimeout(start, 300); else window.addEventListener('load', function () { setTimeout(start, 300); });
+    /* آیکون‌ها زودتر شروع شوند: نه بعد از لود کامل صفحه، نه با تأخیر ۳۰۰ میلی‌ثانیه */
+    if (document.readyState !== 'loading') start();
+    else document.addEventListener('DOMContentLoaded', start);
   })();
 
   /* دسته‌ها همیشه بازند؛ ناوبری با تب‌های قرصی چسبان بالای صفحه انجام می‌شود */
@@ -2144,13 +2599,25 @@ body.list-view .edit-btn { left: 69px; }
     if (ch) ch.classList.add('on');
   }
 
-  /* تب دسته: اسکرول نرم به همان دسته؛ تب‌ها فقط ناوبری‌اند و همیشه بالای صفحه‌اند */
+  /* تب دسته: اسکرول نرم به همان دسته؛ تب‌ها فقط ناوبری‌اند و همیشه بالای صفحه‌اند
+     چون بخش‌های پایین با content-visibility دیرتر رندر می‌شوند، بعد از پایان اسکرول جای هدف یک بار اصلاح می‌شود */
   chips.forEach(function (ch) {
     ch.addEventListener('click', function () {
       var c = document.getElementById(ch.getAttribute('data-target')); if (!c) return;
       c.scrollIntoView({ block: 'start', behavior: 'smooth' });
       c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
       setTimeout(function () { c.classList.remove('flash'); }, 1600);
+      var moved = false;
+      var mark = function () { moved = true; };
+      window.addEventListener('wheel', mark, { passive: true, once: true });
+      window.addEventListener('touchmove', mark, { passive: true, once: true });
+      setTimeout(function () {
+        window.removeEventListener('wheel', mark);
+        window.removeEventListener('touchmove', mark);
+        if (moved) return;
+        var top = c.getBoundingClientRect().top;
+        if (top < 20 || top > window.innerHeight * 0.6) c.scrollIntoView({ block: 'start' });
+      }, 500);
     });
   });
 
@@ -2661,7 +3128,10 @@ body.list-view .edit-btn { left: 69px; }
   }
   /* منابع تخصصی بین‌المللی (بدون کلید، با CORS باز — تست‌شده):
        وقتی اینترنت بین‌الملل در دسترس است اول از همین‌ها گرفته می‌شود؛
-       اگر پاسخ نیامد، firstOk بی‌درنگ به منبع داخلی می‌رسد. */
+       اگر پاسخ نیامد، firstOk بی‌درنگ به منبع داخلی می‌رسد.
+       دربارهٔ کوین‌مارکت‌کپ: API رسمی‌اش برای هر درخواست کلید (پلن Pro) می‌خواهد و در یک فایل
+       مستقلِ بدون سرور، کلید جایی امن نگه‌داری نمی‌شود؛ پس برای بیت‌کوین از منابع رایگانِ بدون کلید
+       (CoinGecko ← بایننس ← tgju ← نوبیتکس) استفاده می‌کنیم که دقتشان یکسان است. */
   function fromGoldApi(sym) {
     return function () {
       return getJSON('https://api.gold-api.com/price/' + sym).then(function (j) {
@@ -2677,6 +3147,17 @@ body.list-view .edit-btn { left: 69px; }
         var o = j && j.bitcoin, v = num(o && o.usd);
         if (!isFinite(v) || v <= 0) throw new Error('coingecko bad');
         var c = num(o.usd_24h_change);
+        return { v: v, pct: isFinite(c) ? c : null };
+      });
+    };
+  }
+  /* بایننس: قیمت لحظه‌ای BTC/USDT با درصد تغییر ۲۴ ساعته؛ API عمومی، بدون کلید و با CORS باز */
+  function fromBinance() {
+    return function () {
+      return getJSON('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT').then(function (j) {
+        var v = num(j && j.lastPrice);
+        if (!isFinite(v) || v <= 0) throw new Error('binance bad');
+        var c = num(j.priceChangePercent);
         return { v: v, pct: isFinite(c) ? c : null };
       });
     };
@@ -2704,7 +3185,7 @@ body.list-view .edit-btn { left: 69px; }
     g18: { load: firstOk([withSource(fromTgju('geram18'), 'https://www.tgju.org/profile/geram18', 'TGJU'), withSource(fromTalasea(), 'https://talasea.ir/', 'طلاسی'), withSource(fromMilli(), 'https://milli.gold/', 'میلی')]), div: 10 },
     ons: { load: firstOk([ranged(withSource(fromGoldApi('XAU'), 'https://gold-api.com/', 'Gold-API'), 100, 50000), withSource(fromTgju('ons'), 'https://www.tgju.org/profile/ons', 'TGJU')]), div: 1 },
     usd: { load: firstOk([withSource(fromTgju('price_dollar_rl'), 'https://www.tgju.org/profile/price_dollar_rl', 'TGJU'), withSource(fromNobitexUsdt(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 10 },
-    btc: { load: firstOk([withSource(fromCoinGecko(), 'https://www.coingecko.com/en/coins/bitcoin', 'CoinGecko'), withSource(fromTgju('crypto-bitcoin'), 'https://www.tgju.org/profile/crypto-bitcoin', 'TGJU'), withSource(fromNobitex(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 1 },
+    btc: { load: firstOk([withSource(fromCoinGecko(), 'https://www.coingecko.com/en/coins/bitcoin', 'CoinGecko'), withSource(fromBinance(), 'https://www.binance.com/en/trade/BTC_USDT', 'بایننس'), withSource(fromTgju('crypto-bitcoin'), 'https://www.tgju.org/profile/crypto-bitcoin', 'TGJU'), withSource(fromNobitex(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 1 },
     tse: { load: withSource(fromTseIndex(), 'https://www.tsetmc.com/', 'TSETMC'), div: 1 },
     oil: { load: withSource(fromTgju('oil_brent'), 'https://www.tgju.org/profile/oil_brent', 'TGJU'), div: 1 },
     /* نقره: دلار برای هر اونس (Gold-API بین‌المللی، tgju جایگزین داخلی). مس جهانی: دلار برای هر تن */
@@ -2742,7 +3223,7 @@ body.list-view .edit-btn { left: 69px; }
       g18: ['https://www.tgju.org/profile/geram18', 'https://talasea.ir/', 'https://milli.gold/'],
       ons: ['https://gold-api.com/', 'https://www.tgju.org/profile/ons'],
       usd: ['https://www.tgju.org/profile/price_dollar_rl', 'https://nobitex.ir/'],
-      btc: ['https://www.coingecko.com/en/coins/bitcoin', 'https://www.tgju.org/profile/crypto-bitcoin', 'https://nobitex.ir/'],
+      btc: ['https://www.coingecko.com/en/coins/bitcoin', 'https://www.binance.com/en/trade/BTC_USDT', 'https://www.tgju.org/profile/crypto-bitcoin', 'https://nobitex.ir/'],
       tse: ['https://www.tsetmc.com/'], oil: ['https://www.tgju.org/profile/oil_brent'],
       slv: ['https://gold-api.com/', 'https://www.tgju.org/profile/silver'],
       cu: ['https://www.tgju.org/profile/basemetal-london-copper']
@@ -2926,7 +3407,7 @@ body.list-view .edit-btn { left: 69px; }
   }
 
   /* ── میانبرهای کیبورد ──
-     / جستجو (قبلاً تعریف شده) · t تم · n لینک جدید · l نمای فهرستی · u برگشت به بالا · ? راهنما */
+     / جستجو (قبلاً تعریف شده) · t تم · e حالت ویرایش · n لینک جدید · l نمای فهرستی · u برگشت به بالا · ? راهنما */
   document.addEventListener('keydown', function (e) {
     var a = document.activeElement;
     if (!a || /INPUT|TEXTAREA|SELECT/.test(a.tagName) || a.isContentEditable) return;
@@ -2936,6 +3417,8 @@ body.list-view .edit-btn { left: 69px; }
     if (k === 't') {
       $('#themeBtn').click();
       showToast('تم ' + (document.documentElement.getAttribute('data-theme') === 'dark' ? 'تیره' : 'روشن') + ' شد');
+    } else if (k === 'e') {
+      $('#editBtn').click();   /* حالت ویرایش: مرتب‌سازی و حذف کاشی‌ها */
     } else if (k === 'n') {
       $('#addLinkBtn').click();
     } else if (k === 'l') {
@@ -3238,7 +3721,7 @@ body.list-view .edit-btn { left: 69px; }
   })();
 
   /* ── پشتیبان‌گیری و بازیابی تنظیمات (سنجاق‌ها، شیفت، دفترچه، لینک‌های شخصی) ── */
-  var BK_KEYS = ['theme', 'pinned_sites', 'shift_cfg', 'note_collapsed', 'tasks_v1', 'quick_note', 'custom_links', 'view_mode', 'geo_pos', 'hidden_tiles', 'custom_deleted'];
+  var BK_KEYS = ['theme', 'pinned_sites', 'shift_cfg', 'note_collapsed', 'tasks_v1', 'quick_note', 'custom_links', 'view_mode', 'geo_pos', 'hidden_tiles', 'custom_deleted', 'tile_order', 'cat_order', 'cat_names'];
   $('#bkExport').addEventListener('click', function () {
     var pack = { v: 1, app: 'mezkar-ali', date: new Date().toISOString(), data: {} };
     BK_KEYS.forEach(function (k) { var v = store.get(k, ''); if (v) pack.data[k] = v; });

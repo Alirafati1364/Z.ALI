@@ -1,6 +1,6 @@
 /* سرویس‌ورکر «میز کار علی رأفتی» — کار آفلاین و اطلاع نسخهٔ جدید
    فقط درخواست‌های همین دامنه را می‌گیرد؛ APIها و فاویکون‌های بیرونی مستقیم رد می‌شوند */
-var CACHE = 'mezkar-ali-v8';
+var CACHE = 'mezkar-ali-v9';
 var ASSETS = [
   './',
   './index.html',
@@ -45,15 +45,26 @@ self.addEventListener('fetch', function (e) {
   var url = new URL(e.request.url);
   if (url.origin !== location.origin) return;   /* API و فاویکون‌های بیرونی: بدون دخالت */
 
-  /* صفحهٔ اصلی: اول شبکه تا آپدیت‌ها برسند؛ قطع اینترنت → نسخهٔ کش‌شده */
+  /* صفحهٔ اصلی: اول کش (لود فوری)، بعد به‌روزرسانی بی‌صدا در پس‌زمینه؛
+     اگر نسخهٔ تازه‌تر رسید، یک بار «نسخهٔ جدیدتر آماده است» اعلام می‌شود */
   if (e.request.mode === 'navigate' || url.pathname.endsWith('/index.html')) {
     e.respondWith(
-      fetch(e.request).then(function (r) {
-        var cp = r.clone();
-        caches.open(CACHE).then(function (c) { c.put('./index.html', cp); });
-        return r;
-      }).catch(function () {
-        return caches.match('./index.html').then(function (r) { return r || Response.error(); });
+      caches.match('./index.html').then(function (cached) {
+        var net = fetch(e.request).then(function (r) {
+          if (!r || !r.ok) return r;
+          var cp = r.clone();
+          caches.open(CACHE).then(function (c) { return c.put('./index.html', cp); }).then(function () {
+            if (!cached) return;
+            return Promise.all([cached.text(), cp.text()]).then(function (t) {
+              if (t[0] === t[1]) return;
+              return self.clients.matchAll({ includeUncontrolled: true }).then(function (cs) {
+                cs.forEach(function (c) { c.postMessage({ type: 'updated' }); });
+              });
+            });
+          });
+          return r;
+        }).catch(function () { return Response.error(); });
+        return cached || net;
       })
     );
     return;
