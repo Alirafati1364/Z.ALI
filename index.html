@@ -158,10 +158,13 @@ body::before {
   margin: 0 0 8px; line-height: 1.7;
   display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 2px 7px;
 }
-/* ردیف وضعیت: کادر شیفت راست، آب‌وهوا چپ — همیشه در یک خط روبروی هم، آب‌وهوا هرگز به خط بعد نمی‌رود */
-.hero-top {
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap;
-  gap: 8px;
+/* کادر یکپارچهٔ مستطیلی شیفت و آب‌وهوا — مثل کادر تقویم: شیفت راست، آب‌وهوا روبرویش چپ، جداشده با خط عمودی */
+.shift-cal {
+  display: flex; align-items: stretch; width: 100%; margin-top: 12px; overflow: hidden;
+  border-radius: 18px; border: 1px solid rgba(255, 255, 255, .20);
+  background: rgba(255, 255, 255, .09);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3); backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow: 0 14px 30px -16px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .25);
 }
 /* سلام و خوش‌آمد: یک خط، یک اندازه و طلایی — بالاترین قسمت */
 .g1, .g2 {
@@ -204,21 +207,18 @@ body::before {
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   font-size: 12.5px; font-weight: 700; color: #FFE9A8;
 }
-.shift-line {
-  display: flex; align-items: center; justify-content: flex-start; gap: 8px;
-  flex: 1 1 auto; min-width: 0; text-align: start;
-  padding: 7px 13px; border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, .26); background: rgba(255, 255, 255, .11);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, .96); font: inherit; font-size: 12.5px; font-weight: 600; line-height: 1.6; cursor: pointer;
-  transition: background .2s, border-color .2s;
+/* بخش شیفت در کادر یکپارچه: آیکون راست، توضیحات دوخطی روی هم (خط اول وضعیت الان، خط دوم شیفت بعدی) */
+.shift-side {
+  display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0;
+  margin: 0; padding: 8px 14px; border: 0; background: none;
+  color: rgba(255, 255, 255, .96); font: inherit; font-size: 12.5px; font-weight: 600; line-height: 1.6;
+  text-align: start; cursor: pointer; transition: background .2s;
 }
-/* توضیحات شیفت روی هم (دو خط) داخل همان کادر: خط اول وضعیت الان، خط دوم شیفت بعدی */
-.shift-line #shiftIcon { font-size: 17px; line-height: 1; }
+.shift-side #shiftIcon { font-size: 17px; line-height: 1; }
 .shift-lines { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
 #shiftText2 { font-size: 11.5px; opacity: .78; }
-.shift-line:hover { background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .38); }
-.shift-line:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 16px; }
+.shift-side:hover { background: rgba(255, 255, 255, .10); }
+.shift-side:focus-visible { outline: 2px solid #fff; outline-offset: -3px; border-radius: 14px; }
 
 /* ───────── داک جستجو (نوار شناور چسبان) ───────── */
 .bar {
@@ -957,28 +957,27 @@ dialog.sheet::before {
 [data-theme="dark"] .btn.primary { box-shadow: 0 8px 20px -10px rgba(233, 237, 255, .25); }
 .btn.primary:hover { filter: brightness(1.08); }
 
-/* ───────── پیل آب‌وهوای مشهد — گوشهٔ چپ سربرگ ───────── */
-.hero-wx {
-  display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto; white-space: nowrap;
-  padding: 6px 13px; border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .26); background: rgba(255, 255, 255, .11);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, .96); font: inherit; font-size: 12.5px; font-weight: 600; line-height: 1.6; cursor: pointer;
-  transition: background .2s, border-color .2s;
+/* ───────── بخش آب‌وهوا در کادر یکپارچهٔ شیفت — سمت چپ، روبروی توضیحات شیفت ───────── */
+.wx-side {
+  display: flex; align-items: center; gap: 7px; flex: 0 0 auto; white-space: nowrap;
+  margin: 0; padding: 8px 14px; border: 0; background: none;
+  border-inline-start: 1px solid rgba(255, 255, 255, .22);
+  color: rgba(255, 255, 255, .96); font: inherit; font-size: 12.5px; font-weight: 600; line-height: 1.6;
+  cursor: pointer; transition: background .2s;
 }
-.hero-wx:hover { background: rgba(255, 255, 255, .18); border-color: rgba(255, 226, 150, .45); }
-.hero-wx:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 999px; }
-.hero-wx .wx-ico { font-size: 16px; line-height: 1; }
-.hero-wx .wx-temp { font-size: 14.5px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
-.hero-wx .wx-desc { display: none; }
-.hero-wx .wx-hilo {
+.wx-side:hover { background: rgba(255, 226, 150, .10); }
+.wx-side:focus-visible { outline: 2px solid #fff; outline-offset: -3px; border-radius: 14px; }
+.wx-side .wx-ico { font-size: 16px; line-height: 1; }
+.wx-side .wx-temp { font-size: 14.5px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.wx-side .wx-desc { display: none; }
+.wx-side .wx-hilo {
   display: inline-flex; gap: 6px; padding-inline-start: 8px;
   border-inline-start: 1px solid rgba(255, 255, 255, .22);
   font-size: 11px; opacity: .85; font-variant-numeric: tabular-nums; direction: ltr;
 }
-.hero-wx.wx-stale { opacity: .75; }
-/* در نمایشگرهای باریک، کمینه/بیشینهٔ دما پنهان می‌شود تا کادر شیفت دو خطِ تمیز داشته باشد و آب‌وهوا در همان خط بماند */
-@media (max-width: 459px) { .hero-wx .wx-hilo { display: none; } }
+.wx-side.wx-stale { opacity: .75; }
+/* در نمایشگرهای باریک، کمینه/بیشینهٔ دما پنهان می‌شود تا هر دو بخش تمیز در یک کادر بمانند */
+@media (max-width: 459px) { .wx-side .wx-hilo { display: none; } }
 
 /* ───────── پنل اوقات شرعی مشهد ───────── */
 .owq { --h: 150; }
@@ -1115,10 +1114,10 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 
 /* ───────── انیمیشن‌ها ───────── */
 @media (prefers-reduced-motion: no-preference) {
-  .hero h1, .hero-cal, .occ, .shift-line { animation: rise .6s cubic-bezier(.2, .7, .2, 1) both; }
+  .hero h1, .hero-cal, .occ, .shift-cal { animation: rise .6s cubic-bezier(.2, .7, .2, 1) both; }
   .hero-cal { animation-delay: .08s; }
   .occ { animation-delay: .14s; }
-  .shift-line { animation-delay: .18s; }
+  .shift-cal { animation-delay: .18s; }
   @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
 
   .o1 { animation: drift1 16s ease-in-out infinite alternate; }
@@ -1175,9 +1174,9 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   <span class="orb o2" aria-hidden="true"></span>
   <button class="install-btn" id="installBtn" type="button" hidden>📲 نصب برنامه</button>
   <h1 id="greet"><span class="g1" id="g1">میز کار</span><span class="g2" id="g2">علی رأفتی</span></h1>
-  <div class="hero-top">
-    <button class="shift-line" id="shiftPill" type="button"><span id="shiftIcon" aria-hidden="true">🌙</span><span class="shift-lines"><span id="shiftText"></span><span id="shiftText2"></span></span></button>
-    <button class="hero-wx" id="wxPill" type="button" hidden aria-label="نمایش جزئیات آب‌وهوای مشهد">
+  <div class="shift-cal">
+    <button class="shift-side" id="shiftPill" type="button" aria-label="جزئیات شیفت کاری"><span id="shiftIcon" aria-hidden="true">🌙</span><span class="shift-lines"><span id="shiftText"></span><span id="shiftText2"></span></span></button>
+    <button class="wx-side" id="wxPill" type="button" hidden aria-label="نمایش جزئیات آب‌وهوای مشهد">
       <span class="wx-ico" id="wxIco" aria-hidden="true">🌡️</span>
       <span class="wx-temp" id="wxTemp">—</span>
       <span class="wx-desc" id="wxDesc">آب‌وهوای مشهد</span>
