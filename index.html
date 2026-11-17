@@ -851,6 +851,14 @@ dialog.sheet::before {
   transition: border-color .2s, box-shadow .2s;
 }
 .form input:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3.5px var(--focus-ring); }
+.form select {
+  display: block; width: 100%; height: 46px; margin-top: 6px; padding: 0 14px;
+  border-radius: 13px; border: 1px solid var(--line);
+  background: var(--field); color: var(--ink);
+  font: inherit; font-size: 14px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form select:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3.5px var(--focus-ring); }
 .form .two { display: flex; gap: 10px; }
 .form .two label { flex: 1; }
 .btns { display: flex; gap: 8px; }
@@ -1547,6 +1555,7 @@ body.list-view .edit-btn { left: 69px; }
   <div class="backup-row">
     <button type="button" id="bkExport">↓ پشتیبان‌گیری از تنظیمات</button>
     <button type="button" id="bkImport">↑ بازیابی پشتیبان</button>
+    <button type="button" id="bkRestore" hidden>↺ برگرداندن لینک‌های حذف‌شده</button>
     <input type="file" id="bkFile" accept=".json,application/json" hidden>
   </div>
   <p>🌸 اختصاصی علی رأفتی</p>
@@ -1574,10 +1583,11 @@ body.list-view .edit-btn { left: 69px; }
 
 <dialog class="sheet" id="addDlg"><div class="sheet-in">
   <div class="sheet-head"><h2 id="addDlgTitle">افزودن لینک</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
-  <p class="dlg-note">لینک‌های شخصی در دستهٔ «لینک‌های من» جمع می‌شوند؛ مثل بقیهٔ سایت‌ها می‌توانی سنجاقشان کنی، در جستجو پیدا می‌شوند و هر وقت خواستی ویرایش یا حذفشان کنی. فقط روی همین دستگاه ذخیره می‌شوند.</p>
-  <form class="form" id="addForm">
+  <p class="dlg-note">دسته را از فهرست انتخاب کن تا لینک به همان دسته اضافه شود؛ مثل بقیهٔ سایت‌ها می‌توانی سنجاقشان کنی، در جستجو پیدا می‌شوند و هر وقت خواستی ویرایش یا حذفشان کنی. فقط روی همین دستگاه ذخیره می‌شوند.</p>
+  <form class="form" id="addForm" novalidate>
     <label>اسم لینک<input type="text" id="addName" maxlength="60" placeholder="مثلاً: سایت شرکت اتوبوس" autocomplete="off"></label>
     <label>آدرس<input type="url" id="addUrl" dir="ltr" inputmode="url" placeholder="example.com"></label>
+    <label>دسته<select id="addCat"></select></label>
     <div class="btns"><button class="btn primary" type="submit" id="addSave">افزودن</button><button class="btn" type="button" data-close>انصراف</button></div>
   </form>
 </div></dialog>
@@ -1720,15 +1730,79 @@ body.list-view .edit-btn { left: 69px; }
     $('#addSave').textContent = 'ذخیرهٔ تغییرات';
     $('#addName').value = l.n;
     $('#addUrl').value = l.u;
+    fillCatSelect(l.cat || 'c-mine');
     openSheet($('#addDlg'));
     setTimeout(function () { $('#addName').focus(); }, 80);
   }
-  customLinks.forEach(function (l) { var g = $('#b-mine .grid'); if (g) g.appendChild(buildCustomTile(l)); });
-  if (customLinks.length) showMine(true);
+  customLinks.forEach(function (l) {
+    var bid = 'b-' + String(l.cat || 'c-mine').slice(2);
+    var g = $('#' + bid + ' .grid') || $('#b-mine .grid');
+    if (g) g.appendChild(buildCustomTile(l));
+  });
+  if (customLinks.some(function (l) { return !l.cat || l.cat === 'c-mine'; })) showMine(true);
 
   /* ── کاشی‌ها ── */
   var cats = $$('#cats .cat');
   var tiles = $$('#cats .tile');
+
+  /* ── حذف لینک‌های از پیش تعریف‌شده (فقط روی همین دستگاه؛ با دکمهٔ ↺ پایین صفحه برمی‌گردند) ── */
+  var hiddenTiles = [];
+  try {
+    var ht = JSON.parse(store.get('hidden_tiles', '[]'));
+    if (Array.isArray(ht)) hiddenTiles = ht.filter(function (u) { return typeof u === 'string'; });
+  } catch (e) {}
+  function saveHidden() { store.set('hidden_tiles', JSON.stringify(hiddenTiles)); }
+  function restoreBtnSync() { var b = $('#bkRestore'); if (b) b.hidden = !hiddenTiles.length; }
+  function attachHide(t) {
+    var a = $('a', t);
+    if (!a || $('.del-btn', t) || $('.hide-btn', t)) return;   /* لینک شخصی دکمهٔ حذف خودش را دارد */
+    var href = a.getAttribute('href');
+    var nmEl = $('.name', t); var nm = nmEl ? nmEl.textContent.trim() : href;
+    var h = el('button', 'del-btn', '×');
+    h.type = 'button';
+    h.setAttribute('aria-label', 'حذف ' + nm);
+    h.title = 'حذف این لینک';
+    h.addEventListener('click', function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      if (hiddenTiles.indexOf(href) < 0) hiddenTiles.push(href);
+      saveHidden();
+      var i = tiles.indexOf(t); if (i > -1) tiles.splice(i, 1);
+      var fi = favs.indexOf(href);
+      if (fi > -1) { favs.splice(fi, 1); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+      t.remove();
+      refreshCounts();
+      restoreBtnSync();
+      showToast('«' + nm + '» حذف شد؛ برگرداندن با دکمهٔ ↺ پایین صفحه');
+    });
+    t.appendChild(h);
+  }
+  tiles.slice().forEach(function (t) {
+    var a = $('a', t);
+    if (a && hiddenTiles.indexOf(a.getAttribute('href')) > -1) {
+      var i = tiles.indexOf(t); if (i > -1) tiles.splice(i, 1);
+      t.remove();
+    }
+  });
+  restoreBtnSync();
+  var rb = $('#bkRestore');
+  if (rb) rb.addEventListener('click', function () {
+    hiddenTiles = []; saveHidden();
+    showToast('همهٔ لینک‌های حذف‌شده برگشتند ✓');
+    setTimeout(function () { location.reload(); }, 700);
+  });
+
+  /* فهرست دسته‌ها برای فرم «افزودن/ویرایش لینک» */
+  function fillCatSelect(sel) {
+    var s = $('#addCat'); if (!s) return;
+    s.textContent = '';
+    $$('#cats .cat').forEach(function (sec) {
+      var nm = $('.cat-name', sec); if (!nm) return;
+      var o = el('option', '', nm.textContent.trim());
+      o.value = sec.id;
+      if (sel ? sec.id === sel : sec.id === 'c-mine') o.selected = true;
+      s.appendChild(o);
+    });
+  }
   /* افزودن دستی لینک ساده‌تر شود: شمارندهٔ دسته و حرف اولِ کاشی خودکار پر می‌شوند */
   cats.forEach(function (c) { var n = $$('.tile', c).length; c.setAttribute('data-total', n); $('.count', c).textContent = fa(n); });
   tiles.forEach(function (t) { var m = $('.mono', t); if (m && !m.textContent.trim()) m.textContent = Array.from($('.name', t).textContent.trim())[0] || '•'; });
@@ -1765,7 +1839,7 @@ body.list-view .edit-btn { left: 69px; }
     pin.addEventListener('click',function(ev){ ev.preventDefault(); ev.stopPropagation(); var i=favs.indexOf(href); if(i>-1) favs.splice(i,1); else favs.push(href); store.set('pinned_sites',JSON.stringify(favs)); tiles.forEach(function(tt){var aa=$('a',tt),bb=$('.pin-btn',tt),on=aa&&favs.indexOf(aa.getAttribute('href'))>-1;if(bb){bb.textContent=on?'★':'☆';bb.setAttribute('aria-pressed',on?'true':'false');}}); renderFavs(); showToast(favs.indexOf(href)>-1 ? '📌 سنجاق شد — بالای صفحه نمایش داده می‌شود' : 'از سنجاق‌ها برداشته شد'); });
     t.appendChild(pin);
   }
-  tiles.forEach(attachPin);
+  tiles.forEach(function (t) { attachPin(t); attachHide(t); });
   renderFavs();
 
   /* ── افزودن لینک از داخل خود صفحه (دستهٔ «لینک‌های من») ── */
@@ -1776,6 +1850,7 @@ body.list-view .edit-btn { left: 69px; }
       $('#addDlgTitle').textContent = 'افزودن لینک';
       $('#addSave').textContent = 'افزودن';
       form.reset();
+      fillCatSelect(null);
       openSheet(dlg);
       setTimeout(function () { $('#addName').focus(); }, 80);
     });
@@ -1789,16 +1864,20 @@ body.list-view .edit-btn { left: 69px; }
       var u;
       try { u = new URL(url); } catch (e2) { showToast('آدرس معتبر نیست؛ مثلاً: digikala.com'); return; }
       url = u.href;
+      var catId = ($('#addCat') && $('#addCat').value) || 'c-mine';
       if (editTarget) {   /* ── ذخیرهٔ تغییرات لینک شخصی ── */
         var oldL = editTarget.l, oldT = editTarget.t, oldU = oldL.u;
         var dupE = oldU !== url && (customLinks.some(function (x) { return x.u === url; }) ||
           tiles.some(function (tt) { var aa = $('a', tt); return aa && aa.getAttribute('href') === url && tt !== oldT; }));
         if (dupE) { showToast('این آدرس قبلاً اضافه شده است.'); return; }
-        oldL.n = name; oldL.u = url;
+        oldL.n = name; oldL.u = url; oldL.cat = catId;
         saveCustomLinks();
         var nt = buildCustomTile(oldL);
         var idx = tiles.indexOf(oldT); if (idx > -1) tiles[idx] = nt;
         oldT.replaceWith(nt);
+        var ng = $('#b-' + catId.slice(2) + ' .grid');
+        if (ng && ng !== nt.parentNode) ng.appendChild(nt);
+        if (customLinks.some(function (x) { return !x.cat || x.cat === 'c-mine'; })) showMine(true); else showMine(false);
         nt._hay = norm(nt.textContent + ' ' + url);
         attachPin(nt);
         if (favs.indexOf(oldU) > -1 && oldU !== url) { favs.splice(favs.indexOf(oldU), 1); store.set('pinned_sites', JSON.stringify(favs)); }
@@ -1813,20 +1892,24 @@ body.list-view .edit-btn { left: 69px; }
       var dup = customLinks.some(function (x) { return x.u === url; }) ||
         tiles.some(function (tt) { var aa = $('a', tt); return aa && aa.getAttribute('href') === url; });
       if (dup) { showToast('این لینک قبلاً اضافه شده است.'); return; }
-      var l = { n: name, u: url };
+      var catName = 'لینک‌های من';
+      var catSec = $('#' + catId);
+      if (catSec && $('.cat-name', catSec)) catName = $('.cat-name', catSec).textContent.trim();
+      var l = { n: name, u: url, cat: catId };
       customLinks.push(l); saveCustomLinks();
       var t = buildCustomTile(l);
-      $('#b-mine .grid').appendChild(t);
-      showMine(true);
+      var g = $('#b-' + catId.slice(2) + ' .grid') || $('#b-mine .grid');
+      g.appendChild(t);
+      if (catId === 'c-mine') showMine(true);
       tiles.push(t);
       t._hay = norm(t.textContent + ' ' + url);
       attachPin(t);
       refreshCounts();
-      showToast('لینک به «لینک‌های من» اضافه شد ✓');
+      showToast('لینک به «' + catName + '» اضافه شد ✓');
       if (document.body.classList.contains('searching')) runSearch();
       if (dlg.close) dlg.close(); else dlg.removeAttribute('open');
       setIcon($('.mono', t), url, function () { if (favs.indexOf(url) > -1) renderFavs(); });
-      var c = $('#c-mine');
+      var c = $('#' + catId) || $('#c-mine');
       c.scrollIntoView({ block: 'start' });
       c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
       setTimeout(function () { c.classList.remove('flash'); }, 1600);
@@ -2418,7 +2501,10 @@ body.list-view .edit-btn { left: 69px; }
   })();
 
   /* ── نوار قیمت بازارها ──
-     فقط از سرویس‌های داخل ایران (tgju، tsetmc، نوبیتکس) تا با اینترنت ملی هم کار کند. */
+     هر عدد از «منبع تخصصی معتبر» همان بازار گرفته می‌شود و لینکِ ردیف هم همان منبع است؛
+     پس عددی که علی می‌بیند با سایت مقصد یکسان است و اختلافی وجود ندارد.
+     اگر منبع اصلی در دسترس نبود (مثل قطع اینترنت بین‌الملل)، به‌سرعت از جایگزین داخلی
+     (tgju، نوبیتکس، طلاسی، میلی — همه داخل ایران و سازگار با اینترنت ملی) گرفته می‌شود. */
   var TIMEOUT = 9000;
   function timed(url) {
     return new Promise(function (resolve, reject) {
@@ -2522,6 +2608,28 @@ body.list-view .edit-btn { left: 69px; }
       });
     };
   }
+  /* منابع تخصصی بین‌المللی (بدون کلید، با CORS باز — تست‌شده):
+       وقتی اینترنت بین‌الملل در دسترس است اول از همین‌ها گرفته می‌شود؛
+       اگر پاسخ نیامد، firstOk بی‌درنگ به منبع داخلی می‌رسد. */
+  function fromGoldApi(sym) {
+    return function () {
+      return getJSON('https://api.gold-api.com/price/' + sym).then(function (j) {
+        var v = num(j && j.price);
+        if (!isFinite(v) || v <= 0) throw new Error('gold-api ' + sym + ' bad');
+        return { v: v, pct: null };
+      });
+    };
+  }
+  function fromCoinGecko() {
+    return function () {
+      return getJSON('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true').then(function (j) {
+        var o = j && j.bitcoin, v = num(o && o.usd);
+        if (!isFinite(v) || v <= 0) throw new Error('coingecko bad');
+        var c = num(o.usd_24h_change);
+        return { v: v, pct: isFinite(c) ? c : null };
+      });
+    };
+  }
   function firstOk(loaders) {
     return function () {
       var i = 0;
@@ -2542,14 +2650,14 @@ body.list-view .edit-btn { left: 69px; }
     return function () { return loader().then(function (r) { if (!(r.v >= lo && r.v <= hi)) throw new Error('out of range'); return r; }); };
   }
   var TICKER = {
-    g18: { load: firstOk([withSource(fromTalasea(), 'https://talasea.ir/', 'طلاسی'), withSource(fromMilli(), 'https://milli.gold/', 'میلی'), withSource(fromTgju('geram18'), 'https://www.tgju.org/profile/geram18', 'TGJU')]), div: 10 },
-    ons: { load: withSource(fromTgju('ons'), 'https://www.tgju.org/profile/ons', 'TGJU'), div: 1 },
-    usd: { load: firstOk([withSource(fromNobitexUsdt(), 'https://nobitex.ir/', 'نوبیتکس'), withSource(fromTgju('price_dollar_rl'), 'https://www.tgju.org/profile/price_dollar_rl', 'TGJU')]), div: 10 },
-    btc: { load: firstOk([withSource(fromTgju('crypto-bitcoin'), 'https://www.tgju.org/profile/crypto-bitcoin', 'TGJU'), withSource(fromNobitex(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 1 },
+    g18: { load: firstOk([withSource(fromTgju('geram18'), 'https://www.tgju.org/profile/geram18', 'TGJU'), withSource(fromTalasea(), 'https://talasea.ir/', 'طلاسی'), withSource(fromMilli(), 'https://milli.gold/', 'میلی')]), div: 10 },
+    ons: { load: firstOk([ranged(withSource(fromGoldApi('XAU'), 'https://gold-api.com/', 'Gold-API'), 100, 50000), withSource(fromTgju('ons'), 'https://www.tgju.org/profile/ons', 'TGJU')]), div: 1 },
+    usd: { load: firstOk([withSource(fromTgju('price_dollar_rl'), 'https://www.tgju.org/profile/price_dollar_rl', 'TGJU'), withSource(fromNobitexUsdt(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 10 },
+    btc: { load: firstOk([withSource(fromCoinGecko(), 'https://www.coingecko.com/en/coins/bitcoin', 'CoinGecko'), withSource(fromTgju('crypto-bitcoin'), 'https://www.tgju.org/profile/crypto-bitcoin', 'TGJU'), withSource(fromNobitex(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 1 },
     tse: { load: withSource(fromTseIndex(), 'https://www.tsetmc.com/', 'TSETMC'), div: 1 },
     oil: { load: withSource(fromTgju('oil_brent'), 'https://www.tgju.org/profile/oil_brent', 'TGJU'), div: 1 },
-    /* نقره: دلار برای هر اونس. مس جهانی: دلار برای هر تن (کلیدها از نام صفحه‌های tgju) */
-    slv: { load: ranged(withSource(fromTgju('silver'), 'https://www.tgju.org/profile/silver', 'TGJU'), 5, 500), div: 1 },
+    /* نقره: دلار برای هر اونس (Gold-API بین‌المللی، tgju جایگزین داخلی). مس جهانی: دلار برای هر تن */
+    slv: { load: firstOk([ranged(withSource(fromGoldApi('XAG'), 'https://gold-api.com/', 'Gold-API'), 5, 500), ranged(withSource(fromTgju('silver'), 'https://www.tgju.org/profile/silver', 'TGJU'), 5, 500)]), div: 1 },
     cu: { load: firstOk([
       ranged(withSource(fromTgju('basemetal-london-copper'), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU'), 3000, 40000),
       withSource(fromTgjuCopper(), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU')   /* پشتیبان: اگر کلید فرق کرد، کلیدی که اسمش copper دارد */
@@ -2580,12 +2688,12 @@ body.list-view .edit-btn { left: 69px; }
   }
   function validSource(id, url) {
     var allowed = {
-      g18: ['https://talasea.ir/', 'https://milli.gold/', 'https://www.tgju.org/profile/geram18'],
-      ons: ['https://www.tgju.org/profile/ons'],
+      g18: ['https://www.tgju.org/profile/geram18', 'https://talasea.ir/', 'https://milli.gold/'],
+      ons: ['https://gold-api.com/', 'https://www.tgju.org/profile/ons'],
       usd: ['https://www.tgju.org/profile/price_dollar_rl', 'https://nobitex.ir/'],
-      btc: ['https://www.tgju.org/profile/crypto-bitcoin', 'https://nobitex.ir/'],
+      btc: ['https://www.coingecko.com/en/coins/bitcoin', 'https://www.tgju.org/profile/crypto-bitcoin', 'https://nobitex.ir/'],
       tse: ['https://www.tsetmc.com/'], oil: ['https://www.tgju.org/profile/oil_brent'],
-      slv: ['https://www.tgju.org/profile/silver'],
+      slv: ['https://gold-api.com/', 'https://www.tgju.org/profile/silver'],
       cu: ['https://www.tgju.org/profile/basemetal-london-copper']
     };
     return allowed[id] && allowed[id].indexOf(url) >= 0;
@@ -3051,7 +3159,7 @@ body.list-view .edit-btn { left: 69px; }
   })();
 
   /* ── پشتیبان‌گیری و بازیابی تنظیمات (سنجاق‌ها، شیفت، دفترچه، لینک‌های شخصی) ── */
-  var BK_KEYS = ['theme', 'pinned_sites', 'shift_cfg', 'note_collapsed', 'tasks_v1', 'quick_note', 'custom_links', 'view_mode', 'geo_pos'];
+  var BK_KEYS = ['theme', 'pinned_sites', 'shift_cfg', 'note_collapsed', 'tasks_v1', 'quick_note', 'custom_links', 'view_mode', 'geo_pos', 'hidden_tiles'];
   $('#bkExport').addEventListener('click', function () {
     var pack = { v: 1, app: 'mezkar-ali', date: new Date().toISOString(), data: {} };
     BK_KEYS.forEach(function (k) { var v = store.get(k, ''); if (v) pack.data[k] = v; });
