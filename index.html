@@ -992,6 +992,19 @@ body.list-view .edit-btn { left: 69px; }
 }
 [data-theme="dark"] .toast { background: #E9EDFF; color: #0A1022; }
 .toast.show { opacity: 1; transform: none; }
+.toast.undo {
+  display: flex; align-items: center; gap: 12px; text-align: right; pointer-events: auto;
+  padding: 8px 8px 8px 10px;
+}
+.toast.undo .undo-msg { flex: 1; text-align: right; }
+.toast .undo-btn {
+  flex: none; padding: 6px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.45);
+  background: rgba(255,255,255,.14); color: inherit; font: inherit; font-size: 12.5px; font-weight: 800;
+  cursor: pointer; transition: background .15s, transform .15s;
+}
+.toast .undo-btn:hover { background: rgba(255,255,255,.28); transform: scale(1.05); }
+[data-theme="dark"] .toast .undo-btn { border-color: rgba(10,16,34,.35); background: rgba(10,16,34,.08); }
+[data-theme="dark"] .toast .undo-btn:hover { background: rgba(10,16,34,.18); }
 
 /* ───────── راهنمای میانبرها (پانوشت) ───────── */
 .kbd-hint { margin-top: 8px; font-size: 11.5px; line-height: 2; color: var(--muted); }
@@ -1703,15 +1716,29 @@ body.list-view .edit-btn { left: 69px; }
     d.setAttribute('aria-label', 'حذف ' + l.n);
     d.addEventListener('click', function (ev) {
       ev.preventDefault(); ev.stopPropagation();
+      var wasPinned = favs.indexOf(l.u) > -1;
       customLinks = customLinks.filter(function (x) { return x.u !== l.u; });
-      saveCustomLinks();
-      var i = favs.indexOf(l.u);
-      if (i > -1) { favs.splice(i, 1); store.set('pinned_sites', JSON.stringify(favs)); }
+      deletedCustom.push({ n: l.n, u: l.u, cat: l.cat || 'c-mine' });
+      saveCustomLinks(); saveDeletedCustom();
+      if (wasPinned) { favs.splice(favs.indexOf(l.u), 1); store.set('pinned_sites', JSON.stringify(favs)); }
       var ti = tiles.indexOf(t); if (ti > -1) tiles.splice(ti, 1);
+      var home = t.parentNode, next = t.nextSibling;
       t.remove();
       refreshCounts(); renderFavs();
       if (!customLinks.length && !document.body.classList.contains('searching')) showMine(false);
-      showToast('لینک حذف شد');
+      restoreBtnSync();
+      showUndoToast('«' + l.n + '» حذف شد', function () {
+        var di = deletedCustom.map(function (x) { return x.u; }).indexOf(l.u);
+        if (di > -1) { deletedCustom.splice(di, 1); saveDeletedCustom(); }
+        customLinks.push(l); saveCustomLinks();
+        if (wasPinned) { favs.push(l.u); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+        if (home) home.insertBefore(t, next || null);
+        if (tiles.indexOf(t) < 0) tiles.push(t);
+        refreshCounts(); renderFavs();
+        if (!l.cat || l.cat === 'c-mine') showMine(true);
+        restoreBtnSync();
+        showToast('«' + l.n + '» برگشت ✓');
+      });
     });
     t.appendChild(d);
     var ed = el('button', 'edit-btn', '✎');
@@ -1752,7 +1779,16 @@ body.list-view .edit-btn { left: 69px; }
     if (Array.isArray(ht)) hiddenTiles = ht.filter(function (u) { return typeof u === 'string'; });
   } catch (e) {}
   function saveHidden() { store.set('hidden_tiles', JSON.stringify(hiddenTiles)); }
-  function restoreBtnSync() { var b = $('#bkRestore'); if (b) b.hidden = !hiddenTiles.length; }
+  /* سطل زبالهٔ لینک‌های شخصی: حذف‌شده‌ها اینجا می‌مانند تا با دکمهٔ ↺ پایین صفحه برگردند */
+  var deletedCustom = [];
+  try {
+    var dc = JSON.parse(store.get('custom_deleted', '[]'));
+    if (Array.isArray(dc)) deletedCustom = dc.filter(function (l) {
+      return l && typeof l.n === 'string' && typeof l.u === 'string';
+    }).slice(0, 60);
+  } catch (e) {}
+  function saveDeletedCustom() { store.set('custom_deleted', JSON.stringify(deletedCustom)); }
+  function restoreBtnSync() { var b = $('#bkRestore'); if (b) b.hidden = !(hiddenTiles.length || deletedCustom.length); }
   function attachHide(t) {
     var a = $('a', t);
     if (!a || $('.del-btn', t) || $('.hide-btn', t)) return;   /* لینک شخصی دکمهٔ حذف خودش را دارد */
@@ -1767,12 +1803,22 @@ body.list-view .edit-btn { left: 69px; }
       if (hiddenTiles.indexOf(href) < 0) hiddenTiles.push(href);
       saveHidden();
       var i = tiles.indexOf(t); if (i > -1) tiles.splice(i, 1);
-      var fi = favs.indexOf(href);
-      if (fi > -1) { favs.splice(fi, 1); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+      var fi = favs.indexOf(href); var wasPinned = fi > -1;
+      if (wasPinned) { favs.splice(fi, 1); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+      var home = t.parentNode, next = t.nextSibling;
       t.remove();
       refreshCounts();
       restoreBtnSync();
-      showToast('«' + nm + '» حذف شد؛ برگرداندن با دکمهٔ ↺ پایین صفحه');
+      showUndoToast('«' + nm + '» حذف شد', function () {
+        var hi = hiddenTiles.indexOf(href);
+        if (hi > -1) { hiddenTiles.splice(hi, 1); saveHidden(); }
+        if (wasPinned) { favs.push(href); store.set('pinned_sites', JSON.stringify(favs)); renderFavs(); }
+        if (home) home.insertBefore(t, next || null);
+        if (tiles.indexOf(t) < 0) tiles.splice(Math.min(i < 0 ? tiles.length : i, tiles.length), 0, t);
+        refreshCounts();
+        restoreBtnSync();
+        showToast('«' + nm + '» برگشت ✓');
+      });
     });
     t.appendChild(h);
   }
@@ -1786,6 +1832,11 @@ body.list-view .edit-btn { left: 69px; }
   restoreBtnSync();
   var rb = $('#bkRestore');
   if (rb) rb.addEventListener('click', function () {
+    if (deletedCustom.length) {
+      deletedCustom.forEach(function (x) { customLinks.push(x); });
+      deletedCustom = [];
+      saveCustomLinks(); saveDeletedCustom();
+    }
     hiddenTiles = []; saveHidden();
     showToast('همهٔ لینک‌های حذف‌شده برگشتند ✓');
     setTimeout(function () { location.reload(); }, 700);
@@ -2845,6 +2896,34 @@ body.list-view .edit-btn { left: 69px; }
       setTimeout(function () { t.remove(); }, 260);
     }, ms || 3200);
   }
+  /* توست با دکمهٔ «برگردان» — حذف اشتباهی را همان لحظه قابل لغو می‌کند */
+  function showUndoToast(msg, onUndo, ms) {
+    if (!toastWrap) {
+      toastWrap = el('div', 'toast-wrap');
+      toastWrap.setAttribute('role', 'status');
+      toastWrap.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toastWrap);
+    }
+    var t = el('div', 'toast undo');
+    t.appendChild(el('div', 'undo-msg', msg));
+    var btn = el('button', 'undo-btn', 'برگردان');
+    btn.type = 'button';
+    var timer = setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 260);
+    }, ms || 7000);
+    btn.addEventListener('click', function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      clearTimeout(timer);
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 260);
+      onUndo();
+    });
+    t.appendChild(btn);
+    toastWrap.appendChild(t);
+    while (toastWrap.children.length > 3) toastWrap.removeChild(toastWrap.firstChild);
+    requestAnimationFrame(function () { t.classList.add('show'); });
+  }
 
   /* ── میانبرهای کیبورد ──
      / جستجو (قبلاً تعریف شده) · t تم · n لینک جدید · l نمای فهرستی · u برگشت به بالا · ? راهنما */
@@ -3159,7 +3238,7 @@ body.list-view .edit-btn { left: 69px; }
   })();
 
   /* ── پشتیبان‌گیری و بازیابی تنظیمات (سنجاق‌ها، شیفت، دفترچه، لینک‌های شخصی) ── */
-  var BK_KEYS = ['theme', 'pinned_sites', 'shift_cfg', 'note_collapsed', 'tasks_v1', 'quick_note', 'custom_links', 'view_mode', 'geo_pos', 'hidden_tiles'];
+  var BK_KEYS = ['theme', 'pinned_sites', 'shift_cfg', 'note_collapsed', 'tasks_v1', 'quick_note', 'custom_links', 'view_mode', 'geo_pos', 'hidden_tiles', 'custom_deleted'];
   $('#bkExport').addEventListener('click', function () {
     var pack = { v: 1, app: 'mezkar-ali', date: new Date().toISOString(), data: {} };
     BK_KEYS.forEach(function (k) { var v = store.get(k, ''); if (v) pack.data[k] = v; });
