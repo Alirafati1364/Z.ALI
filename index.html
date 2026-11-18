@@ -417,6 +417,11 @@ a.tk {
 @supports (content-visibility: auto) {
   body.edit-mode #cats .panel, body.edit-mode .fav-panel { content-visibility: visible; }
 }
+/* هنگام پرش با تب دسته‌ها هم همه‌چیز رندر می‌شود تا ارتفاع تخمینی باعث فرود در دستهٔ اشتباه نشود
+   (دلیلِ «کلیکِ اولِ اشتباه» همین بود: وسط اسکرول نرم، ارتفاع واقعی جای تخمین ۵۰۰px را می‌گرفت) */
+@supports (content-visibility: auto) {
+  body.nav-render .panel, body.nav-render .fav-panel { content-visibility: visible; }
+}
 
 .cat-head {
   appearance: none; -webkit-appearance: none;
@@ -1896,7 +1901,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     var dc = JSON.parse(store.get('custom_deleted', '[]'));
     if (Array.isArray(dc)) deletedCustom = dc.filter(function (l) {
       return l && typeof l.n === 'string' && typeof l.u === 'string';
-    }).slice(0, 60);
+    }).slice(-60);   /* سطل زباله حداکثر ۶۰ تا: آخرین حذف‌شده‌ها (تازه‌ترین‌ها) بمانند */
   } catch (e) {}
   function saveDeletedCustom() { store.set('custom_deleted', JSON.stringify(deletedCustom)); }
   function restoreBtnSync() { var b = $('#bkRestore'); if (b) b.hidden = !(hiddenTiles.length || deletedCustom.length); }
@@ -2623,7 +2628,14 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   chips.forEach(function (ch) {
     ch.addEventListener('click', function () {
       var c = document.getElementById(ch.getAttribute('data-target')); if (!c) return;
-      c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      /* همهٔ بخش‌ها واقعی رندر شوند تا ارتفاع صفحه دیگر وسط اسکرول عوض نشود و دقیق در همان دسته فرود بیاییم */
+      document.body.classList.add('nav-render');
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        });
+      });
+      setTimeout(function () { document.body.classList.remove('nav-render'); }, 2000);
       c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
       setTimeout(function () { c.classList.remove('flash'); }, 1600);
       var moved = false;
