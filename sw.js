@@ -1,6 +1,6 @@
 /* سرویس‌ورکر «میز کار علی رأفتی» — کار آفلاین و اطلاع نسخهٔ جدید
    فقط درخواست‌های همین دامنه را می‌گیرد؛ APIها و فاویکون‌های بیرونی مستقیم رد می‌شوند */
-var CACHE = 'mezkar-ali-v18';
+var CACHE = 'mezkar-ali-v20';
 var ASSETS = [
   './',
   './index.html',
@@ -50,20 +50,25 @@ self.addEventListener('fetch', function (e) {
   if (e.request.mode === 'navigate' || url.pathname.endsWith('/index.html')) {
     e.respondWith(
       caches.match('./index.html').then(function (cached) {
+        /* بدنهٔ هر Response فقط یک بار خوانده می‌شود؛ پس برای مقایسه نسخهٔ جدا (clone) نگه می‌داریم */
+        var oldCopy = cached ? cached.clone() : null;
+        var bg = null;
         var net = fetch(e.request).then(function (r) {
           if (!r || !r.ok) return r;
-          var cp = r.clone();
-          caches.open(CACHE).then(function (c) { return c.put('./index.html', cp); }).then(function () {
-            if (!cached) return;
-            return Promise.all([cached.text(), cp.text()]).then(function (t) {
+          var forCache = r.clone(), forCompare = r.clone();
+          bg = caches.open(CACHE).then(function (c) { return c.put('./index.html', forCache); }).then(function () {
+            if (!oldCopy) return;
+            return Promise.all([oldCopy.text(), forCompare.text()]).then(function (t) {
               if (t[0] === t[1]) return;
               return self.clients.matchAll({ includeUncontrolled: true }).then(function (cs) {
                 cs.forEach(function (c) { c.postMessage({ type: 'updated' }); });
               });
             });
-          });
+          }).catch(function () {});
           return r;
         }).catch(function () { return Response.error(); });
+        /* سرویس‌ورکر تا تمام‌شدن به‌روزرسانی پس‌زمینه زنده بماند */
+        e.waitUntil(net.then(function () { return bg; }).catch(function () {}));
         return cached || net;
       })
     );

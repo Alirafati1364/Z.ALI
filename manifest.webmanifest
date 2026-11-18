@@ -4,6 +4,7 @@
   "description": "میزکار شخصی علی — لینک‌ها، تقویم و شیفت کاری، اوقات شرعی و آب‌وهوای مشهد، قیمت لحظه‌ای بازار",
   "lang": "fa",
   "dir": "rtl",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

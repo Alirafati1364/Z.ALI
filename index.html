@@ -444,7 +444,7 @@ a.tk {
 /* اوقات شرعی: نشان خیلی کوچک — بخش کم‌اهمیت‌تر */
 #owq .badge { width: 20px; height: 20px; border-radius: 7px; font-size: 10px; }
 #owq .cat-head { gap: 8px; padding: 8px 4px 4px; }
-.cat-name { flex: 1; font-size: 15.5px; font-weight: 800; }
+.cat-name { flex: 1; min-width: 0; font-size: 15.5px; font-weight: 800; overflow-wrap: break-word; }
 .count {
   flex: none; padding: 3px 11px;
   border-radius: 999px;
@@ -3860,7 +3860,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     var d = document.createElement('div');
     d.setAttribute('role', 'status');
     d.textContent = 'نسخهٔ جدیدتری آماده است؛ برنامه را یک بار ببند و دوباره باز کن.';
-    d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:99;padding:12px 14px;border-radius:14px;background:#14214D;color:#fff;font:600 13.5px/1.7 inherit;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';
+    d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:99;padding:12px 14px;border-radius:14px;background:#14214D;color:#fff;font-family:inherit;font-weight:600;font-size:13.5px;line-height:1.7;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';
     document.body.appendChild(d);
     setTimeout(function () { d.remove(); }, 12000);
   });
