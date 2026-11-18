@@ -418,9 +418,10 @@ a.tk {
   body.edit-mode #cats .panel, body.edit-mode .fav-panel { content-visibility: visible; }
 }
 /* هنگام پرش با تب دسته‌ها هم همه‌چیز رندر می‌شود تا ارتفاع تخمینی باعث فرود در دستهٔ اشتباه نشود
-   (دلیلِ «کلیکِ اولِ اشتباه» همین بود: وسط اسکرول نرم، ارتفاع واقعی جای تخمین ۵۰۰px را می‌گرفت) */
+   (دلیلِ «کلیکِ اولِ اشتباه» همین بود: وسط اسکرول نرم، ارتفاع واقعی جای تخمین ۵۰۰px را می‌گرفت)
+   نکته: سلکتور باید id داشته باشد وگرنه از «#cats .panel» ضعیف‌تر است و اصلاً اعمال نمی‌شود */
 @supports (content-visibility: auto) {
-  body.nav-render .panel, body.nav-render .fav-panel { content-visibility: visible; }
+  body.nav-render #cats .panel, body.nav-render .fav-panel { content-visibility: visible; }
 }
 
 .cat-head {
@@ -2624,31 +2625,42 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   }
 
   /* تب دسته: اسکرول نرم به همان دسته؛ تب‌ها فقط ناوبری‌اند و همیشه بالای صفحه‌اند
-     چون بخش‌های پایین با content-visibility دیرتر رندر می‌شوند، بعد از پایان اسکرول جای هدف یک بار اصلاح می‌شود */
+     پس از پایان اسکرول هم فرود یک بار چک و در صورت نیاز اصلاح می‌شود (scrollend + تایمر پشتیبان) */
+  var navEpoch = 0;
   chips.forEach(function (ch) {
     ch.addEventListener('click', function () {
       var c = document.getElementById(ch.getAttribute('data-target')); if (!c) return;
-      /* همهٔ بخش‌ها واقعی رندر شوند تا ارتفاع صفحه دیگر وسط اسکرول عوض نشود و دقیق در همان دسته فرود بیاییم */
+      var epoch = ++navEpoch;
+      /* همهٔ بخش‌ها واقعی رندر شوند تا ارتفاع صفحه دیگر وسط اسکرول عوض نشود */
       document.body.classList.add('nav-render');
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          if (epoch === navEpoch) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
         });
       });
-      setTimeout(function () { document.body.classList.remove('nav-render'); }, 2000);
       c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
       setTimeout(function () { c.classList.remove('flash'); }, 1600);
-      var moved = false;
+      var moved = false, finished = false;
+      var t0 = Date.now();
       var mark = function () { moved = true; };
       window.addEventListener('wheel', mark, { passive: true, once: true });
       window.addEventListener('touchmove', mark, { passive: true, once: true });
-      setTimeout(function () {
+      var finish = function () {
+        if (finished || epoch !== navEpoch) return;   /* کلیک جدیدتر آمده؛ این یکی بی‌اثر */
+        if (Date.now() - t0 < 150) return;            /* اسکرول ما هنوز شروع نشده؛ تایمر بعدی چک می‌کند */
+        finished = true;
         window.removeEventListener('wheel', mark);
         window.removeEventListener('touchmove', mark);
-        if (moved) return;
-        var top = c.getBoundingClientRect().top;
-        if (top < 20 || top > window.innerHeight * 0.6) c.scrollIntoView({ block: 'start' });
-      }, 500);
+        if (!moved) {
+          var want = parseFloat(getComputedStyle(c).scrollMarginTop) || 0;
+          var top = c.getBoundingClientRect().top;
+          if (Math.abs(top - want) > 12) c.scrollIntoView({ block: 'start' });
+        }
+        setTimeout(function () { document.body.classList.remove('nav-render'); }, 350);
+      };
+      if ('onscrollend' in window) window.addEventListener('scrollend', finish, { once: true });
+      setTimeout(finish, 600);
+      setTimeout(finish, 1700);
     });
   });
 
