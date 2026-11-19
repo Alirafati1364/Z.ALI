@@ -1219,7 +1219,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 <main>
   <div class="ticker" id="ticker" aria-label="قیمت بازارها">
     <a class="tk" data-id="g18" href="https://rahavard365.com/asset/1560/chart" title="نمودار طلای ۱۸ عیار در رهاورد ۳۶۵"><span class="tk-l">طلای ۱۸</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-    <a class="tk" data-id="usd" href="https://rahavard365.com/asset/48192/chart" title="نمودار دلار بازار تهران در رهاورد ۳۶۵"><span class="tk-l">دلار</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
+    <a class="tk" data-id="usd" href="https://rahavard365.com/asset/2/chart" title="نمودار دلار تهران در رهاورد ۳۶۵"><span class="tk-l">دلار</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk" data-id="tse" href="https://rahavard365.com/index/1/chart" title="نمودار شاخص کل بورس در رهاورد ۳۶۵"><span class="tk-l">شاخص بورس</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk tk-s" data-id="ons" href="https://www.tradingview.com/symbols/XAUUSD/" title="نمودار انس جهانی طلا در تریدینگ‌ویو"><span class="tk-l">انس طلا $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk tk-s" data-id="oil" href="https://www.tradingview.com/symbols/UKOIL/" title="نمودار نفت برنت در تریدینگ‌ویو"><span class="tk-l">برنت $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
@@ -1228,7 +1228,6 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     <a class="tk tk-s" data-id="btc" href="https://www.tradingview.com/symbols/BTCUSDT/" title="نمودار بیت‌کوین در تریدینگ‌ویو"><span class="tk-l">بیت‌کوین $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
   </div>
   <div class="tk-meta">
-    <span>طلا و دلار به تومان؛ بقیه به دلار • کلیک روی هر قیمت = چارت همان بازار (طلا، دلار، شاخص: رهاورد ۳۶۵ — بقیه: تریدینگ‌ویو)</span>
     <button id="tkRefresh" type="button" aria-label="به‌روزرسانی قیمت‌ها"><span id="tkTime"></span><span class="rf">↻</span></button>
   </div>
 
@@ -3127,8 +3126,9 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   })();
 
   /* ── نوار قیمت بازارها ──
-     هر عدد از «منبع تخصصی معتبر» همان بازار گرفته می‌شود و لینکِ ردیف هم همان منبع است؛
-     پس عددی که علی می‌بیند با سایت مقصد یکسان است و اختلافی وجود ندارد.
+     هر عدد از «منبع تخصصی معتبر» همان بازار گرفته می‌شود؛ نام منبع فقط در راهنمای لمسِ (title) هر خانه می‌آید.
+     کلیک روی هر خانه = باز شدن «چارت همان بازار»: طلا، دلار و شاخص بورس در ره‌آورد ۳۶۵، بقیه در تریدینگ‌ویو؛
+     پس href خانه‌ها هرگز عوض نمی‌شود و فقط عدد، رنگ و title به‌روز می‌شود.
      اگر منبع اصلی در دسترس نبود (مثل قطع اینترنت بین‌الملل)، به‌سرعت از جایگزین داخلی
      (tgju، نوبیتکس، طلاسی، میلی — همه داخل ایران و سازگار با اینترنت ملی) گرفته می‌شود. */
   var TIMEOUT = 9000;
@@ -3354,17 +3354,14 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   } catch (e) {}
   function paintTicker(id) {
     var box = $('.tk[data-id="' + id + '"]'), d = tkCache[id]; if (!box) return;
-    if (box.getAttribute('data-home') == null) box.setAttribute('data-home', box.getAttribute('href') || '');
     var n = $('b', box), c = $('.tk-c', box), l = $('.tk-l', box);
     if (l.getAttribute('data-d') == null) l.setAttribute('data-d', l.textContent);
     l.textContent = l.getAttribute('data-d') + (d && d.unit ? ' (' + d.unit + ')' : '');
     if (!validRecord(d)) {
       n.textContent = '—'; c.textContent = ''; c.className = 'tk-c';
-      box.setAttribute('href', box.getAttribute('data-home')); box.removeAttribute('aria-disabled');
       box.setAttribute('title', tkFailed[id] ? 'دریافت قیمت ناموفق بود' : 'در انتظار دریافت قیمت');
       box.classList.remove('stale'); return;
     }
-    box.setAttribute('href', d.sourceUrl); box.removeAttribute('aria-disabled');
     var stale = Date.now() - d.ts > 30 * 60000;
     var status = tkFailed[id] ? '؛ دریافت تازه ناموفق بود' : stale ? '؛ قیمت قدیمی است' : '';
     box.setAttribute('title', 'منبع: ' + d.sourceName + '؛ زمان دریافت: ' + tfmt(d.ts) + status);
