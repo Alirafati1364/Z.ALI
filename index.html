@@ -1339,15 +1339,15 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       </button>
       <div class="body" id="b-mine"><div class="inner"><div class="grid"></div></div></div>
     </section>
-    <section class="panel cat" id="c-bank" data-h="222" data-total="22" style="--h:222">
+    <section class="panel cat" id="c-bank" data-h="222" data-total="21" style="--h:222">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-bank">
         <span class="badge" aria-hidden="true">💳</span>
         <span class="cat-name">شبکه بانکی</span>
-        <span class="count">۲۲</span>
+        <span class="count">۲۱</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-bank"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://blubank.sb24.ir/download/" data-search="بانک بلو سامان"><span class="mono" aria-hidden="true">ب</span><span class="name">بلوبانک</span></a></div>
+        <div class="tile"><a href="https://app.blubank.com/" data-search="بانک بلو سامان اپلیکیشن"><span class="mono" aria-hidden="true">ب</span><span class="name">بلوبانک</span></a></div>
         <div class="tile"><a href="https://app.sb24.com/auth/login" data-search="بانک موبایلت سامان"><span class="mono" aria-hidden="true">م</span><span class="name">موبایلت</span></a></div>
         <div class="tile"><a href="https://web.wepod.ir/landing" data-search="بانک ویپاد"><span class="mono" aria-hidden="true">و</span><span class="name">ویپاد</span></a></div>
         <div class="tile"><a href="https://ebank.banksepah.net/netway/pwa/index" data-search="بانک سپه"><span class="mono" aria-hidden="true">ب</span><span class="name">بانک سپه</span></a></div>
@@ -1357,8 +1357,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://web.zypod.ir/user/home" data-search="بانک زیپاد"><span class="mono" aria-hidden="true">ز</span><span class="name">زیپاد</span></a></div>
         <div class="tile"><a href="https://vbank.rqb.ir/" data-search="بانک وی رسالت"><span class="mono" aria-hidden="true">و</span><span class="name">وی رسالت</span></a></div>
         <div class="tile"><a href="https://qbank24.ir/qbankpwa/#/" data-search="بانک کیوبانک"><span class="mono" aria-hidden="true">ک</span><span class="name">کیوبانک</span></a></div>
-        <div class="tile"><a href="https://hamrahbank.qmb.ir/pwa/#/HomePage/tab1" data-search="بانک مهر ایران"><span class="mono" aria-hidden="true">ب</span><span class="name">بانک مهر</span></a></div>
-        <div class="tile"><a href="https://qbank24.ir/qkidspwa/#/" data-search="بانک کیو کیدز"><span class="mono" aria-hidden="true">ک</span><span class="name">کیو کیدز</span></a></div>
+        <div class="tile"><a href="https://my.qmehr724.com/" data-search="بانک مهر ایران قبض ۷۲۴"><span class="mono" aria-hidden="true">ب</span><span class="name">بانک مهر</span></a></div>
         <div class="tile"><a href="https://hplus.shahr-bank.ir/#/login" data-search="بانک همراه شهر پلاس"><span class="mono" aria-hidden="true">ه</span><span class="name">همراه شهر</span></a></div>
         <div class="tile"><a href="https://baran.bki.ir/#/home" data-search="بانک باران کشاورزی"><span class="mono" aria-hidden="true">ب</span><span class="name">باران</span></a></div>
         <div class="tile"><a href="https://pwa.bank-maskan.ir/auth/login" data-search="بانک مسکن"><span class="mono" aria-hidden="true">م</span><span class="name">مسکن</span></a></div>
@@ -1878,7 +1877,20 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   customLinks.forEach(function (l) {
     var bid = 'b-' + String(l.cat || 'c-mine').slice(2);
     var g = $('#' + bid + ' .grid') || $('#b-mine .grid');
-    if (g) g.appendChild(buildCustomTile(l));
+    if (!g) return;
+    var t = buildCustomTile(l);
+    /* بازیابی در جای قبلی: اول کنار «کاشی قبلی» قدیم، بعد شمارهٔ جایگاه، وگرنه ته دسته */
+    var placed = false;
+    if (l.prev) {
+      $$('.tile', g).some(function (x) {
+        var a = $('a', x);
+        if (a && a.getAttribute('href') === l.prev) { x.parentNode.insertBefore(t, x.nextSibling); placed = true; return true; }
+        return false;
+      });
+    }
+    if (!placed && typeof l.pos === 'number' && l.pos >= 0) { g.insertBefore(t, g.children[Math.min(l.pos, g.children.length)] || null); placed = true; }
+    if (!placed) g.appendChild(t);
+    if (placed) t.setAttribute('data-keep-pos', '1');   /* مرتب‌سازِ ترتیبِ ذخیره‌شده این کاشی را جابه‌جا نکند */
   });
   if (customLinks.some(function (l) { return !l.cat || l.cat === 'c-mine'; })) showMine(true);
 
@@ -1912,7 +1924,12 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   function deleteCustomTile(l, t) {
     var wasPinned = favs.indexOf(l.u) > -1;
     customLinks = customLinks.filter(function (x) { return x.u !== l.u; });
-    deletedCustom.push({ n: l.n, u: l.u, cat: l.cat || 'c-mine' });
+    /* جای قبلی برای بازگشت دقیق: کاشیِ قبلی (با href) و شمارهٔ جایگاه در شبکه */
+    var g0 = t.parentNode;
+    var sib = g0 ? Array.prototype.slice.call(g0.children) : [];
+    var idx = sib.indexOf(t);
+    var pa = idx > 0 && sib[idx - 1] ? $('a', sib[idx - 1]) : null;
+    deletedCustom.push({ n: l.n, u: l.u, cat: l.cat || 'c-mine', pos: idx > -1 ? idx : null, prev: pa ? pa.getAttribute('href') : '' });
     saveCustomLinks(); saveDeletedCustom();
     if (wasPinned) { favs.splice(favs.indexOf(l.u), 1); store.set('pinned_sites', JSON.stringify(favs)); }
     var ti = tiles.indexOf(t); if (ti > -1) tiles.splice(ti, 1);
@@ -2057,7 +2074,8 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 
   /* ── ترتیب دستی کاشی‌ها و دسته‌ها (ذخیره روی همین دستگاه) ──
      ترتیب از آخر به اول اعمال می‌شود: هر کاشیِ موجود در فهرست، به انتهای شبکه منتقل می‌شود؛
-     کاشی‌هایی که در فهرست نیستند (مثل لینک‌های بازیابی‌شده) به ترتیب فعلی آخر می‌ایستند */
+     کاشی‌های بیرون از فهرست (مثل لینک‌های بازیابی‌شده) اگر «جای ذخیره‌شده» دارند همان‌جا می‌مانند
+     وگرنه به انتهای دسته می‌روند — نه اولِ دسته */
   var tileOrder = {};
   try {
     var _to = JSON.parse(store.get('tile_order', '{}'));
@@ -2088,7 +2106,30 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
           return false;
         });
       });
-      $$('.tile', g).forEach(function (x) { g.appendChild(x); });
+      /* کاشی‌های بیرون از فهرست: بازیابی‌شدهٔ صاحب‌جایگاه بعداً کنار همسایهٔ قدیمش می‌نشیند؛ بقیه به ته دسته می‌روند */
+      $$('.tile', g).forEach(function (x) {
+        if (x.hasAttribute('data-keep-pos')) return;
+        var a = $('a', x);
+        if (!a || list.indexOf(a.getAttribute('href')) < 0) g.appendChild(x);
+      });
+      /* بازیابی‌شده‌ها بعد از همهٔ مرتب‌سازی‌ها کنار «کاشیِ قبلی» قدیم‌شان می‌نشینند؛
+         اگر href در ترتیب ذخیره‌شده باشد، همان ترتیبِ ذخیره‌شده ملاک است */
+      $$('.tile[data-keep-pos]', g).forEach(function (x) {
+        var a = $('a', x); if (!a) return;
+        var href = a.getAttribute('href');
+        if (list.indexOf(href) > -1) return;
+        var rec = null;
+        customLinks.forEach(function (cl) { if (cl.u === href) rec = cl; });
+        if (!rec || !rec.prev) return;
+        var ref = null;
+        $$('.tile', g).some(function (y) {
+          if (y === x) return false;
+          var ya = $('a', y);
+          if (ya && ya.getAttribute('href') === rec.prev) { ref = y; return true; }
+          return false;
+        });
+        if (ref) g.insertBefore(x, ref.nextSibling);
+      });
     });
   }
   function saveOrders() {
