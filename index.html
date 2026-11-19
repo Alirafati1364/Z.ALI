@@ -168,7 +168,7 @@ body::before {
 }
 /* سلام و خوش‌آمد: یک خط، یک اندازه و طلایی — بالاترین قسمت */
 .g1, .g2 {
-  display: inline; font-size: clamp(16px, 4.7vw, 20px); font-weight: 800; letter-spacing: 0; white-space: nowrap;
+  display: inline; font-size: clamp(18px, 5.4vw, 23px); font-weight: 800; letter-spacing: 0; white-space: nowrap;
   background: linear-gradient(185deg, #FFF8D9 8%, #FFD97A 48%, #F2B94B 95%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, .35));
@@ -1235,8 +1235,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   <nav class="chips" id="chips" aria-label="دسته‌ها">
       <button class="chip" type="button" data-target="c-mine" style="--h:150" hidden>لینک‌های من<b class="n"></b></button>
       <button class="chip" type="button" data-target="c-bank" style="--h:222">بانک<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-bourse" style="--h:140">بورس<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-brokers" style="--h:165">کارگزاری<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-bourse" style="--h:140">بورس و کارگزاری<b class="n"></b></button>
       <button class="chip" type="button" data-target="c-crypto" style="--h:36">ارز دیجیتال<b class="n"></b></button>
       <button class="chip" type="button" data-target="c-forex" style="--h:82">فارکس<b class="n"></b></button>
       <button class="chip" type="button" data-target="c-prices" style="--h:52">قیمت‌ها<b class="n"></b></button>
@@ -1373,11 +1372,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://www.mresalat.ir/fa" data-search="ام رسالت بانک"><span class="mono" aria-hidden="true">ا</span><span class="name">ام رسالت</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-bourse" data-h="140" data-total="6" style="--h:140">
+    <section class="panel cat" id="c-bourse" data-h="140" data-total="26" style="--h:140">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-bourse">
         <span class="badge" aria-hidden="true">📈</span>
-        <span class="cat-name">بورس: داده و اخبار</span>
-        <span class="count">۶</span>
+        <span class="cat-name">بورس و کارگزاری</span>
+        <span class="count">۲۶</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-bourse"><div class="inner"><div class="grid">
@@ -1387,16 +1386,6 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://rahavard365.com/asset/1560/chart" data-search="بورس نمودار رهاورد ارز نمودار طلا شاخص چارت"><span class="mono" aria-hidden="true">ر</span><span class="name">رهاورد ۳۶۵</span></a></div>
         <div class="tile"><a href="https://farachart.com/" data-search="بورس نمودار ارز طلا شاخص چارت فراچارت"><span class="mono" aria-hidden="true">ف</span><span class="name">فراچارت</span></a></div>
         <div class="tile"><a href="https://www.sena.ir/" data-search="سنا اخبار بورس"><span class="mono" aria-hidden="true">ا</span><span class="name">اخبار بورس</span></a></div>
-      </div></div></div>
-    </section>
-    <section class="panel cat" id="c-brokers" data-h="165" data-total="20" style="--h:165">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-brokers">
-        <span class="badge" aria-hidden="true">💼</span>
-        <span class="cat-name">کارگزاری‌ها</span>
-        <span class="count">۲۰</span>
-        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="body" id="b-brokers"><div class="inner"><div class="grid">
         <div class="tile"><a href="https://mofidonline.com/" data-search="بورس آنلاین پلاس مفید"><span class="mono" aria-hidden="true">آ</span><span class="name">آنلاین پلاس مفید</span></a></div>
         <div class="tile"><a href="https://my.emofid.com/" data-search="خرید مفیدآپ بورس سهام"><span class="mono" aria-hidden="true">م</span><span class="name">مفید آپ</span></a></div>
         <div class="tile"><a href="https://m.easytrader.ir/market-watch" data-search="بورس ایزی خرید تریدر مفید"><span class="mono" aria-hidden="true">ا</span><span class="name">ایزی تریدر</span></a></div>
@@ -1416,14 +1405,14 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://razavi.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره رضوی بورس سهام"><span class="mono" aria-hidden="true">ر</span><span class="name">رضوی</span></a></div>
         <div class="tile"><a href="https://sm.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره صنعت و معدن بورس سهام"><span class="mono" aria-hidden="true">ص</span><span class="name">صنعت و معدن</span></a></div>
         <div class="tile"><a href="https://mobile.oibourse.ir/login" data-search="خرید بورس اردیبهشت ایرانیان سهام"><span class="mono" aria-hidden="true">ا</span><span class="name">اردیبهشت ایرانیان</span></a></div>
-        <div class="tile"><a href="https://mobile.parsianbroker.com/login/index.html" data-search="خرید پارسیان من بورس سهام"><span class="mono" aria-hidden="true">پ</span><span class="name">پارسیان</span></a></div>
+        <div class="tile"><a href="https://pwa.pasargadtrader.ir/auth/login" data-search="خرید نقره پاسارگاد بورس سهام کارگزاری"><span class="mono" aria-hidden="true">پ</span><span class="name">پاسارگاد</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-crypto" data-h="36" data-total="9" style="--h:36">
+    <section class="panel cat" id="c-crypto" data-h="36" data-total="8" style="--h:36">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-crypto">
         <span class="badge" aria-hidden="true">🪙</span>
         <span class="cat-name">ارز دیجیتال</span>
-        <span class="count">۹</span>
+        <span class="count">۸</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-crypto"><div class="inner"><div class="grid">
@@ -1455,11 +1444,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://www.tradingview.com/chart/6zSpUWVj/" data-search="فارکس تریدینگ ویو ارز شاخص نمودار چارت"><span class="mono" aria-hidden="true">ت</span><span class="name">تریدینگ ویو</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-prices" data-h="52" data-total="5" style="--h:52">
+    <section class="panel cat" id="c-prices" data-h="52" data-total="3" style="--h:52">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-prices">
         <span class="badge" aria-hidden="true">💰</span>
         <span class="cat-name">قیمت طلا و ابزار مالی</span>
-        <span class="count">۵</span>
+        <span class="count">۳</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-prices"><div class="inner"><div class="grid">
@@ -1468,11 +1457,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://milli.gold/app/home" data-search="خرید قیمت میلی طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت طلا میلی</span></a></div>
         </div></div></div>
     </section>
-    <section class="panel cat" id="c-gov" data-h="245" data-total="9" style="--h:245">
+    <section class="panel cat" id="c-gov" data-h="245" data-total="10" style="--h:245">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-gov">
         <span class="badge" aria-hidden="true">🏛️</span>
         <span class="cat-name">خدمات دولتی و شهروندی</span>
-        <span class="count">۹</span>
+        <span class="count">۱۰</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-gov"><div class="inner"><div class="grid">
@@ -1488,11 +1477,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://sakha.epolice.ir/portal/login" data-search="پلیس خودرو سخا"><span class="mono" aria-hidden="true">س</span><span class="name">سخا</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-travel" data-h="190" data-total="7" style="--h:190">
+    <section class="panel cat" id="c-travel" data-h="190" data-total="5" style="--h:190">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-travel">
         <span class="badge" aria-hidden="true">🗺️</span>
         <span class="cat-name">نقشه، سفر و حمل‌ونقل</span>
-        <span class="count">۷</span>
+        <span class="count">۵</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-travel"><div class="inner"><div class="grid">
@@ -1503,11 +1492,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://app.snapp.taxi/?superapp_service=home" data-search="سفر خرید اسنپ"><span class="mono" aria-hidden="true">ا</span><span class="name">اسنپ</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-operators" data-h="18" data-total="9" style="--h:18">
+    <section class="panel cat" id="c-operators" data-h="18" data-total="8" style="--h:18">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-operators">
         <span class="badge" aria-hidden="true">📶</span>
         <span class="cat-name">اپراتورها</span>
-        <span class="count">۹</span>
+        <span class="count">۸</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-operators"><div class="inner"><div class="grid">
@@ -1582,14 +1571,16 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://www.instagram.com/" data-search="پیام رسان اینستاگرام"><span class="mono" aria-hidden="true">ا</span><span class="name">اینستاگرام</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-ai" data-h="262" data-total="10" style="--h:262">
+    <section class="panel cat" id="c-ai" data-h="262" data-total="12" style="--h:262">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-ai">
         <span class="badge" aria-hidden="true">🤖</span>
         <span class="cat-name">هوش مصنوعی</span>
-        <span class="count">۱۰</span>
+        <span class="count">۱۲</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-ai"><div class="inner"><div class="grid">
+        <div class="tile"><a href="https://z.ai/" data-search="هوش مصنوعی زد ای z ai zai چت دستیار گپ مدل زبانی"><span class="mono" aria-hidden="true">ز</span><span class="name">زد ای</span></a></div>
+        <div class="tile"><a href="https://moj3.ir/" data-search="هوش مصنوعی موج سوم moj3 تحلیل بورس سهام تابلوخوانی آپشن سیگنال چارت دستیار ترید سرمایه"><span class="mono" aria-hidden="true">م</span><span class="name">موج سوم</span></a></div>
         <div class="tile"><a href="https://chatgpt.com/" data-search="هوش مصنوعی چت جی پی تی gpt"><span class="mono" aria-hidden="true">ج</span><span class="name">جی پی تی</span></a></div>
         <div class="tile"><a href="https://gapgpt.app/chat" data-search="هوش مصنوعی چت گپ جی پی تی"><span class="mono" aria-hidden="true">گ</span><span class="name">گپ جی پی تی</span></a></div>
         <div class="tile"><a href="https://app.zigap.ir/app" data-search="هوش مصنوعی زیگپ چت جی پی تی"><span class="mono" aria-hidden="true">ز</span><span class="name">زیگپ</span></a></div>
@@ -1625,17 +1616,21 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://docs.google.com/" data-search="داکس اسناد گوگل"><span class="mono" aria-hidden="true">د</span><span class="name">داکس</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-picks" data-h="292" data-total="14" style="--h:292">
+    <section class="panel cat" id="c-picks" data-h="292" data-total="21" style="--h:292">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-picks">
         <span class="badge" aria-hidden="true">💗</span>
         <span class="cat-name">سایت‌های پیشنهادی</span>
-        <span class="count">۱۴</span>
+        <span class="count">۲۱</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-picks"><div class="inner"><div class="grid">
         <div class="tile"><a href="https://github.com/" data-search="گیت هاب github مخزن کد برنامه نویسی کنترل نسخه"><span class="mono" aria-hidden="true">گ</span><span class="name">گیت‌هاب</span></a></div>
         <div class="tile"><a href="https://hamgit.ir/" data-search="هم گیت همگیت گیت لب ایرانی مخزن کد برنامه نویسی رایگان"><span class="mono" aria-hidden="true">ه</span><span class="name">هم‌گیت</span></a></div>
         <div class="tile"><a href="https://git.parscoders.com/" data-search="گیت پارسکدرز گیت لب ایرانی مخزن کد رایگان"><span class="mono" aria-hidden="true">گ</span><span class="name">گیت پارسکدرز</span></a></div>
+        <div class="tile"><a href="https://pages.cloudflare.com/" data-search="هاست میزبانی رایگان نصب برنامه جایگزین گیت هاب کلادفلر پیجز cloudflare pages صفحات استاتیک دامنه"><span class="mono" aria-hidden="true">ک</span><span class="name">کلادفلر پیجز</span></a></div>
+        <div class="tile"><a href="https://www.netlify.com/" data-search="هاست میزبانی رایگان نصب برنامه جایگزین گیت هاب نتلیفای netlify آپلود کشیدن رها کردن درگ دراپ"><span class="mono" aria-hidden="true">ن</span><span class="name">نتلیفای</span></a></div>
+        <div class="tile"><a href="https://neocities.org/" data-search="هاست میزبانی رایگان سایت استاتیک جایگزین گیت هاب نیوسایتیز neocities آپلود فایل"><span class="mono" aria-hidden="true">ن</span><span class="name">نیوسایتیز</span></a></div>
+        <div class="tile"><a href="https://codeberg.org/" data-search="گیت متن باز رایگان کدبرگ پیجز codeberg pages جایگزین گیت هاب میزبانی صفحات"><span class="mono" aria-hidden="true">ک</span><span class="name">کدبرگ</span></a></div>
         <div class="tile"><a href="https://zarebin.ir/" data-search="جستجو گوگل ذره بین ایرانی"><span class="mono" aria-hidden="true">ذ</span><span class="name">ذره بین</span></a></div>
         <div class="tile"><a href="https://search.bertina.ir/" data-search="جستجو گوگل ذره بین ایرانی موتور برتینا"><span class="mono" aria-hidden="true">ب</span><span class="name">برتینا</span></a></div>
         <div class="tile"><a href="https://telewebion.ir/" data-search="تلوزیون تی وی تلوبیون سیما شبکه آنلاین زنده پخش"><span class="mono" aria-hidden="true">ت</span><span class="name">تلوبیون</span></a></div>
@@ -2625,42 +2620,63 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   }
 
   /* تب دسته: اسکرول نرم به همان دسته؛ تب‌ها فقط ناوبری‌اند و همیشه بالای صفحه‌اند
-     پس از پایان اسکرول هم فرود یک بار چک و در صورت نیاز اصلاح می‌شود (scrollend + تایمر پشتیبان) */
+     نسخهٔ مقاوم برای شروع سرد (باز شدن برنامه): مقصد با مختصات مطلق محاسبه و با scrollTo می‌رود
+     (scrollIntoView در وب‌ویو با content-visibility گاهی مقصد اشتباه را نشانه می‌گیرد)؛
+     بعد از اسکرول هم فرود پایش می‌شود و اگر «ایستاده ولی سر جایش نیست» فوراً اصلاح می‌شود؛
+     اسکرول واقعی خود کاربر (لمس بیش از ۱۴px یا چرخ موس) پایش را متوقف می‌کند تا با او نزنیم */
   var navEpoch = 0;
+  var fingerDown = false, lastUserScroll = 0, touchY0 = null;
+  document.addEventListener('pointerdown', function () { fingerDown = true; }, { passive: true });
+  document.addEventListener('pointerup', function () { fingerDown = false; }, { passive: true });
+  document.addEventListener('pointercancel', function () { fingerDown = false; }, { passive: true });
+  document.addEventListener('wheel', function (e) { if (e.deltaY) lastUserScroll = Date.now(); }, { passive: true });
+  document.addEventListener('touchstart', function (e) { touchY0 = e.touches && e.touches[0] ? e.touches[0].clientY : null; }, { passive: true });
+  document.addEventListener('touchmove', function (e) {
+    var t = e.touches && e.touches[0];
+    if (t && touchY0 != null && Math.abs(t.clientY - touchY0) > 14) lastUserScroll = Date.now();  /* لمس عمدی، نه لغزش انگشت */
+  }, { passive: true });
+  function catTop(c) {
+    var want = parseFloat(getComputedStyle(c).scrollMarginTop) || 0;
+    return Math.max(0, Math.round(c.getBoundingClientRect().top + window.pageYOffset - want));
+  }
+  function navDone(epoch) {
+    if (epoch !== navEpoch) return;
+    setTimeout(function () { if (epoch === navEpoch) document.body.classList.remove('nav-render'); }, 350);
+  }
   chips.forEach(function (ch) {
     ch.addEventListener('click', function () {
       var c = document.getElementById(ch.getAttribute('data-target')); if (!c) return;
       var epoch = ++navEpoch;
-      /* همهٔ بخش‌ها واقعی رندر شوند تا ارتفاع صفحه دیگر وسط اسکرول عوض نشود */
+      /* همهٔ بخش‌ها واقعی رندر شوند تا ارتفاع صفحه وسط اسکرول عوض نشود؛
+         خواندن اجباری layout همین حالا مختصات واقعی را می‌سازد — کلید درست‌شدن شروع سرد */
       document.body.classList.add('nav-render');
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          if (epoch === navEpoch) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
-        });
-      });
+      void document.body.offsetHeight;
+      syncBar();
       c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
       setTimeout(function () { c.classList.remove('flash'); }, 1600);
-      var moved = false, finished = false;
-      var t0 = Date.now();
-      var mark = function () { moved = true; };
-      window.addEventListener('wheel', mark, { passive: true, once: true });
-      window.addEventListener('touchmove', mark, { passive: true, once: true });
-      var finish = function () {
-        if (finished || epoch !== navEpoch) return;   /* کلیک جدیدتر آمده؛ این یکی بی‌اثر */
-        if (Date.now() - t0 < 150) return;            /* اسکرول ما هنوز شروع نشده؛ تایمر بعدی چک می‌کند */
-        finished = true;
-        window.removeEventListener('wheel', mark);
-        window.removeEventListener('touchmove', mark);
-        if (!moved) {
-          var want = parseFloat(getComputedStyle(c).scrollMarginTop) || 0;
-          var top = c.getBoundingClientRect().top;
-          if (Math.abs(top - want) > 12) c.scrollIntoView({ block: 'start' });
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          if (epoch === navEpoch) window.scrollTo({ top: catTop(c), behavior: 'smooth' });
+        });
+      });
+      var t0 = Date.now(), lastY = -1, tries = 0;
+      var poll = setInterval(function () {
+        if (epoch !== navEpoch) { clearInterval(poll); return; }
+        var want = parseFloat(getComputedStyle(c).scrollMarginTop) || 0;
+        var diff = Math.abs(c.getBoundingClientRect().top - want);
+        if (diff <= 8) { clearInterval(poll); navDone(epoch); return; }      /* فرود درست */
+        if (fingerDown) return;                                              /* انگشت روی صفحه است؛ بعداً چک */
+        if (Date.now() - lastUserScroll < 500) { clearInterval(poll); navDone(epoch); return; }  /* کاربر خودش اسکرول کرد */
+        var y = window.pageYOffset;
+        if (Math.abs(y - lastY) > 1 || Date.now() - t0 < 400) { lastY = y; return; }  /* هنوز در حال اسکرول */
+        if (tries++ < 3) {                                                   /* ایستاده ولی خطا: پرش اصلاحی */
+          window.scrollTo({ top: catTop(c) });
+          lastY = window.pageYOffset;
+          return;
         }
-        setTimeout(function () { document.body.classList.remove('nav-render'); }, 350);
-      };
-      if ('onscrollend' in window) window.addEventListener('scrollend', finish, { once: true });
-      setTimeout(finish, 600);
-      setTimeout(finish, 1700);
+        clearInterval(poll); navDone(epoch);
+      }, 150);
+      setTimeout(function () { if (epoch === navEpoch) { clearInterval(poll); navDone(epoch); } }, 5000);
     });
   });
 
