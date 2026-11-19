@@ -1219,12 +1219,12 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 <main>
   <div class="ticker" id="ticker" aria-label="قیمت بازارها">
     <a class="tk" data-id="g18" href="https://rahavard365.com/asset/1560/chart" title="نمودار طلای ۱۸ عیار در رهاورد ۳۶۵"><span class="tk-l">طلای ۱۸</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-    <a class="tk" data-id="usd" href="https://rahavard365.com/asset/2/chart" title="نمودار دلار تهران در رهاورد ۳۶۵"><span class="tk-l">دلار</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
+    <a class="tk" data-id="usd" href="https://rahavard365.com/asset/44167/chart" title="نمودار دلار هرات در رهاورد ۳۶۵"><span class="tk-l">دلار</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk" data-id="tse" href="https://rahavard365.com/index/1/chart" title="نمودار شاخص کل بورس در رهاورد ۳۶۵"><span class="tk-l">شاخص بورس</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk tk-s" data-id="ons" href="https://www.tradingview.com/symbols/XAUUSD/" title="نمودار انس جهانی طلا در تریدینگ‌ویو"><span class="tk-l">انس طلا $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk tk-s" data-id="oil" href="https://www.tradingview.com/symbols/UKOIL/" title="نمودار نفت برنت در تریدینگ‌ویو"><span class="tk-l">برنت $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk tk-s" data-id="slv" href="https://www.tradingview.com/symbols/XAGUSD/" title="نمودار نقره در تریدینگ‌ویو"><span class="tk-l">نقره $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-    <a class="tk tk-s" data-id="cu" href="https://www.tradingview.com/symbols/COPPER/" title="نمودار مس در تریدینگ‌ویو"><span class="tk-l">مس (تن) $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
+    <a class="tk tk-s" data-id="cu" href="https://rahavard365.com/asset/1971/chart" title="نمودار مس ۳ ماهه بورس فلزات لندن در ره‌آورد ۳۶۵"><span class="tk-l">مس (تن) $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
     <a class="tk tk-s" data-id="btc" href="https://www.tradingview.com/symbols/BTCUSDT/" title="نمودار بیت‌کوین در تریدینگ‌ویو"><span class="tk-l">بیت‌کوین $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
   </div>
   <div class="tk-meta">
@@ -3127,8 +3127,9 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 
   /* ── نوار قیمت بازارها ──
      هر عدد از «منبع تخصصی معتبر» همان بازار گرفته می‌شود؛ نام منبع فقط در راهنمای لمسِ (title) هر خانه می‌آید.
-     کلیک روی هر خانه = باز شدن «چارت همان بازار»: طلا، دلار و شاخص بورس در ره‌آورد ۳۶۵، بقیه در تریدینگ‌ویو؛
+     کلیک روی هر خانه = باز شدن «چارت همان بازار»: طلا، دلار هرات، شاخص بورس و مس لندن در ره‌آورد ۳۶۵، بقیه در تریدینگ‌ویو؛
      پس href خانه‌ها هرگز عوض نمی‌شود و فقط عدد، رنگ و title به‌روز می‌شود.
+     دربارهٔ واحدها: تایل مس «دلار بر تن» (بورس فلزات لندن) است؛ چارتِ COPPER در تریدینگ‌ویو «دلار بر پوند» است (یک تن = ۲۲۰۴٫۶۲ پوند)، برای همین چارت مس به ره‌آورد وصل شده که همان واحد تن را نشان می‌دهد.
      اگر منبع اصلی در دسترس نبود (مثل قطع اینترنت بین‌الملل)، به‌سرعت از جایگزین داخلی
      (tgju، نوبیتکس، طلاسی، میلی — همه داخل ایران و سازگار با اینترنت ملی) گرفته می‌شود. */
   var TIMEOUT = 9000;
