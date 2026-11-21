@@ -371,7 +371,7 @@ main { max-width: 980px; margin: 0 auto; padding: 4px 16px 24px; }
 .tk-tape { display: flex; overflow: hidden; padding: 2px 0 5px;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent);
   mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
-.tk-track { display: flex; width: max-content; animation: tkScroll 36s linear infinite; will-change: transform; }
+.tk-track { display: flex; width: max-content; animation: tkScroll 18s linear infinite; will-change: transform; }
 .tk-set { display: flex; gap: 6px; padding-inline-start: 6px; }
 /* عرض هر خانه ثابت نیست و به‌اندازهٔ محتواست: درصد کنار نام آمد و خانه‌ها جمع‌وجور‌تر شدند */
 .tk-set > a.tk { min-width: 64px; flex: 0 0 auto; padding: 7px 7px 6px; }
@@ -838,7 +838,7 @@ body.no-results .empty { display: block; }
 .mnav:hover { border-color: color-mix(in srgb, var(--ink) 26%, transparent); }
 .mnav:active { transform: scale(.93); }
 .mgrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
-.wd { padding: 4px 0 6px; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); }
+.wd { padding: 4px 0 0; line-height: 1.3; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); }
 .wd.fri { color: #D43232; }
 [data-theme="dark"] .wd.fri { color: #FF9191; }
 .dc {
@@ -852,6 +852,9 @@ body.no-results .empty { display: block; }
 .dc b { font-size: 13.5px; font-weight: 700; line-height: 1.2; }
 .dc i { min-height: 12px; font-style: normal; font-size: 10.5px; line-height: 1.1; opacity: .85; }
 .dc.empty { visibility: hidden; pointer-events: none; }
+/* خانه‌های خالی ابتدای ماه کلاس مشترک «.empty» را هم می‌گیرند؛ ::before همان کلاس (آیکن ذخیرهٔ جست‌وجو) داخلشان ساخته می‌شد و ردیف هفتهٔ اول را در موبایل بلندتر از بقیهٔ ردیف‌ها می‌کرد — باطلش می‌کنیم تا فاصلهٔ همهٔ ردیف‌ها یکسان بماند */
+.dc.empty::before { content: none; }
+.dc.empty::after { content: none; }
 .dc.free { background: #D9F5E8; border-color: #A5DEC3; color: #145B3C; }
 .dc.night { background: #E3E8FF; border-color: #B8C4F4; color: #273B83; }
 .dc.dayshift { background: #FFE9BD; border-color: #F2CE83; color: #754500; }
