@@ -372,11 +372,12 @@ main { max-width: 980px; margin: 0 auto; padding: 4px 16px 24px; }
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent);
   mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
 .tk-track { display: flex; width: max-content; animation: tkScroll 36s linear infinite; will-change: transform; }
-.tk-set { display: flex; gap: 7px; padding-inline-start: 7px; }
-.tk-set > a.tk { width: 140px; flex: 0 0 auto; }
-.tk-set > a.tk-s { width: 110px; padding: 6px 4px 5px; }
-.tk-s .tk-v { font-size: 13.5px; }
-.tk-s .tk-l { font-size: 10.5px; }
+.tk-set { display: flex; gap: 6px; padding-inline-start: 6px; }
+/* عرض هر خانه ثابت نیست و به‌اندازهٔ محتواست: درصد کنار نام آمد و خانه‌ها جمع‌وجور‌تر شدند */
+.tk-set > a.tk { min-width: 64px; flex: 0 0 auto; padding: 7px 7px 6px; }
+.tk-set > a.tk-s { min-width: 54px; padding: 6px 6px 5px; }
+.tk-s .tk-v { font-size: 13px; }
+.tk-s .tk-l { font-size: 9.5px; }
 @keyframes tkScroll { from { transform: translateX(0); } to { transform: translateX(12.5%); } }
 .tk-tape:hover .tk-track, .tk-tape:focus-within .tk-track { animation-play-state: paused; }
 body.searching .tk-track { animation-play-state: paused; }
@@ -384,20 +385,24 @@ body.searching .tk-track { animation-play-state: paused; }
 body.searching .ticker, body.searching .tk-meta { display: none; }
 a.tk {
   min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center;
-  padding: 7px 8px 6px;
+  padding: 7px 7px 6px;
   border-radius: 16px; border: 1px solid var(--line);
   background: var(--surface); color: var(--ink); text-decoration: none;
   box-shadow: var(--shadow-soft);
   transition: transform .15s, border-color .15s;
 }
 @media (hover: hover) { a.tk:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--ink) 24%, transparent); } }
-.tk-l { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; font-weight: 600; color: var(--muted); }
-.tk-c { min-height: 14px; font-size: 10.5px; line-height: 1.3; font-weight: 800; direction: rtl; white-space: nowrap; }
+/* ردیف اول هر خانه: نام نماد + درصد تغییر (مثبت/منفی) کنار هم؛ درصد خالی هیچ فضایی نمی‌گیرد */
+.tk-top { display: flex; align-items: baseline; justify-content: center; gap: 3px; max-width: 100%; }
+.tk-top .tk-l { flex: 0 1 auto; min-width: 0; }
+.tk-l { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; font-weight: 600; color: var(--muted); }
+.tk-c { flex: 0 0 auto; font-size: 10px; line-height: 1.3; font-weight: 800; direction: rtl; white-space: nowrap; }
+.tk-c:empty { display: none; }
 .tk-c.up { color: #0B8A5A; }
 .tk-c.down { color: #D43232; }
 [data-theme="dark"] .tk-c.up { color: #4ADE9A; }
 [data-theme="dark"] .tk-c.down { color: #FF8080; }
-.tk-v { font-size: 16px; font-weight: 800; line-height: 1.35; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tk-v { font-size: 14.5px; font-weight: 800; line-height: 1.35; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tk.stale .tk-v { opacity: .5; }
 .tk-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 4px 12px; font-size: 10.5px; color: var(--muted); }
 .tk-meta button { display: flex; align-items: center; gap: 5px; padding: 4px 8px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; cursor: pointer; transition: color .2s, background .2s; }
@@ -1232,14 +1237,14 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     <div class="tk-tape">
       <div class="tk-track" id="tkTrack">
         <div class="tk-set">
-          <a class="tk" data-id="g18" href="https://rahavard365.com/asset/1560/chart" title="نمودار طلای ۱۸ عیار در رهاورد ۳۶۵"><span class="tk-l">طلای ۱۸</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk" data-id="usd" href="https://rahavard365.com/asset/44167/chart" title="نمودار دلار هرات در رهاورد ۳۶۵"><span class="tk-l">دلار</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk" data-id="tse" href="https://rahavard365.com/index/1/chart" title="نمودار شاخص کل بورس در رهاورد ۳۶۵"><span class="tk-l">شاخص بورس</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk tk-s" data-id="ons" href="https://www.tradingview.com/symbols/XAUUSD/" title="نمودار انس جهانی طلا در تریدینگ‌ویو"><span class="tk-l">انس طلا $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk tk-s" data-id="oil" href="https://www.tradingview.com/symbols/UKOIL/" title="نمودار نفت برنت در تریدینگ‌ویو"><span class="tk-l">برنت $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk tk-s" data-id="slv" href="https://www.tradingview.com/symbols/XAGUSD/" title="نمودار نقره در تریدینگ‌ویو"><span class="tk-l">نقره $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk tk-s" data-id="cu" href="https://www.tradingview.com/symbols/LME-CA1!/" title="نمودار مس لندن در تریدینگ‌ویو"><span class="tk-l">مس (تن) $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
-          <a class="tk tk-s" data-id="btc" href="https://www.tradingview.com/symbols/BTCUSDT/" title="نمودار بیت‌کوین در تریدینگ‌ویو"><span class="tk-l">بیت‌کوین $</span><span class="tk-v"><b>—</b></span><span class="tk-c"></span></a>
+          <a class="tk" data-id="g18" href="https://rahavard365.com/asset/1560/chart" title="نمودار طلای ۱۸ عیار در رهاورد ۳۶۵"><span class="tk-top"><span class="tk-l">طلای ۱۸</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk" data-id="usd" href="https://rahavard365.com/asset/44167/chart" title="نمودار دلار هرات در رهاورد ۳۶۵"><span class="tk-top"><span class="tk-l">دلار</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk" data-id="tse" href="https://rahavard365.com/index/1/chart" title="نمودار شاخص کل بورس در رهاورد ۳۶۵"><span class="tk-top"><span class="tk-l">شاخص بورس</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk tk-s" data-id="ons" href="https://www.tradingview.com/symbols/XAUUSD/" title="نمودار انس جهانی طلا در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">انس طلا $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk tk-s" data-id="oil" href="https://www.tradingview.com/symbols/UKOIL/" title="نمودار نفت برنت در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">برنت $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk tk-s" data-id="slv" href="https://www.tradingview.com/symbols/XAGUSD/" title="نمودار نقره در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">نقره $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk tk-s" data-id="cu" href="https://www.tradingview.com/symbols/LME-CA1!/" title="نمودار مس لندن در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">مس (تن) $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk tk-s" data-id="btc" href="https://www.tradingview.com/symbols/BTCUSDT/" title="نمودار بیت‌کوین در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">بیت‌کوین $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
         </div>
       </div>
     </div>
@@ -1366,18 +1371,14 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       <div class="body" id="b-bank"><div class="inner"><div class="grid">
         <div class="tile"><a href="https://app.blubank.com/" data-search="بانک بلو سامان اپلیکیشن"><span class="mono" aria-hidden="true">ب</span><span class="name">بلوبانک</span></a></div>
         <div class="tile"><a href="https://app.sb24.com/auth/login" data-search="بانک موبایلت سامان"><span class="mono" aria-hidden="true">م</span><span class="name">موبایلت</span></a></div>
-        <div class="tile"><a href="https://web.wepod.ir/landing" data-search="بانک ویپاد"><span class="mono" aria-hidden="true">و</span><span class="name">ویپاد</span></a></div>
+        <div class="tile"><a href="https://qbank24.ir/qbankpwa/#/" data-search="بانک کیوبانک"><span class="mono" aria-hidden="true">ک</span><span class="name">کیوبانک</span></a></div>
+        <div class="tile"><a href="https://my.qmehr724.com/" data-search="بانک مهر ایران قبض ۷۲۴"><span class="mono" aria-hidden="true">ب</span><span class="name">بانک مهر</span></a></div>
         <div class="tile"><a href="https://ebank.banksepah.net/netway/pwa/index" data-search="بانک سپه"><span class="mono" aria-hidden="true">ب</span><span class="name">بانک سپه</span></a></div>
         <div class="tile"><a href="https://sepinoapp.bsi.ir/" data-search="سپینو بانک صادرات"><span class="mono" aria-hidden="true">س</span><span class="name">سپینو</span></a></div>
         <div class="tile"><a href="https://baambank.ir/fa/auth/login?returnUrl=%2Fconsole%2Fhome" data-search="بانک بام ملی"><span class="mono" aria-hidden="true">ب</span><span class="name">بام ملی</span></a></div>
+        <div class="tile"><a href="https://web.wepod.ir/landing" data-search="بانک ویپاد"><span class="mono" aria-hidden="true">و</span><span class="name">ویپاد</span></a></div>
         <div class="tile"><a href="https://vbank.bpi.ir/" data-search="بانک پاسارگاد"><span class="mono" aria-hidden="true">پ</span><span class="name">پاسارگاد</span></a></div>
         <div class="tile"><a href="https://web.zypod.ir/user/home" data-search="بانک زیپاد"><span class="mono" aria-hidden="true">ز</span><span class="name">زیپاد</span></a></div>
-        <div class="tile"><a href="https://vbank.rqb.ir/" data-search="بانک وی رسالت"><span class="mono" aria-hidden="true">و</span><span class="name">وی رسالت</span></a></div>
-        <div class="tile"><a href="https://pishkhan.rqbank.ir/#/login" data-search="بانک پیشخوان رسالت"><span class="mono" aria-hidden="true">پ</span><span class="name">پیشخوان</span></a></div>
-        <div class="tile"><a href="https://www.mresalat.ir/fa" data-search="ام رسالت بانک"><span class="mono" aria-hidden="true">ا</span><span class="name">ام رسالت</span></a></div>
-        <div class="tile"><a href="https://qbank24.ir/qbankpwa/#/" data-search="بانک کیوبانک"><span class="mono" aria-hidden="true">ک</span><span class="name">کیوبانک</span></a></div>
-        <div class="tile"><a href="https://my.qmehr724.com/" data-search="بانک مهر ایران قبض ۷۲۴"><span class="mono" aria-hidden="true">ب</span><span class="name">بانک مهر</span></a></div>
-        <div class="tile"><a href="https://user.imerat.ir/#!/login" data-search="مرآت بانک مهر ایران"><span class="mono" aria-hidden="true">م</span><span class="name">مرآت</span></a></div>
         <div class="tile"><a href="https://hplus.shahr-bank.ir/#/login" data-search="بانک همراه شهر پلاس"><span class="mono" aria-hidden="true">ه</span><span class="name">همراه شهر</span></a></div>
         <div class="tile"><a href="https://baran.bki.ir/#/home" data-search="بانک باران کشاورزی"><span class="mono" aria-hidden="true">ب</span><span class="name">باران</span></a></div>
         <div class="tile"><a href="https://pwa.bank-maskan.ir/auth/login" data-search="بانک مسکن"><span class="mono" aria-hidden="true">م</span><span class="name">مسکن</span></a></div>
@@ -1385,6 +1386,10 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://bsun.middleeastbank.ir/login" data-search="بی سان خاورمیانه بانک"><span class="mono" aria-hidden="true">ب</span><span class="name">بی سان</span></a></div>
         <div class="tile"><a href="https://dima.bankmellat.ir/" data-search="مگابانک ملت"><span class="mono" aria-hidden="true">د</span><span class="name">دیماملت</span></a></div>
         <div class="tile"><a href="https://ebanking.bankmellat.ir/ebanking/" data-search="اینترنت بانک ملت"><span class="mono" aria-hidden="true">ا</span><span class="name">اینترنت ملت</span></a></div>
+        <div class="tile"><a href="https://vbank.rqb.ir/" data-search="بانک وی رسالت"><span class="mono" aria-hidden="true">و</span><span class="name">وی رسالت</span></a></div>
+        <div class="tile"><a href="https://pishkhan.rqbank.ir/#/login" data-search="بانک پیشخوان رسالت"><span class="mono" aria-hidden="true">پ</span><span class="name">پیشخوان</span></a></div>
+        <div class="tile"><a href="https://www.mresalat.ir/fa" data-search="ام رسالت بانک"><span class="mono" aria-hidden="true">ا</span><span class="name">ام رسالت</span></a></div>
+        <div class="tile"><a href="https://user.imerat.ir/#!/login" data-search="مرآت بانک "><span class="mono" aria-hidden="true">م</span><span class="name">مرآت</span></a></div>
       </div></div></div>
     </section>
     <section class="panel cat" id="c-bourse" data-h="140" data-total="34" style="--h:140">
@@ -1395,40 +1400,37 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-bourse"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://www.tsetmc.com/" data-search="دیده‌بان بازار بورس"><span class="mono" aria-hidden="true">د</span><span class="name">دیده‌بان بورس</span></a></div>
-        <div class="tile"><a href="https://www.codal.ir/" data-search="بورس کدال"><span class="mono" aria-hidden="true">ک</span><span class="name">کدال</span></a></div>
-        <div class="tile"><a href="https://dara.csdiran.ir/login" data-search="درگاه یکپارچه زینفعان بورس سهام متوفی عدالت"><span class="mono" aria-hidden="true">د</span><span class="name">درگاه زینفعان</span></a></div>
-        <div class="tile"><a href="https://rahavard365.com/asset/1560/chart" data-search="بورس نمودار رهاورد ارز نمودار طلا شاخص چارت"><span class="mono" aria-hidden="true">ر</span><span class="name">رهاورد ۳۶۵</span></a></div>
-        <div class="tile"><a href="https://farachart.com/" data-search="بورس نمودار ارز طلا شاخص چارت فراچارت"><span class="mono" aria-hidden="true">ف</span><span class="name">فراچارت</span></a></div>
-        <div class="tile"><a href="https://www.sena.ir/" data-search="سنا اخبار بورس"><span class="mono" aria-hidden="true">ا</span><span class="name">اخبار بورس</span></a></div>
         <div class="tile"><a href="https://mofidonline.com/" data-search="بورس آنلاین پلاس مفید"><span class="mono" aria-hidden="true">آ</span><span class="name">آنلاین پلاس مفید</span></a></div>
         <div class="tile"><a href="https://my.emofid.com/" data-search="خرید مفیدآپ بورس سهام"><span class="mono" aria-hidden="true">م</span><span class="name">مفید آپ</span></a></div>
         <div class="tile"><a href="https://m.easytrader.ir/market-watch" data-search="بورس ایزی خرید تریدر مفید"><span class="mono" aria-hidden="true">ا</span><span class="name">ایزی تریدر</span></a></div>
+        <div class="tile"><a href="https://pwa.bidartrader.ir/" data-search="خرید نقره اقتصادبیدار بورس سهام"><span class="mono" aria-hidden="true">ا</span><span class="name">اقتصادبیدار</span></a></div>
+        <div class="tile"><a href="https://smobilepro.mobinsb.ir/" data-search="خرید بورس مبین سرمایه"><span class="mono" aria-hidden="true">م</span><span class="name">مبین سرمایه</span></a></div>
         <div class="tile"><a href="https://online.agah.com/" data-search="خرید آگاه بورس سهام"><span class="mono" aria-hidden="true">آ</span><span class="name">آساتریدر</span></a></div>
         <div class="tile"><a href="https://my.agah.com/" data-search="خرید آگاه من بورس سهام"><span class="mono" aria-hidden="true">آ</span><span class="name">آگاه من</span></a></div>
         <div class="tile"><a href="https://mobotrader.nahayatnegar.com/online/watchlist" data-search="خرید نقره نهایت نگر بورس سهام"><span class="mono" aria-hidden="true">ن</span><span class="name">نهایت نگر</span></a></div>
         <div class="tile"><a href="https://m.farabixo.irfarabi.com/" data-search="بورس فارابی"><span class="mono" aria-hidden="true">ف</span><span class="name">فارابی</span></a></div>
         <div class="tile"><a href="https://my.irfarabi.com/" data-search="بورس فارابی"><span class="mono" aria-hidden="true">ف</span><span class="name">فارابی من</span></a></div>
-        <div class="tile"><a href="https://pwa.bidartrader.ir/" data-search="خرید نقره اقتصادبیدار بورس سهام"><span class="mono" aria-hidden="true">ا</span><span class="name">اقتصادبیدار</span></a></div>
-        <div class="tile"><a href="https://smobilepro.mobinsb.ir/" data-search="خرید بورس مبین سرمایه"><span class="mono" aria-hidden="true">م</span><span class="name">مبین سرمایه</span></a></div>
         <div class="tile"><a href="https://mobile.samanbourse.ir/Login" data-search="بورس آنلاین پلاس سامان سهام"><span class="mono" aria-hidden="true">آ</span><span class="name">آنلاین پلاس سامان</span></a></div>
         <div class="tile"><a href="https://my.samanbourse.ir/login" data-search="خرید بورس سهام سامان نئوبروکر آنلاین"><span class="mono" aria-hidden="true">ن</span><span class="name">نئوبروکر سامان</span></a></div>
         <div class="tile"><a href="https://my.charisma.ir/" data-search="خرید نقره کاریزما بورس سهام"><span class="mono" aria-hidden="true">ک</span><span class="name">کاریزما</span></a></div>
         <div class="tile"><a href="https://mobile.mellatbroker.ir/Login" data-search="ملت سهام خرید بورس کارگزاری بانک"><span class="mono" aria-hidden="true">ک</span><span class="name">کارگزاری ملت</span></a></div>
-        <div class="tile"><a href="https://behgozin.exirbroker.com/mobile/#view/login.html" data-search="بورس آنلاین بهگزین سهام اکسیر"><span class="mono" aria-hidden="true">ب</span><span class="name">بهگزین</span></a></div>
+        <div class="tile"><a href="https://mobile.sepahbroker.ir/" data-search="خرید بورس سهام کارگزاری بانک سپه موبایل"><span class="mono" aria-hidden="true">ک</span><span class="name">کارگزاری سپه</span></a></div>
+        <div class="tile"><a href="https://my.bmibourse.ir/" data-search="خرید بورس سهام کارگزاری بانک ملی آنلاین وب"><span class="mono" aria-hidden="true">م</span><span class="name">ملی آنلاین</span></a></div>
+        <div class="tile"><a href="https://mobile.bmibourse.ir/" data-search="خرید بورس سهام کارگزاری بانک ملی موبایل"><span class="mono" aria-hidden="true">م</span><span class="name">ملی موبایل</span></a></div>
         <div class="tile"><a href="https://www.sahamyab.com/" data-search="خرید سهامیاب من بورس سهام"><span class="mono" aria-hidden="true">س</span><span class="name">سهامیاب</span></a></div>
-        <div class="tile"><a href="https://tadbir.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره تدبیرگران فردا بورس سهام"><span class="mono" aria-hidden="true">ت</span><span class="name">تدبیرگران</span></a></div>
-        <div class="tile"><a href="https://razavi.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره رضوی بورس سهام"><span class="mono" aria-hidden="true">ر</span><span class="name">رضوی</span></a></div>
-        <div class="tile"><a href="https://sm.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره صنعت و معدن بورس سهام"><span class="mono" aria-hidden="true">ص</span><span class="name">صنعت و معدن</span></a></div>
+        <div class="tile"><a href="https://trader.danayan.broker/tse" data-search="خرید بورس سهام کارگزاری دانایان موبایل"><span class="mono" aria-hidden="true">د</span><span class="name">دانایان موبایل</span></a></div>
         <div class="tile"><a href="https://mobile.oibourse.ir/login" data-search="خرید بورس اردیبهشت ایرانیان سهام"><span class="mono" aria-hidden="true">ا</span><span class="name">اردیبهشت ایرانیان</span></a></div>
         <div class="tile"><a href="https://pwa.pasargadtrader.ir/auth/login" data-search="خرید نقره پاسارگاد بورس سهام کارگزاری"><span class="mono" aria-hidden="true">پ</span><span class="name">پاسارگاد</span></a></div>
         <div class="tile"><a href="https://tejarat.irbrokersite.ir/" data-search="خرید بورس سهام کارگزاری بانک تجارت آنلاین وب"><span class="mono" aria-hidden="true">ک</span><span class="name">کارگزاری تجارت</span></a></div>
         <div class="tile"><a href="https://tejarat.exirbroker.com/mobile/#view/login.html" data-search="خرید بورس سهام کارگزاری بانک تجارت موبایل اکسیر"><span class="mono" aria-hidden="true">ت</span><span class="name">تجارت موبایل</span></a></div>
-        <div class="tile"><a href="https://mobile.sepahbroker.ir/" data-search="خرید بورس سهام کارگزاری بانک سپه موبایل"><span class="mono" aria-hidden="true">ک</span><span class="name">کارگزاری سپه</span></a></div>
-        <div class="tile"><a href="https://my.bmibourse.ir/" data-search="خرید بورس سهام کارگزاری بانک ملی آنلاین وب"><span class="mono" aria-hidden="true">م</span><span class="name">ملی آنلاین</span></a></div>
-        <div class="tile"><a href="https://mobile.bmibourse.ir/" data-search="خرید بورس سهام کارگزاری بانک ملی موبایل"><span class="mono" aria-hidden="true">م</span><span class="name">ملی موبایل</span></a></div>
-        <div class="tile"><a href="https://mobile.danayan.broker/Login" data-search="خرید بورس سهام کارگزاری دانایان موبایل"><span class="mono" aria-hidden="true">د</span><span class="name">دانایان موبایل</span></a></div>
-        <div class="tile"><a href="https://online.danayan.broker/login?checkmobile=false" data-search="خرید بورس سهام کارگزاری دانایان آنلاین وب"><span class="mono" aria-hidden="true">د</span><span class="name">دانایان آنلاین</span></a></div>
+        <div class="tile"><a href="https://behgozin.exirbroker.com/mobile/#view/login.html" data-search="بورس آنلاین بهگزین سهام اکسیر"><span class="mono" aria-hidden="true">ب</span><span class="name">بهگزین</span></a></div>
+        <div class="tile"><a href="https://tadbir.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره تدبیرگران فردا بورس سهام"><span class="mono" aria-hidden="true">ت</span><span class="name">تدبیرگران</span></a></div>
+        <div class="tile"><a href="https://razavi.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره رضوی بورس سهام"><span class="mono" aria-hidden="true">ر</span><span class="name">رضوی</span></a></div>
+        <div class="tile"><a href="https://sm.exirbroker.com/mobile/#view/login.html" data-search="خرید نقره صنعت و معدن بورس سهام"><span class="mono" aria-hidden="true">ص</span><span class="name">صنعت و معدن</span></a></div>
+        <div class="tile"><a href="https://www.tsetmc.com/" data-search="دیده‌بان بازار بورس"><span class="mono" aria-hidden="true">د</span><span class="name">دیده‌بان بورس</span></a></div>
+        <div class="tile"><a href="https://www.codal.ir/" data-search="بورس کدال"><span class="mono" aria-hidden="true">ک</span><span class="name">کدال</span></a></div>
+        <div class="tile"><a href="https://dara.csdiran.ir/login" data-search="درگاه یکپارچه زینفعان بورس سهام متوفی عدالت"><span class="mono" aria-hidden="true">د</span><span class="name">درگاه زینفعان</span></a></div>
+        <div class="tile"><a href="https://rahavard365.com/asset/1560/chart" data-search="بورس نمودار رهاورد ارز نمودار طلا شاخص چارت"><span class="mono" aria-hidden="true">ر</span><span class="name">رهاورد ۳۶۵</span></a></div>
       </div></div></div>
     </section>
     <section class="panel cat" id="c-crypto" data-h="36" data-total="8" style="--h:36">
@@ -3441,7 +3443,8 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       if (d.pct == null) { c.textContent = ''; c.className = 'tk-c'; }
       else {
         c.className = 'tk-c ' + (d.pct >= 0 ? 'up' : 'down');
-        c.textContent = (d.pct >= 0 ? '▲ ' : '▼ ') + Math.abs(d.pct).toLocaleString('fa-IR', { maximumFractionDigits: 2 }) + '٪';
+        /* علامت مثبت/منفی به‌جای مثلث: جمع‌وجورتر می‌شود؛ رنگ سبز/قرمز جهت را نشان می‌دهد */
+        c.textContent = (d.pct >= 0 ? '+' : '-') + Math.abs(d.pct).toLocaleString('fa-IR', { maximumFractionDigits: 2 }) + '٪';
       }
       box.classList.toggle('stale', stale || !!tkFailed[id]);
     });
