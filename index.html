@@ -1006,6 +1006,10 @@ dialog.sheet::before {
   font-size: 11px; opacity: .85; font-variant-numeric: tabular-nums; direction: ltr;
 }
 .wx-side.wx-stale { opacity: .75; }
+.wx-side.wx-stale .wx-desc { display: inline; opacity: .85; max-width: 11em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wx-age-row { display: flex; align-items: center; gap: 10px; margin: -6px 0 10px; color: var(--muted); font-size: 11.5px; flex-wrap: wrap; }
+.wx-age-row .mnav { min-width: 0; height: 34px; font-size: 12px; }
+.wx-age-row .mnav[disabled] { opacity: .55; cursor: default; }
 /* در نمایشگرهای باریک، کمینه/بیشینهٔ دما پنهان می‌شود تا هر دو بخش تمیز در یک کادر بمانند */
 @media (max-width: 459px) { .wx-side .wx-hilo { display: none; } }
 
@@ -1258,20 +1262,19 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 
   <nav class="chips" id="chips" aria-label="دسته‌ها">
       <button class="chip" type="button" data-target="c-mine" style="--h:150" hidden>لینک‌های من<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-bank" style="--h:222">بانک<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-bank" style="--h:222">شبکه بانکی<b class="n"></b></button>
       <button class="chip" type="button" data-target="c-bourse" style="--h:140">بورس و کارگزاری<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-crypto" style="--h:36">ارز دیجیتال<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-forex" style="--h:82">فارکس<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-prices" style="--h:52">قیمت‌ها<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-gov" style="--h:245">دولتی<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-travel" style="--h:190">سفر<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-operators" style="--h:18">اپراتور<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-cars" style="--h:48">خودرو<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-shops" style="--h:330">فروشگاه<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-social" style="--h:172">پیام‌رسان<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-operators" style="--h:18">اپراتورها<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-travel" style="--h:190">نقشه، سفر و حمل‌ونقل<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-prices" style="--h:52">قیمت طلا و دلار<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-forex" style="--h:82">بروکرها و صرافی‌ها<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-gov" style="--h:245">خدمات دولتی و شهروندی<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-social" style="--h:172">شبکه‌های اجتماعی<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-shops" style="--h:330">فروشگاه‌های اینترنتی<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-cars" style="--h:48">خدمات خودرو<b class="n"></b></button>
       <button class="chip" type="button" data-target="c-ai" style="--h:262">هوش مصنوعی<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-google" style="--h:200">گوگل<b class="n"></b></button>
-      <button class="chip" type="button" data-target="c-picks" style="--h:292">پیشنهادی<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-google" style="--h:200">سرویس‌های گوگل<b class="n"></b></button>
+      <button class="chip" type="button" data-target="c-picks" style="--h:292">سایت‌های پیشنهادی<b class="n"></b></button>
   </nav>
 
   <section class="panel calpanel" id="mcal" style="--h:222">
@@ -1437,29 +1440,58 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://rahavard365.com/asset/1560/chart" data-search="بورس نمودار رهاورد ارز نمودار طلا شاخص چارت"><span class="mono" aria-hidden="true">ر</span><span class="name">رهاورد ۳۶۵</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-crypto" data-h="36" data-total="8" style="--h:36">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-crypto">
-        <span class="badge" aria-hidden="true">🪙</span>
-        <span class="cat-name">ارز دیجیتال</span>
-        <span class="count">۸</span>
+    <section class="panel cat" id="c-operators" data-h="18" data-total="9" style="--h:18">
+      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-operators">
+        <span class="badge" aria-hidden="true">📶</span>
+        <span class="cat-name">اپراتورها</span>
+        <span class="count">۹</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div class="body" id="b-crypto"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://coinmarketcap.com/" data-search="کوین مارکت کپ قیمت ارز دیجیتال"><span class="mono" aria-hidden="true">م</span><span class="name">مارکت کپ</span></a></div>
-        <div class="tile"><a href="https://bitpin.ir/" data-search="خرید بیت‌پین صرافی ارز دیجیتال"><span class="mono" aria-hidden="true">ب</span><span class="name">بیت‌پین</span></a></div>
-        <div class="tile"><a href="https://nobitex.ir/panel" data-search="خرید نوبیتکس صرافی ارز دیجیتال"><span class="mono" aria-hidden="true">ن</span><span class="name">نوبیتکس</span></a></div>
-        <div class="tile"><a href="https://tabdeal.org/panel" data-search="خرید صرافی تبدیل ارز دیجیتال"><span class="mono" aria-hidden="true">ت</span><span class="name">تبدیل</span></a></div>
-        <div class="tile"><a href="https://abantether.com/" data-search="خرید صرافی آبان‌تتر ارز دیجیتال"><span class="mono" aria-hidden="true">آ</span><span class="name">آبان‌تتر</span></a></div>
-        <div class="tile"><a href="https://sarmayex.com/" data-search="خرید صرافی سرمایکس ارز دیجیتال"><span class="mono" aria-hidden="true">س</span><span class="name">سرمایکس</span></a></div>
-        <div class="tile"><a href="https://bit24.cash/dashboard/" data-search="خرید صرافی بیت 24 ارز دیجیتال"><span class="mono" aria-hidden="true">ب</span><span class="name">بیت24</span></a></div>
-        <div class="tile"><a href="https://wallex.ir/app" data-search="خرید والکس صرافی ارز دیجیتال"><span class="mono" aria-hidden="true">و</span><span class="name">والکس</span></a></div>
+      <div class="body" id="b-operators"><div class="inner"><div class="grid">
+        <div class="tile"><a href="https://my.rightel.ir/main/dashboard" data-search="راستل اپراتور سیم‌کارت موبایل rightel"><span class="mono" aria-hidden="true">ر</span><span class="name">راستل</span></a></div>
+        <div class="tile"><a href="https://my.mci.ir/" data-search="اپراتور همراه من همراه اول"><span class="mono" aria-hidden="true">ه</span><span class="name">همراه من</span></a></div>
+        <div class="tile"><a href="https://my.irancell.ir/" data-search="اپراتور ایرانسل من"><span class="mono" aria-hidden="true">ا</span><span class="name">ایرانسل من</span></a></div>
+        <div class="tile"><a href="https://bargheman.com/profile/dashboard" data-search="اپراتور برق من"><span class="mono" aria-hidden="true">ب</span><span class="name">برق من</span></a></div>
+        <div class="tile"><a href="https://my.nigc.ir/" data-search="اپراتور گاز من"><span class="mono" aria-hidden="true">گ</span><span class="name">گاز من</span></a></div>
+        <div class="tile"><a href="https://egas.ir/crm" data-search="اپراتور گاز من"><span class="mono" aria-hidden="true">گ</span><span class="name">گازخراسان</span></a></div>
+        <div class="tile"><a href="https://moshtarekin.abfamashhad.ir/Abfamashhad/sid.aspx" data-search="اپراتور آبفا مشهد آب فاضلاب"><span class="mono" aria-hidden="true">آ</span><span class="name">آبفا مشهد</span></a></div>
+        <div class="tile"><a href="https://my.tci.ir/dashboard/home" data-search="اپراتور مخابرات من"><span class="mono" aria-hidden="true">م</span><span class="name">مخابرات من</span></a></div>
+        <div class="tile"><a href="https://internet.tci.ir/panel/" data-search="اپراتور مخابرات اینترنت adsl 2020 تلفن۲۰۲۰"><span class="mono" aria-hidden="true">ا</span><span class="name">اینترنت مخابرات</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-forex" data-h="82" data-total="8" style="--h:82">
+    <section class="panel cat" id="c-travel" data-h="190" data-total="5" style="--h:190">
+      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-travel">
+        <span class="badge" aria-hidden="true">🗺️</span>
+        <span class="cat-name">نقشه، سفر و حمل‌ونقل</span>
+        <span class="count">۵</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="body" id="b-travel"><div class="inner"><div class="grid">
+        <div class="tile"><a href="https://fids.airport.ir/102/" data-search="سفر اطلاعات پرواز"><span class="mono" aria-hidden="true">ا</span><span class="name">اطلاعات پرواز</span></a></div>
+        <div class="tile"><a href="https://www.flightradar24.com/" data-search="مپ نقشه رادار پرواز"><span class="mono" aria-hidden="true">ر</span><span class="name">رادار۲۴</span></a></div>
+        <div class="tile"><a href="https://balad.ir" data-search="نقشه نشان بلد مسیریاب گوگل مپ آدرس"><span class="mono" aria-hidden="true">ب</span><span class="name">بلد</span></a></div>
+        <div class="tile"><a href="https://neshan.org/maps#c36.298-59.606-9z-0p" data-search="نقشه نشان بلد مسیریاب گوگل مپ آدرس"><span class="mono" aria-hidden="true">ن</span><span class="name">نشان</span></a></div>
+        <div class="tile"><a href="https://app.snapp.taxi/?superapp_service=home" data-search="سفر خرید اسنپ"><span class="mono" aria-hidden="true">ا</span><span class="name">اسنپ</span></a></div>
+      </div></div></div>
+    </section>
+    <section class="panel cat" id="c-prices" data-h="52" data-total="3" style="--h:52">
+      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-prices">
+        <span class="badge" aria-hidden="true">💰</span>
+        <span class="cat-name">قیمت طلا و دلار</span>
+        <span class="count">۳</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="body" id="b-prices"><div class="inner"><div class="grid">
+        <div class="tile"><a href="https://www.tgju.org/" data-search="خرید قیمت دلار طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت دلار و طلا</span></a></div>
+        <div class="tile"><a href="https://talasea.ir/" data-search="خرید قیمت طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت طلاسی</span></a></div>
+        <div class="tile"><a href="https://milli.gold/app/home" data-search="خرید قیمت میلی طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت طلا میلی</span></a></div>
+        </div></div></div>
+    </section>
+    <section class="panel cat" id="c-forex" data-h="82" data-total="16" style="--h:82">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-forex">
         <span class="badge" aria-hidden="true">💱</span>
-        <span class="cat-name">فارکس و بازار جهانی</span>
-        <span class="count">۸</span>
+        <span class="cat-name">بروکرها و صرافی‌ها</span>
+        <span class="count">۱۶</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-forex"><div class="inner"><div class="grid">
@@ -1471,20 +1503,18 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://client.opofinance.com/" data-search="اوپو فایننس بروکر فارکس"><span class="mono" aria-hidden="true">ا</span><span class="name">اوپو فایننس</span></a></div>
         <div class="tile"><a href="https://market24hclock.com/" data-search="فارکس ساعت مارکت"><span class="mono" aria-hidden="true">س</span><span class="name">ساعت مارکت</span></a></div>
         <div class="tile"><a href="https://www.tradingview.com/chart/6zSpUWVj/" data-search="فارکس تریدینگ ویو ارز شاخص نمودار چارت"><span class="mono" aria-hidden="true">ت</span><span class="name">تریدینگ ویو</span></a></div>
+      
+
+        <div class="tile"><a href="https://coinmarketcap.com/" data-search="کوین مارکت کپ قیمت ارز دیجیتال"><span class="mono" aria-hidden="true">م</span><span class="name">مارکت کپ</span></a></div>
+        <div class="tile"><a href="https://bitpin.ir/" data-search="خرید بیت‌پین صرافی ارز دیجیتال"><span class="mono" aria-hidden="true">ب</span><span class="name">بیت‌پین</span></a></div>
+        <div class="tile"><a href="https://nobitex.ir/panel" data-search="خرید نوبیتکس صرافی ارز دیجیتال"><span class="mono" aria-hidden="true">ن</span><span class="name">نوبیتکس</span></a></div>
+        <div class="tile"><a href="https://tabdeal.org/panel" data-search="خرید صرافی تبدیل ارز دیجیتال"><span class="mono" aria-hidden="true">ت</span><span class="name">تبدیل</span></a></div>
+        <div class="tile"><a href="https://abantether.com/" data-search="خرید صرافی آبان‌تتر ارز دیجیتال"><span class="mono" aria-hidden="true">آ</span><span class="name">آبان‌تتر</span></a></div>
+        <div class="tile"><a href="https://sarmayex.com/" data-search="خرید صرافی سرمایکس ارز دیجیتال"><span class="mono" aria-hidden="true">س</span><span class="name">سرمایکس</span></a></div>
+        <div class="tile"><a href="https://bit24.cash/dashboard/" data-search="خرید صرافی بیت 24 ارز دیجیتال"><span class="mono" aria-hidden="true">ب</span><span class="name">بیت24</span></a></div>
+        <div class="tile"><a href="https://wallex.ir/app" data-search="خرید والکس صرافی ارز دیجیتال"><span class="mono" aria-hidden="true">و</span><span class="name">والکس</span></a></div>
+      
       </div></div></div>
-    </section>
-    <section class="panel cat" id="c-prices" data-h="52" data-total="3" style="--h:52">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-prices">
-        <span class="badge" aria-hidden="true">💰</span>
-        <span class="cat-name">قیمت طلا و ابزار مالی</span>
-        <span class="count">۳</span>
-        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="body" id="b-prices"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://www.tgju.org/" data-search="خرید قیمت دلار طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت دلار و طلا</span></a></div>
-        <div class="tile"><a href="https://talasea.ir/" data-search="خرید قیمت طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت طلاسی</span></a></div>
-        <div class="tile"><a href="https://milli.gold/app/home" data-search="خرید قیمت میلی طلا"><span class="mono" aria-hidden="true">ق</span><span class="name">قیمت طلا میلی</span></a></div>
-        </div></div></div>
     </section>
     <section class="panel cat" id="c-gov" data-h="245" data-total="10" style="--h:245">
       <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-gov">
@@ -1506,55 +1536,23 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://sakha.epolice.ir/portal/login" data-search="پلیس خودرو سخا"><span class="mono" aria-hidden="true">س</span><span class="name">سخا</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-travel" data-h="190" data-total="5" style="--h:190">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-travel">
-        <span class="badge" aria-hidden="true">🗺️</span>
-        <span class="cat-name">نقشه، سفر و حمل‌ونقل</span>
-        <span class="count">۵</span>
+    <section class="panel cat" id="c-social" data-h="172" data-total="9" style="--h:172">
+      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-social">
+        <span class="badge" aria-hidden="true">💬</span>
+        <span class="cat-name">شبکه‌های اجتماعی</span>
+        <span class="count">۹</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div class="body" id="b-travel"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://fids.airport.ir/102/" data-search="سفر اطلاعات پرواز"><span class="mono" aria-hidden="true">ا</span><span class="name">اطلاعات پرواز</span></a></div>
-        <div class="tile"><a href="https://www.flightradar24.com/" data-search="مپ نقشه رادار پرواز"><span class="mono" aria-hidden="true">ر</span><span class="name">رادار۲۴</span></a></div>
-        <div class="tile"><a href="https://balad.ir" data-search="نقشه نشان بلد مسیریاب گوگل مپ آدرس"><span class="mono" aria-hidden="true">ب</span><span class="name">بلد</span></a></div>
-        <div class="tile"><a href="https://neshan.org/maps#c36.298-59.606-9z-0p" data-search="نقشه نشان بلد مسیریاب گوگل مپ آدرس"><span class="mono" aria-hidden="true">ن</span><span class="name">نشان</span></a></div>
-        <div class="tile"><a href="https://app.snapp.taxi/?superapp_service=home" data-search="سفر خرید اسنپ"><span class="mono" aria-hidden="true">ا</span><span class="name">اسنپ</span></a></div>
-      </div></div></div>
-    </section>
-    <section class="panel cat" id="c-operators" data-h="18" data-total="8" style="--h:18">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-operators">
-        <span class="badge" aria-hidden="true">📶</span>
-        <span class="cat-name">اپراتورها</span>
-        <span class="count">۸</span>
-        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="body" id="b-operators"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://my.mci.ir/" data-search="اپراتور همراه من همراه اول"><span class="mono" aria-hidden="true">ه</span><span class="name">همراه من</span></a></div>
-        <div class="tile"><a href="https://my.irancell.ir/" data-search="اپراتور ایرانسل من"><span class="mono" aria-hidden="true">ا</span><span class="name">ایرانسل من</span></a></div>
-        <div class="tile"><a href="https://bargheman.com/profile/dashboard" data-search="اپراتور برق من"><span class="mono" aria-hidden="true">ب</span><span class="name">برق من</span></a></div>
-        <div class="tile"><a href="https://my.nigc.ir/" data-search="اپراتور گاز من"><span class="mono" aria-hidden="true">گ</span><span class="name">گاز من</span></a></div>
-        <div class="tile"><a href="https://egas.ir/crm" data-search="اپراتور گاز من"><span class="mono" aria-hidden="true">گ</span><span class="name">گازخراسان</span></a></div>
-        <div class="tile"><a href="https://moshtarekin.abfamashhad.ir/Abfamashhad/sid.aspx" data-search="اپراتور آبفا مشهد آب فاضلاب"><span class="mono" aria-hidden="true">آ</span><span class="name">آبفا مشهد</span></a></div>
-        <div class="tile"><a href="https://my.tci.ir/dashboard/home" data-search="اپراتور مخابرات من"><span class="mono" aria-hidden="true">م</span><span class="name">مخابرات من</span></a></div>
-        <div class="tile"><a href="https://internet.tci.ir/panel/" data-search="اپراتور مخابرات اینترنت adsl 2020 تلفن۲۰۲۰"><span class="mono" aria-hidden="true">ا</span><span class="name">اینترنت مخابرات</span></a></div>
-      </div></div></div>
-    </section>
-    <section class="panel cat" id="c-cars" data-h="48" data-total="8" style="--h:48">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-cars">
-        <span class="badge" aria-hidden="true">🚗</span>
-        <span class="cat-name">خدمات خودرو</span>
-        <span class="count">۸</span>
-        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="body" id="b-cars"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://www.rahvar120.ir/" data-search="راهور ۱۲۰ خودرو"><span class="mono" aria-hidden="true">ر</span><span class="name">راهور ۱۲۰</span></a></div>
-        <div class="tile"><a href="https://bahman.iranecar.com/signin" data-search="خرید خودرو بهمن ثبت نام ماشین"><span class="mono" aria-hidden="true">ب</span><span class="name">بهمن خودرو</span></a></div>
-        <div class="tile"><a href="https://esale.ikco.ir/#!/Login?t=0" data-search="خرید ایران خودرو ماشین ثبت نام"><span class="mono" aria-hidden="true">ا</span><span class="name">ایران خودرو</span></a></div>
-        <div class="tile"><a href="https://ikcosales.ir/check-national-code" data-search="خرید ایران خودرو ماشین ثبت نام"><span class="mono" aria-hidden="true">ا</span><span class="name">اولویت بندی</span></a></div>
-        <div class="tile"><a href="https://saipa.iranecar.com/auth/signin" data-search="خرید سایپا خودرو ماشین ثبت نام"><span class="mono" aria-hidden="true">س</span><span class="name">سایپا</span></a></div>
-        <div class="tile"><a href="https://aaniro.com/#/plates" data-search="عوارض آزاد راه خودرو آنی رو"><span class="mono" aria-hidden="true">ع</span><span class="name">عوارض آزادراه</span></a></div>
-        <div class="tile"><a href="https://salecars.ir/login?url=/menu" data-search="خرید ثبت نام خارجی خودرو وارداتی اولویت بندی"><span class="mono" aria-hidden="true">ث</span><span class="name">ثبت نام وارداتی</span></a></div>
-        <div class="tile"><a href="https://eservice.mashhad.ir/fa/FAQ/2863192" data-search="آنی رو سمیع عوارض خودرو شهرداری پرداخت"><span class="mono" aria-hidden="true">ع</span><span class="name">عوارض خودرو</span></a></div>
+      <div class="body" id="b-social"><div class="inner"><div class="grid">
+        <div class="tile"><a href="https://my.shad.ir/" data-search="پیام رسان شاد"><span class="mono" aria-hidden="true">ش</span><span class="name">شاد</span></a></div>
+        <div class="tile"><a href="https://web.eitaa.com/" data-search="پیام رسان ایتا"><span class="mono" aria-hidden="true">ا</span><span class="name">ایتا</span></a></div>
+        <div class="tile"><a href="https://m.rubika.ir/" data-search="پیام رسان روبیکا"><span class="mono" aria-hidden="true">ر</span><span class="name">روبیکا</span></a></div>
+        <div class="tile"><a href="https://web.bale.ai/chat" data-search="پیام رسان بله"><span class="mono" aria-hidden="true">ب</span><span class="name">بله</span></a></div>
+        <div class="tile"><a href="https://web.splus.ir/" data-search="پیام رسان سروش"><span class="mono" aria-hidden="true">س</span><span class="name">سروش</span></a></div>
+        <div class="tile"><a href="https://web.gap.im/" data-search="پیام رسان گپ"><span class="mono" aria-hidden="true">گ</span><span class="name">گپ</span></a></div>
+        <div class="tile"><a href="https://web.igap.net/" data-search="پیام رسان آی‌گپ"><span class="mono" aria-hidden="true">آ</span><span class="name">آی‌گپ</span></a></div>
+        <div class="tile"><a href="https://web.telegram.org/" data-search="پیام رسان تلگرام وب"><span class="mono" aria-hidden="true">ت</span><span class="name">تلگرام وب</span></a></div>
+        <div class="tile"><a href="https://www.instagram.com/" data-search="پیام رسان اینستاگرام"><span class="mono" aria-hidden="true">ا</span><span class="name">اینستاگرام</span></a></div>
       </div></div></div>
     </section>
     <section class="panel cat" id="c-shops" data-h="330" data-total="14" style="--h:330">
@@ -1581,23 +1579,22 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://pwa.tara.mobi/" data-search="تارا قسط خرید"><span class="mono" aria-hidden="true">ت</span><span class="name">تارا</span></a></div>
       </div></div></div>
     </section>
-    <section class="panel cat" id="c-social" data-h="172" data-total="9" style="--h:172">
-      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-social">
-        <span class="badge" aria-hidden="true">💬</span>
-        <span class="cat-name">شبکه‌های اجتماعی</span>
-        <span class="count">۹</span>
+    <section class="panel cat" id="c-cars" data-h="48" data-total="8" style="--h:48">
+      <button class="cat-head" type="button" aria-expanded="true" aria-controls="b-cars">
+        <span class="badge" aria-hidden="true">🚗</span>
+        <span class="cat-name">خدمات خودرو</span>
+        <span class="count">۸</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div class="body" id="b-social"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://my.shad.ir/" data-search="پیام رسان شاد"><span class="mono" aria-hidden="true">ش</span><span class="name">شاد</span></a></div>
-        <div class="tile"><a href="https://web.eitaa.com/" data-search="پیام رسان ایتا"><span class="mono" aria-hidden="true">ا</span><span class="name">ایتا</span></a></div>
-        <div class="tile"><a href="https://m.rubika.ir/" data-search="پیام رسان روبیکا"><span class="mono" aria-hidden="true">ر</span><span class="name">روبیکا</span></a></div>
-        <div class="tile"><a href="https://web.bale.ai/chat" data-search="پیام رسان بله"><span class="mono" aria-hidden="true">ب</span><span class="name">بله</span></a></div>
-        <div class="tile"><a href="https://web.splus.ir/" data-search="پیام رسان سروش"><span class="mono" aria-hidden="true">س</span><span class="name">سروش</span></a></div>
-        <div class="tile"><a href="https://web.gap.im/" data-search="پیام رسان گپ"><span class="mono" aria-hidden="true">گ</span><span class="name">گپ</span></a></div>
-        <div class="tile"><a href="https://web.igap.net/" data-search="پیام رسان آی‌گپ"><span class="mono" aria-hidden="true">آ</span><span class="name">آی‌گپ</span></a></div>
-        <div class="tile"><a href="https://web.telegram.org/" data-search="پیام رسان تلگرام وب"><span class="mono" aria-hidden="true">ت</span><span class="name">تلگرام وب</span></a></div>
-        <div class="tile"><a href="https://www.instagram.com/" data-search="پیام رسان اینستاگرام"><span class="mono" aria-hidden="true">ا</span><span class="name">اینستاگرام</span></a></div>
+      <div class="body" id="b-cars"><div class="inner"><div class="grid">
+        <div class="tile"><a href="https://www.rahvar120.ir/" data-search="راهور ۱۲۰ خودرو"><span class="mono" aria-hidden="true">ر</span><span class="name">راهور ۱۲۰</span></a></div>
+        <div class="tile"><a href="https://bahman.iranecar.com/signin" data-search="خرید خودرو بهمن ثبت نام ماشین"><span class="mono" aria-hidden="true">ب</span><span class="name">بهمن خودرو</span></a></div>
+        <div class="tile"><a href="https://esale.ikco.ir/#!/Login?t=0" data-search="خرید ایران خودرو ماشین ثبت نام"><span class="mono" aria-hidden="true">ا</span><span class="name">ایران خودرو</span></a></div>
+        <div class="tile"><a href="https://ikcosales.ir/check-national-code" data-search="خرید ایران خودرو ماشین ثبت نام"><span class="mono" aria-hidden="true">ا</span><span class="name">اولویت بندی</span></a></div>
+        <div class="tile"><a href="https://saipa.iranecar.com/auth/signin" data-search="خرید سایپا خودرو ماشین ثبت نام"><span class="mono" aria-hidden="true">س</span><span class="name">سایپا</span></a></div>
+        <div class="tile"><a href="https://aaniro.com/#/plates" data-search="عوارض آزاد راه خودرو آنی رو"><span class="mono" aria-hidden="true">ع</span><span class="name">عوارض آزادراه</span></a></div>
+        <div class="tile"><a href="https://salecars.ir/login?url=/menu" data-search="خرید ثبت نام خارجی خودرو وارداتی اولویت بندی"><span class="mono" aria-hidden="true">ث</span><span class="name">ثبت نام وارداتی</span></a></div>
+        <div class="tile"><a href="https://eservice.mashhad.ir/fa/FAQ/2863192" data-search="آنی رو سمیع عوارض خودرو شهرداری پرداخت"><span class="mono" aria-hidden="true">ع</span><span class="name">عوارض خودرو</span></a></div>
       </div></div></div>
     </section>
     <section class="panel cat" id="c-ai" data-h="262" data-total="12" style="--h:262">
@@ -1741,9 +1738,10 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
 <dialog class="sheet" id="wxDlg"><div class="sheet-in">
   <div class="sheet-head"><h2 id="wxDlgTitle">آب‌وهوای مشهد</h2><button class="x-btn" type="button" data-close aria-label="بستن"><svg aria-hidden="true"><use href="#i-x"/></svg></button></div>
   <p class="big" id="wxNow">در حال دریافت…</p>
+  <div class="wx-age-row"><button class="mnav" id="wxRefresh" type="button">به‌روزرسانی</button><span id="wxAge"></span></div>
   <h3>روزهای پیش رو</h3>
   <div id="wxDays"></div>
-  <p class="owq-note">منبع: Open-Meteo، به وقت رسمی مشهد (Asia/Tehran). اگر اینترنت در دسترس نباشد، آخرین دادهٔ ذخیره‌شده نشان داده می‌شود.</p>
+  <p class="owq-note">منبع: Open-Meteo؛ اگر در دسترس نبود خودکار از wttr.in خوانده می‌شود — به وقت رسمی مشهد (Asia/Tehran). اگر اینترنت در دسترس نباشد، آخرین دادهٔ ذخیره‌شده نشان داده می‌شود و زمان دریافتش کنار دکمهٔ به‌روزرسانی نوشته می‌شود.</p>
 </div></dialog>
 
 <dialog class="sheet" id="kbdDlg"><div class="sheet-in">
@@ -1925,6 +1923,9 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
   /* ── کاشی‌ها ── */
   var cats = $$('#cats .cat');
   var tiles = $$('#cats .tile');
+  /* ترتیب پیش‌فرض فایل — قبل از هر جابه‌جایی ذخیره‌شده ثبت می‌شود تا «بازنشانی» همیشه ممکن باشد */
+  var fileCatIds = cats.map(function (s) { return s.id; });
+  var fileChipIds = $$('#chips .chip').map(function (c) { return c.getAttribute('data-target'); });
 
   /* ── حذف لینک‌های از پیش تعریف‌شده (فقط روی همین دستگاه؛ با دکمهٔ ↺ پایین صفحه برمی‌گردند) ── */
   var hiddenTiles = [];
@@ -2188,6 +2189,30 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       if (ch && ch.firstChild && ch.firstChild.nodeType === 3) ch.firstChild.nodeValue = nm;
     });
   }
+  /* یک‌بار در نسخهٔ ۳۶: ترتیب و نام‌های ذخیره‌شدهٔ قدیمی با چیدمان تازهٔ فایل هم‌رو می‌شوند
+     (اولویت‌های تازه: بانکی، بورس، اپراتورها، نقشه، طلا و دلار، بروکرها و صرافی‌ها، دولت، …)
+     بعد از همین یک بار، ترتیب و نام شخصی خودِ کاربر دوباره ملاک است */
+  (function () {
+    var VER = 'layout-v36';
+    if (store.get('layout_ver') !== VER) {
+      store.set('layout_ver', VER);
+      catOrder = []; saveCatOrder();
+      delete catNames['c-forex']; delete catNames['c-prices']; saveCatNames();
+      var to = tileOrder['b-operators'];
+      if (Array.isArray(to)) {
+        var i = to.indexOf('https://my.rightel.ir/main/dashboard');
+        if (i > 0) to.splice(i, 1);
+        if (i !== 0) to.unshift('https://my.rightel.ir/main/dashboard');
+        saveTileOrder();
+      }
+      /* دسته‌ها و چیپ‌ها دوباره به ترتیب پیش‌فرض فایل برگردند (applySavedOrder با فهرست خالی چیزی جابه‌جا نمی‌کند) */
+      var wrap = $('#cats');
+      fileCatIds.forEach(function (id) { var s = document.getElementById(id); if (s && s.parentNode === wrap) wrap.appendChild(s); });
+      var chipsBox = $('#chips');
+      fileChipIds.forEach(function (id) { var ch = chipsBox && $('.chip[data-target="' + id + '"]', chipsBox); if (ch) chipsBox.appendChild(ch); });
+      applySavedOrder();
+    }
+  })();
   applyCatNames();
   var renSec = null;
   document.addEventListener('click', function (ev) {
@@ -3771,7 +3796,17 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     95: ['رعدوبرق', '⛈️'], 96: ['رعدوبرق با تگرگ', '⛈️'], 99: ['رعدوبرق با تگرگ', '⛈️']
   };
   function wcode(c) { return WCODE[c] || ['نامعلوم', '🌡️']; }
+  /* کد هوای wttr.in (متادفتر) به همان شماره‌های WCODE ترجمه می‌شود تا فقط یک نقشهٔ توضیح داشته باشیم */
+  var WTCODE = { 113:0, 116:1, 119:3, 122:3, 143:45, 176:51, 179:71, 182:61, 185:61, 200:95, 227:71, 230:75, 248:45, 260:48, 263:51, 266:51, 281:61, 284:61, 293:51, 296:61, 299:63, 302:63, 305:63, 308:65, 311:63, 314:65, 317:71, 320:73, 323:71, 326:71, 329:73, 332:73, 335:75, 338:75, 350:71, 353:51, 356:63, 359:65, 362:71, 365:73, 368:71, 371:75, 374:51, 377:51, 386:95, 389:95, 392:95, 395:95 };
+  function wtcode(c) { var n = WTCODE[Number(c)]; return n == null ? 3 : n; }
+  function h12(h) {   /* «۰۶:۴۴ AM» سان است و «۰۶:۳۱ PM» را باید ۱۸:۳۱ دید */
+    var m = String(h || '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!m) return String(h || '').slice(0, 5);
+    var H = parseInt(m[1], 10) % 12 + (/pm/i.test(m[3]) ? 12 : 0);
+    return ('0' + H).slice(-2) + ':' + m[2];
+  }
   var wxCache = null;
+  var wxTries = 0;   /* تلاش‌های بی‌نتیجهٔ پشت‌سرهم؛ با هر دریافت موفق صفر می‌شود */
   try {
     var wxSaved = JSON.parse(store.get('wx_cache_v1', 'null'));
     if (wxSaved && wxSaved.cur && typeof wxSaved.cur.t === 'number' && Array.isArray(wxSaved.daily) && wxSaved.daily.length) wxCache = wxSaved;
@@ -3792,14 +3827,121 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     var c = wxCache.cur, w = wcode(c.code), d0 = wxCache.daily[0];
     $('#wxIco').textContent = w[1];
     $('#wxTemp').textContent = fa(Math.round(c.t)) + '°';
-    $('#wxDesc').textContent = w[0];
     $('#wxHiLo').textContent = d0 ? '↑' + fa(Math.round(d0.hi)) + '° ↓' + fa(Math.round(d0.lo)) + '°' : '';
     pill.hidden = false;
     var stale = Date.now() - wxCache.ts > 60 * 6e4;
     pill.classList.toggle('wx-stale', stale);
-    pill.setAttribute('title', 'آب‌وهوای مشهد؛ آخرین دریافت: ' + tfmt(wxCache.ts) + (stale ? ' (قدیمی)' : '') + ' — برای جزئیات بزن');
+    /* وقتی داده تازه نشده، سن واقعی عدد کنارش نوشته می‌شود تا «عدد دیروز» فریبنده نباشد */
+    $('#wxDesc').textContent = stale ? 'قدیمی · ' + wxAge() : w[0];
+    var wxWhere = geo.src !== 'mashhad' ? 'آب‌وهوای موقعیت شما' : 'آب‌وهوای مشهد';
+    pill.setAttribute('title', wxWhere + '؛ آخرین دریافت: ' + tfmt(wxCache.ts) + (stale ? ' (قدیمی)' : '') + ' — برای جزئیات بزن');
   }
-  function fetchWx() {
+  function wxSave(cache) {
+    wxCache = cache;
+    wxTries = 0;
+    try { store.set('wx_cache_v1', JSON.stringify(wxCache)); } catch (e) {}
+    paintWx();
+  }
+  function wxAge() {
+    var m = Math.round((Date.now() - wxCache.ts) / 6e4);
+    if (m < 1) return 'همین حالا';
+    if (m < 60) return fa(m) + ' دقیقه پیش';
+    var h = Math.floor(m / 60);
+    if (h < 24) return fa(h) + ' ساعت پیش';
+    return fa(Math.floor(h / 24)) + ' روز پیش';
+  }
+  function wxUrlWttr() {
+    return 'https://wttr.in/' + geo.lat + ',' + geo.lng + '?format=j1';
+  }
+  function parseWttr(j) {
+    var cc = j && j.current_condition && j.current_condition[0], ds = j && j.weather;
+    if (!cc || !Array.isArray(ds) || !ds.length) throw new Error('bad');
+    var daily = [];
+    for (var i = 0; i < Math.min(ds.length, 5); i++) {
+      var w = ds[i], a = (w.astronomy && w.astronomy[0]) || {};
+      var code = 0;
+      if (Array.isArray(w.hourly) && w.hourly.length) {
+        var mid = w.hourly[Math.min(w.hourly.length - 1, 4)];   /* نزدیک‌ترین نیم‌روز */
+        code = wtcode(mid.weatherCode);
+      }
+      daily.push({ d: w.date, code: code, hi: parseFloat(w.maxtempC), lo: parseFloat(w.mintempC),
+        sr: h12(a.sunrise), ss: h12(a.sunset) });
+    }
+    return {
+      ts: Date.now(), src: 'wttr.in',
+      cur: { t: parseFloat(cc.temp_C), app: parseFloat(cc.FeelsLikeC), hum: parseFloat(cc.humidity), wind: parseFloat(cc.windspeedKmph), code: wtcode(cc.weatherCode) },
+      daily: daily
+    };
+  }
+  /* منبع سوم (اگر Open-Meteo و wttr.in هر دو در دسترس نبودند): مؤسسهٔ هواشناسی نروژ (met.no)
+     بدون کلید، با هدر CORS باز و روی میزبانِ دیگری غیر از آن دو؛ پس اگر یکی فیلتر یا قطع باشد
+     این یکی جواب می‌دهد. بادش «متر بر ثانیه» است (×۳٫۶ = کیلومتر بر ساعت) و بیشینه/کمینهٔ هر روز
+     از تجمیع نقطه‌های همان روز به وقت تهران (UTC+۳:۳۰ ثابت) حساب می‌شود؛ طلوع/غروب ندارد و ردِ آن خالی می‌ماند */
+  var METCODE = { clearsky:0, fair:1, partlycloudy:2, cloudy:3, overcast:3, fog:45,
+    drizzle:51, lightrain:61, rain:63, heavyrain:65, lightrainshowers:80, rainshowers:81, heavyrainshowers:82,
+    lightsnow:71, snow:73, heavysnow:75, lightsnowshowers:85, snowshowers:85, heavysnowshowers:86,
+    lightsleet:61, sleet:63, heavysleet:65, lightsleetshowers:80, sleetshowers:81, heavysleetshowers:82 };
+  function metCode(s) {
+    var b = String(s || '').replace(/_(day|night|polartwilight)$/, '');
+    if (METCODE[b] != null) return METCODE[b];
+    if (/thunder|lightning/.test(b)) return 95;
+    if (/snow/.test(b)) return 73;
+    if (/sleet/.test(b)) return 61;
+    if (/rain|drizzle|showers/.test(b)) return 61;
+    return 3;
+  }
+  function wxUrlMet() {
+    return 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=' + geo.lat + '&lon=' + geo.lng;
+  }
+  function parseMetno(j) {
+    var list = j && j.properties && j.properties.timeseries;
+    if (!Array.isArray(list) || !list.length) throw new Error('bad');
+    var now = Date.now(), curE = list[0];
+    for (var i = 0; i < list.length; i++) {
+      var t = Date.parse(list[i].time);
+      if (!isFinite(t)) continue;
+      if (t <= now) curE = list[i]; else break;
+    }
+    var inst = (curE.data && curE.data.instant && curE.data.instant.details) || {};
+    if (!isFinite(inst.air_temperature)) throw new Error('no temp');
+    var nh = curE.data.next_1_hours || curE.data.next_6_hours;
+    var sym = (nh && nh.summary && nh.summary.symbol_code) || '';
+    /* بیشینه/کمینهٔ هر روز و نماد نزدیک‌ترین نقطه به ساعت ۱۲ ظهر همان روز */
+    var days = {}, codes = {}, today = new Date(now + 210 * 6e4).toISOString().slice(0, 10);
+    list.forEach(function (e) {
+      var t = Date.parse(e.time); if (!isFinite(t)) return;
+      var k = new Date(t + 210 * 6e4).toISOString().slice(0, 10);
+      if (k < today) return;
+      var a = (e.data && e.data.instant && e.data.instant.details) || {};
+      if (isFinite(a.air_temperature)) {
+        var d = days[k] || (days[k] = { hi: -Infinity, lo: Infinity });
+        if (a.air_temperature > d.hi) d.hi = a.air_temperature;
+        if (a.air_temperature < d.lo) d.lo = a.air_temperature;
+      }
+      var h = e.data && (e.data.next_1_hours || e.data.next_6_hours);
+      if (h && h.summary && h.summary.symbol_code) {
+        var dist = Math.abs(new Date(t + 210 * 6e4).getUTCHours() - 12);
+        if (!codes[k] || dist < codes[k][0]) codes[k] = [dist, h.summary.symbol_code];
+      }
+    });
+    var daily = Object.keys(days).sort().slice(0, 5).map(function (k) {
+      return { d: k, code: codes[k] ? metCode(codes[k][1]) : 3, hi: days[k].hi, lo: days[k].lo, sr: '', ss: '' };
+    });
+    if (!daily.length) throw new Error('no days');
+    return {
+      ts: Date.now(), src: 'met.no',
+      cur: { t: inst.air_temperature, app: isFinite(inst.apparent_temperature) ? inst.apparent_temperature : inst.air_temperature,
+        hum: isFinite(inst.relative_humidity) ? inst.relative_humidity : 0,
+        wind: isFinite(inst.wind_speed) ? inst.wind_speed * 3.6 : 0, code: metCode(sym) },
+      daily: daily
+    };
+  }
+  function wxRetrySoon() {   /* اگر وسط بازکردن صفحه اینترنت قطع بود، چند تلاش کوتاه دیگر هم می‌شود */
+    if (wxTries >= 3 || document.hidden) return;
+    wxTries++;
+    setTimeout(function () { if (!document.hidden && wxStale()) fetchWx(); }, 15000);
+  }
+  function fetchWx(cb) {
     getJSON(wxUrl()).then(function (j) {
       if (!j || !j.current || !j.daily || !Array.isArray(j.daily.time) || !j.daily.time.length) throw new Error('bad');
       var c = j.current, d = j.daily, daily = [];
@@ -3810,14 +3952,20 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
           sr: (d.sunrise[i] || '').slice(11, 16), ss: (d.sunset[i] || '').slice(11, 16)
         });
       }
-      wxCache = {
-        ts: Date.now(),
+      wxSave({
+        ts: Date.now(), src: 'Open-Meteo',
         cur: { t: c.temperature_2m, app: c.apparent_temperature, hum: c.relative_humidity_2m, wind: c.wind_speed_10m, code: c.weather_code },
         daily: daily
-      };
-      store.set('wx_cache_v1', JSON.stringify(wxCache));
-      paintWx();
-    }).catch(function () { paintWx(); });   /* اینترنت نبود: همان آخرین دادهٔ ذخیره‌شده */
+      });
+      if (cb) cb();
+    }).catch(function () {
+      /* Open-Meteo در دسترس نبود: همان داده از wttr.in (هدر CORS باز) و بعد از آن met.no خوانده می‌شود تا عدد کهنه روی کاشی نماند */
+      getJSON(wxUrlWttr()).then(function (j) { wxSave(parseWttr(j)); if (cb) cb(); })
+        .catch(function () {
+          getJSON(wxUrlMet()).then(function (j) { wxSave(parseMetno(j)); if (cb) cb(); })
+            .catch(function () { paintWx(); if (cb) cb(); wxRetrySoon(); });
+        });
+    });
   }
   paintWx();
   if (wxStale()) fetchWx();
@@ -3841,6 +3989,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     if (!wxCache) { nowP.textContent = 'هنوز داده‌ای دریافت نشده است؛ با اینترنت، خودکار دوباره تلاش می‌شود.'; return; }
     var c = wxCache.cur, w = wcode(c.code);
     nowP.textContent = 'الان در ' + (geo.src !== 'mashhad' ? 'موقعیت شما' : 'مشهد') + ': ' + w[0] + '، حدود ' + fa(Math.round(c.t)) + ' درجه (احساس واقعی ' + fa(Math.round(c.app)) + '°)، رطوبت ' + fa(Math.round(c.hum)) + '٪، باد ' + fa(Math.round(c.wind)) + ' کیلومتر بر ساعت.';
+    var ageEl = $('#wxAge'); if (ageEl) ageEl.textContent = 'آخرین دریافت: ' + wxAge() + (wxCache.src ? ' · منبع: ' + wxCache.src : '');
     wxCache.daily.forEach(function (d, i) {
       var wd = wcode(d.code);
       var r = el('div', 'row');
@@ -3851,6 +4000,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     });
   }
   $('#wxPill').addEventListener('click', function () { renderWxDlg(); openSheet($('#wxDlg')); });
+  $('#wxRefresh').addEventListener('click', function () {
+    var b = this;
+    b.disabled = true; b.textContent = 'در حال دریافت…';
+    fetchWx(function () { b.disabled = false; b.textContent = 'به‌روزرسانی'; renderWxDlg(); });
+  });
 
   /* ── موقعیت من + قبله‌یاب ──
      پیش‌فرض همهٔ محاسبات جغرافیایی: مشهد (۳۶٫۲۹۷۲ شمالی، ۵۹٫۶۰۶۷ شرقی).
