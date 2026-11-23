@@ -236,6 +236,14 @@ body::before {
   backdrop-filter: blur(16px) saturate(1.4);
   border-bottom-color: var(--line);
 }
+/* سرعت روی موبایل: GPU ضعیف‌تر است؛ شعاع بلورِ چسبان‌ها و کارت‌های هیرو کمتر می‌شود —
+   ظاهر شیشه‌ای می‌ماند ولی بلور پیوستهٔ روی GPU دیگر لگ نمی‌سازد */
+@media (max-width: 699px) {
+  .bar.stuck { -webkit-backdrop-filter: blur(9px) saturate(1.25); backdrop-filter: blur(9px) saturate(1.25); }
+  .shift-cal, .hero-cal { -webkit-backdrop-filter: blur(8px) saturate(1.25); backdrop-filter: blur(8px) saturate(1.25); }
+}
+/* لمس سریع‌تر: تأخیر دابل‌تپِ مرورگر روی کاشی‌ها و دکمه‌ها حذف می‌شود */
+.tile a, .chip, .t-btn, button, .hero-cal, .up-btn { touch-action: manipulation; }
 .bar-in {
   max-width: 980px; margin: 0 auto;
   padding: 8px;
@@ -243,8 +251,8 @@ body::before {
   background: var(--surface);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-lift);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
+  /* بلورِ داخلِ این کادر حذف شد: وقتی نوار چسبان می‌شود، پدرش (.bar.stuck) همین کار را می‌کند —
+     دو لایهٔ بلور روی هم فقط GPU هدر می‌داد و لگ اسکرول می‌ساخت؛ ظاهر تفاوت محسوسی ندارد */
 }
 .search-row { display: flex; gap: 6px; align-items: stretch; }
 /* نوار ابزار جمع‌وجور: همهٔ دکمه‌ها داخل یک مستطیل واحد کنار کادر جستجو */
@@ -1388,9 +1396,9 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <div class="tile"><a href="https://hplus.shahr-bank.ir/#/login" data-search="بانک همراه شهر پلاس"><span class="mono" aria-hidden="true">ه</span><span class="name">همراه شهر</span></a></div>
         <div class="tile"><a href="https://baran.bki.ir/#/home" data-search="بانک باران کشاورزی"><span class="mono" aria-hidden="true">ب</span><span class="name">باران</span></a></div>
         <div class="tile"><a href="https://pwa.bank-maskan.ir/auth/login" data-search="بانک مسکن"><span class="mono" aria-hidden="true">م</span><span class="name">مسکن</span></a></div>
-        <div class="tile"><a href="https://ib.postbank.ir/netway/index" data-search="بانک پست بانک"><span class="mono" aria-hidden="true">پ</span><span class="name">پست بانک</span></a></div>
+        <div class="tile"><a href="https://mobile.pb724.com/netway/index" data-search="بانک پست بانک"><span class="mono" aria-hidden="true">پ</span><span class="name">پست بانک</span></a></div>
         <div class="tile"><a href="https://bsun.middleeastbank.ir/login" data-search="بی سان خاورمیانه بانک"><span class="mono" aria-hidden="true">ب</span><span class="name">بی سان</span></a></div>
-        <div class="tile"><a href="https://dima.bankmellat.ir/" data-search="مگابانک ملت"><span class="mono" aria-hidden="true">د</span><span class="name">دیماملت</span></a></div>
+        <div class="tile"><a href="https://dimaweb.mellat.ir/" data-search="دیماملت دیما مگابانک ملت"><span class="mono" aria-hidden="true">د</span><span class="name">دیماملت</span></a></div>
         <div class="tile"><a href="https://ebanking.bankmellat.ir/ebanking/" data-search="اینترنت بانک ملت"><span class="mono" aria-hidden="true">ا</span><span class="name">اینترنت ملت</span></a></div>
         <div class="tile"><a href="https://vbank.rqb.ir/" data-search="بانک وی رسالت"><span class="mono" aria-hidden="true">و</span><span class="name">وی رسالت</span></a></div>
         <div class="tile"><a href="https://pishkhan.rqbank.ir/#/login" data-search="بانک پیشخوان رسالت"><span class="mono" aria-hidden="true">پ</span><span class="name">پیشخوان</span></a></div>
@@ -1448,7 +1456,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="body" id="b-operators"><div class="inner"><div class="grid">
-        <div class="tile"><a href="https://my.rightel.ir/main/dashboard" data-search="راستل اپراتور سیم‌کارت موبایل rightel"><span class="mono" aria-hidden="true">ر</span><span class="name">راستل</span></a></div>
+        <div class="tile"><a href="https://my.rightel.ir/main/dashboard" data-search="رایتل اپراتور سیم‌کارت موبایل rightel"><span class="mono" aria-hidden="true">ر</span><span class="name">رایتل</span></a></div>
         <div class="tile"><a href="https://my.mci.ir/" data-search="اپراتور همراه من همراه اول"><span class="mono" aria-hidden="true">ه</span><span class="name">همراه من</span></a></div>
         <div class="tile"><a href="https://my.irancell.ir/" data-search="اپراتور ایرانسل من"><span class="mono" aria-hidden="true">ا</span><span class="name">ایرانسل من</span></a></div>
         <div class="tile"><a href="https://bargheman.com/profile/dashboard" data-search="اپراتور برق من"><span class="mono" aria-hidden="true">ب</span><span class="name">برق من</span></a></div>
@@ -2644,7 +2652,13 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     syncBar();
   }
   function clearSearch() { input.value = ''; runSearch(); input.focus(); }
-  input.addEventListener('input', runSearch);
+  /* تایپ روان: فراخوانی‌های پشت‌سرهم کادر جستجو در هر ۱۲۰ میلی‌ثانیه یک‌بار جمع می‌شوند؛
+     هر کلید دیگر کل صفحه را جابه‌جا نمی‌کند و لگ تایپ از بین می‌رود */
+  var searchTimer = null;
+  input.addEventListener('input', function () {
+    if (searchTimer) clearTimeout(searchTimer);
+    searchTimer = setTimeout(runSearch, 120);
+  });
   $('#clearBtn').addEventListener('click', clearSearch);
   /* جستجوی صوتی؛ در Chrome اندروید در صورت پشتیبانی فعال می‌شود. */
   (function(){
@@ -2673,6 +2687,26 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       e.preventDefault(); input.focus();
     }
   });
+
+  /* بازشدن سریع‌تر لینک‌ها: با لمس/کلیک روی هر کاشی، اتصال مقصد (DNS + TLS) همان لحظه
+     پیش‌گرم می‌شود؛ تا مرورگر پرش را آغاز کند دست‌دادن‌وتعامل قبلاً برقرار است و صفحهٔ
+     مقصد چندصد میلی‌ثانیه زودتر باز می‌شود. برای هر میزبان فقط یک‌بار و تا سقف ۲۴ میزبان */
+  (function () {
+    var done = {}, order = [], MAX = 24;
+    function warm(href) {
+      var h; try { h = new URL(href, location.href).origin; } catch (e) { return; }
+      if (h === location.origin || done[h]) return;
+      done[h] = true; order.push(h);
+      if (order.length > MAX) { delete done[order.shift()]; }
+      var pc = document.createElement('link'); pc.rel = 'preconnect'; pc.href = h;
+      var dn = document.createElement('link'); dn.rel = 'dns-prefetch'; dn.href = h;
+      document.head.appendChild(pc); document.head.appendChild(dn);
+    }
+    document.addEventListener('pointerdown', function (ev) {
+      var t = ev.target, a = t && t.closest ? t.closest('a[href]') : null;
+      if (a) warm(a.getAttribute('href'));
+    }, { passive: true });
+  })();
 
   /* ── چیپ‌های دسته و نوار چسبان ── */
   var bar = $('#bar'), chips = $$('.chip');
