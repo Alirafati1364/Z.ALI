@@ -1258,7 +1258,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
           <a class="tk tk-s" data-id="ons" href="https://www.tradingview.com/symbols/XAUUSD/" title="نمودار انس جهانی طلا در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">انس طلا $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
           <a class="tk tk-s" data-id="oil" href="https://www.tradingview.com/symbols/UKOIL/" title="نمودار نفت برنت در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">برنت $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
           <a class="tk tk-s" data-id="slv" href="https://www.tradingview.com/symbols/XAGUSD/" title="نمودار نقره در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">نقره $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
-          <a class="tk tk-s" data-id="cu" href="https://www.tradingview.com/symbols/LME-CA1!/" title="نمودار مس لندن در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">مس (تن) $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
+          <a class="tk tk-s" data-id="cu" href="https://www.tradingview.com/symbols/COMEX-HG1!/" title="نمودار مس کامکس در تریدینگ‌ویو (دلار بر پوند)"><span class="tk-top"><span class="tk-l">مس (پوند) $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
           <a class="tk tk-s" data-id="btc" href="https://www.tradingview.com/symbols/BTCUSDT/" title="نمودار بیت‌کوین در تریدینگ‌ویو"><span class="tk-top"><span class="tk-l">بیت‌کوین $</span><span class="tk-c"></span></span><span class="tk-v"><b>—</b></span></a>
         </div>
       </div>
@@ -3260,8 +3260,10 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
      هر عدد از «منبع تخصصی معتبر» همان بازار گرفته می‌شود؛ نام منبع فقط در راهنمای لمسِ (title) هر خانه می‌آید.
      کلیک روی هر خانه = باز شدن «چارت همان بازار»: طلا، دلار هرات و شاخص بورس در ره‌آورد ۳۶۵، بقیه در تریدینگ‌ویو؛
      پس href خانه‌ها هرگز عوض نمی‌شود و فقط عدد، رنگ و title به‌روز می‌شود.
-     دربارهٔ واحدها: تایل مس «دلار بر تن» است و چارت LME:CA1! در تریدینگ‌ویو هم «دلار بر تن» است (مس گرید A بورس فلزات لندن) و عددش با تایل می‌خواند؛
-     چارتِ COPPER یا HG1! کامکس «دلار بر پوند» است و حدود ۲۲۰۴ برابر کوچک‌تر دیده می‌شود — اشتباه نشود.
+     دربارهٔ واحدها: تایل مس و چارت تریدینگ‌ویوِ آن هر دو «دلار بر پوند»‌اند و عددشان می‌خواند؛
+     منبع اصلی تایل کلید «مس» tgju است (basemetal-copper — بازار جهانی، همان واحد چارت)؛ پشتیبان مس لندن بر تن است که تقسیم بر ۲۲۰۴٫۶۲ به بر پوند می‌رسد.
+     چارت COMEX:HG1! فیوچرز مس بورس کامکس نیویورک است — همان بازاری که قیمت tgju از آن می‌آید.
+     اختلاف جزئی عدد تایل و چارت طبیعی است: دو منبع متفاوت‌اند و لحظهٔ قیمت‌گذاری‌شان کمی فرق دارد.
      اگر منبع اصلی در دسترس نبود (مثل قطع اینترنت بین‌الملل)، به‌سرعت از جایگزین داخلی
      (tgju، نوبیتکس، طلاسی، میلی — همه داخل ایران و سازگار با اینترنت ملی) گرفته می‌شود. */
   var TIMEOUT = 9000;
@@ -3305,20 +3307,11 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     return { v: v, pct: pct };
   }
   var tkDiag = { keys: null, errors: {} };   /* فقط برای عیب‌یابی: آدرس را با #diag باز کن */
-  /* مس جهانی (دلار برای هر تن): اول کلیدهای شناخته‌شده، بعد هر کلیدی که اسمش copper دارد؛
+  /* مس جهانی (دلار بر پوند): اصلی کلید «مس» tgju است (basemetal-copper — بازار جهانی، همون واحد چارت کامکس)؛
+     پشتیبان: مس لندن که بر تن است و تقسیم بر ۲۲۰۴٫۶۲ (تعداد پوند هر تن) به بر پوند می‌رسد.
      فقط عددی پذیرفته می‌شود که در بازهٔ منطقی باشد، پس واحد یا کلید اشتباه هرگز نشان داده نمی‌شود. */
-  function fromTgjuCopper() {
-    return function () {
-      return tgju().then(function (j) {
-        var cur = j.current || j, keys = ['base_global_copper', 'basemetal-london-copper'];
-        Object.keys(cur).forEach(function (k) { if (/copper/i.test(k) && keys.indexOf(k) < 0) keys.push(k); });
-        for (var i = 0; i < keys.length; i++) {
-          if (!cur[keys[i]]) continue;
-          try { var r = parseTgju(cur[keys[i]]); if (r.v >= 3000 && r.v <= 40000) return r; } catch (e) {}
-        }
-        throw new Error('copper key not found or out of range');
-      });
-    };
+  function perLb(f) {   /* لودری که بر تن می‌دهد را به دلار بر پوند تبدیل می‌کند */
+    return function () { return f().then(function (r) { r.v = r.v / 2204.62262; return r; }); };
   }
   function fromTgju(key) {
     return function () { return tgju().then(function (j) { return parseTgju((j.current || j)[key]); }); };
@@ -3430,12 +3423,13 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     btc: { load: firstOk([withSource(fromCoinGecko(), 'https://www.coingecko.com/en/coins/bitcoin', 'CoinGecko'), withSource(fromBinance(), 'https://www.binance.com/en/trade/BTC_USDT', 'بایننس'), withSource(fromTgju('crypto-bitcoin'), 'https://www.tgju.org/profile/crypto-bitcoin', 'TGJU'), withSource(fromNobitex(), 'https://nobitex.ir/', 'نوبیتکس')]), div: 1 },
     tse: { load: withSource(fromTseIndex(), 'https://www.tsetmc.com/', 'TSETMC'), div: 1 },
     oil: { load: withSource(fromTgju('oil_brent'), 'https://www.tgju.org/profile/oil_brent', 'TGJU'), div: 1 },
-    /* نقره: دلار برای هر اونس — اصلی: tgju؛ پشتیبان: Gold-API بین‌المللی. مس جهانی: دلار برای هر تن */
+    /* نقره: دلار برای هر اونس — اصلی: tgju؛ پشتیبان: Gold-API بین‌المللی. مس جهانی: دلار برای هر پوند —
+       اصلی: کلید «مس» tgju (basemetal-copper)؛ پشتیبان: مس لندن بر تن که به بر پوند تبدیل می‌شود */
     slv: { load: firstOk([ranged(withSource(fromTgju('silver'), 'https://www.tgju.org/profile/silver', 'TGJU'), 5, 500), ranged(withSource(fromGoldApi('XAG'), 'https://gold-api.com/', 'Gold-API'), 5, 500)]), div: 1 },
     cu: { load: firstOk([
-      ranged(withSource(fromTgju('basemetal-london-copper'), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU'), 3000, 40000),
-      withSource(fromTgjuCopper(), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU')   /* پشتیبان: اگر کلید فرق کرد، کلیدی که اسمش copper دارد */
-    ]), div: 1 }
+      ranged(withSource(fromTgju('basemetal-copper'), 'https://www.tgju.org/profile/basemetal-copper', 'TGJU'), 1, 15),
+      ranged(withSource(perLb(fromTgju('basemetal-london-copper')), 'https://www.tgju.org/profile/basemetal-london-copper', 'TGJU'), 1, 15)
+    ]), div: 1 }   /* tgju «مس» خودش دلار بر پوند است؛ تایل و چارت COMEX:HG1! هر دو بر پوند و عددشان می‌خواند */
   };
   /* شاخص کل بورس تهران (TSETMC) */
   var TSE = 'https://cdn.tsetmc.com/api/';
@@ -3468,12 +3462,12 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
       btc: ['https://www.coingecko.com/en/coins/bitcoin', 'https://www.binance.com/en/trade/BTC_USDT', 'https://www.tgju.org/profile/crypto-bitcoin', 'https://nobitex.ir/'],
       tse: ['https://www.tsetmc.com/'], oil: ['https://www.tgju.org/profile/oil_brent'],
       slv: ['https://www.tgju.org/profile/silver', 'https://gold-api.com/'],
-      cu: ['https://www.tgju.org/profile/basemetal-london-copper']
+      cu: ['https://www.tgju.org/profile/basemetal-copper', 'https://www.tgju.org/profile/basemetal-london-copper']
     };
     return allowed[id] && allowed[id].indexOf(url) >= 0;
   }
   try {
-    var savedTicker = JSON.parse(store.get('ticker_cache_v2', '{}'));
+    var savedTicker = JSON.parse(store.get('ticker_cache_v3', '{}'));   /* v۳: واحد مس از «بر تن» به «بر پوند» عوض شد تا کش قدیمی بر تن نشان داده نشود */
     if (savedTicker && typeof savedTicker === 'object' && !Array.isArray(savedTicker)) {
       Object.keys(TICKER).forEach(function (id) {
         var d = savedTicker[id];
@@ -3581,7 +3575,7 @@ body.edit-mode .toast-wrap { bottom: calc(74px + env(safe-area-inset-bottom, 0px
     var btn = $('#tkRefresh'); if (btn) btn.classList.add('loading');
     function finish() {
       tkBusy = false; if (btn) btn.classList.remove('loading');
-      try { store.set('ticker_cache_v2', JSON.stringify(tkCache)); tickerStatus(); } catch (e) {}
+      try { store.set('ticker_cache_v3', JSON.stringify(tkCache)); tickerStatus(); } catch (e) {}
       if (/diag/.test(location.hash)) showDiag();
     }
     var jobs = Object.keys(TICKER).map(function (id) {
